@@ -299,6 +299,11 @@ export default function Home({navigation}) {
       {/* //* BANNER */}
       <SafeAreaView style={globalStyles.bannerhome}>
         <Text style={globalStyles.bannertext}>POS</Text>
+        <View style={{position: 'absolute', right: 10}}>
+          <TouchableOpacity>
+            <Icon name={'sync'} size={25} color="white"></Icon>
+          </TouchableOpacity>
+        </View>
       </SafeAreaView>
       {/* //* BANNER */}
 
@@ -315,10 +320,10 @@ export default function Home({navigation}) {
           </TouchableOpacity>
         </View>
         <SafeAreaView style={globalStyles.menuviewhome}>
-          <Text style={globalStyles.menutitletexthome}>Menu</Text>
-
-          {/* //! MENU ITEM */}
-          <View style={{flex: 3, flexDirection: 'row', marginHorizontal: 2}}>
+          <Text style={globalStyles.menutitletexthome}>Sales Type</Text>
+        </SafeAreaView>
+        {/* //! MENU ITEM */}
+        {/* <View style={{flex: 3, flexDirection: 'row', marginHorizontal: 2}}>
             <TouchableOpacity
               style={globalStyles.menubuttonitemnew}
               onPress={handleInvRec}>
@@ -341,34 +346,36 @@ export default function Home({navigation}) {
               <Image style={globalStyles.iconmenu} />
               <Text style={globalStyles.menubuttontextnew}>Stock Opname</Text>
             </TouchableOpacity>
-          </View>
-          {/* //! MENU ITEM */}
-        </SafeAreaView>
+          </View> */}
+        {/* //! MENU ITEM */}
       </ScrollView>
       {/* //* CONTENT */}
 
       <SafeAreaView style={globalStyles.menuviewhome2}>
         <View style={{flex: 2, flexDirection: 'row', marginHorizontal: 0}}>
-          <TouchableOpacity style={globalStyles.menubuttonitembottom} disabled>
-            <Image style={globalStyles.iconmenu2} />
-            <Text style={globalStyles.menubuttontextselected}>Beranda</Text>
+          <TouchableOpacity style={globalStyles.menubuttonitembottom}>
+            <Icon name={'store'} size={30} color="#0096FF" />
+            <Image style={globalStyles.iconmenuwalkin} />
+            <Text style={globalStyles.menubuttontextselected}>Walk In</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={globalStyles.menubuttonitembottom}
-            onPress={handleSetting}>
-            <Image style={globalStyles.iconmenu2} />
-            <Text style={globalStyles.menubuttontextnew}>Pengaturan</Text>
+            //onPress={handleSetting}
+          >
+            <Icon name={'globe'} size={30} color="#0096FF" />
+            <Image style={globalStyles.iconmenuonline} />
+            <Text style={globalStyles.menubuttontextonline}>Online</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
 
       {/* //* FOOTER */}
-      <SafeAreaView style={[globalStyles.box5]}>
+      {/* <SafeAreaView style={[globalStyles.box5]}>
         <View style={[globalStyles.footer]}>
           <Icon name={'copyright'} size={14} color="#212121" />
           <Text style={{color: colors.text, paddingLeft: 2}}>ArthaIT 2023</Text>
         </View>
-      </SafeAreaView>
+      </SafeAreaView> */}
       {/* //* FOOTER */}
     </SafeAreaView>
   );

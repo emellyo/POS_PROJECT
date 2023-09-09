@@ -44,7 +44,7 @@ const db = SQLite.openDatabase(
 const Login = ({navigation}) => {
   LogBox.ignoreLogs([
     'Non-serializable values were found in the navigation state',
-    'Image source "null" doesnt exist',
+    'Image source "null" doesn' + '' + 't exist',
   ]);
   useEffect(() => {
     setModalVisible(false);
@@ -361,7 +361,7 @@ const Login = ({navigation}) => {
                   globalStyles.iconinput,
                   {backgroundColor: colors.card},
                 ]}>
-                <Icon name={'user'} size={20} color="#bdbdbd" />
+                <Icon name={'user'} size={20} color="#0096FF" />
               </View>
               <TextInput
                 style={[
@@ -385,7 +385,7 @@ const Login = ({navigation}) => {
                   globalStyles.iconinput,
                   {backgroundColor: colors.card},
                 ]}>
-                <Icon name={'lock'} size={20} color="#bdbdbd" />
+                <Icon name={'lock'} size={20} color="#0096FF" />
               </View>
               <TextInput
                 style={[
@@ -405,7 +405,7 @@ const Login = ({navigation}) => {
                 <Icon
                   name={seePassword ? 'eye' : 'eye-slash'}
                   size={25}
-                  color="#021F61"
+                  color="#0096FF"
                   style={{marginRight: 8}}
                 />
               </TouchableOpacity>
