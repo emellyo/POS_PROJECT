@@ -36,6 +36,7 @@ export default function Home({navigation}) {
   //#region //* VARIABLE
 
   const [mdlConfirm, setMdlConfirm] = useState(false);
+  const [mdlConfirmSync, setMdlConfirmSync] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [information, setInformation] = useState('');
   const [isLoad, setLoad] = useState(false);
@@ -170,6 +171,10 @@ export default function Home({navigation}) {
     setMdlConfirm(true);
   };
 
+  const viewConfirmSync = async () => {
+    setMdlConfirmSync(true);
+  };
+
   const handleLogout = async () => {
     // StopAll();
     navigation.replace('Login');
@@ -178,6 +183,13 @@ export default function Home({navigation}) {
   const handleSetting = async () => {
     try {
       navigation.navigate('Setting');
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const handleWalkInandOnline = async () => {
+    try {
+      navigation.navigate('Menu');
     } catch (err) {
       console.log(err);
     }
@@ -194,22 +206,6 @@ export default function Home({navigation}) {
       };
 
       navigation.navigate('InvReceiving', {dataparams});
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const handleInvOut = async () => {
-    try {
-      navigation.navigate('InvOut');
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const StockCount = async () => {
-    try {
-      navigation.navigate('StockCount');
     } catch (err) {
       console.log(err);
     }
@@ -276,6 +272,36 @@ export default function Home({navigation}) {
       </Modal>
       {/* //* CONFIRM LOGOUT */}
 
+      {/* //* MODAL SYNC DATA */}
+      <Modal animationType="fade" transparent={true} visible={mdlConfirmSync}>
+        <View style={globalStyles.centeredView}>
+          <View style={globalStyles.modalView}>
+            <View style={globalStyles.modalheader}>
+              <Text style={globalStyles.modalText}>Sync Data</Text>
+            </View>
+            <View style={{margin: 20, marginBottom: 0}}>
+              <Text style={{color: '#212121', fontSize: 16}}>
+                Are you sure want to sync?
+              </Text>
+            </View>
+            <View style={{flexDirection: 'row', marginHorizontal: 0}}>
+              <TouchableOpacity
+                style={[globalStyles.buttonNo]}
+                onPress={() => setMdlConfirmSync(!mdlConfirmSync)}>
+                <Text style={globalStyles.textNo}>No</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[globalStyles.buttonYes]}
+                //onPress={handleLogout}
+              >
+                <Text style={globalStyles.textStyle}>Yes</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      {/* //* MODAL SYNC DATA */}
+
       {/* //* LOADER */}
       {/* <Modal animationType="fade" transparent={true} visible={isLoad}>
         <View style={globalStyles.centeredView}>
@@ -300,7 +326,7 @@ export default function Home({navigation}) {
       <SafeAreaView style={globalStyles.bannerhome}>
         <Text style={globalStyles.bannertext}>POS</Text>
         <View style={{position: 'absolute', right: 10}}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={viewConfirmSync}>
             <Icon name={'sync'} size={25} color="white"></Icon>
           </TouchableOpacity>
         </View>
@@ -353,15 +379,16 @@ export default function Home({navigation}) {
 
       <SafeAreaView style={globalStyles.menuviewhome2}>
         <View style={{flex: 2, flexDirection: 'row', marginHorizontal: 0}}>
-          <TouchableOpacity style={globalStyles.menubuttonitembottom}>
+          <TouchableOpacity
+            style={globalStyles.menubuttonitembottom}
+            onPress={handleWalkInandOnline}>
             <Icon name={'store'} size={30} color="#0096FF" />
             <Image style={globalStyles.iconmenuwalkin} />
             <Text style={globalStyles.menubuttontextselected}>Walk In</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={globalStyles.menubuttonitembottom}
-            //onPress={handleSetting}
-          >
+            onPress={handleWalkInandOnline}>
             <Icon name={'globe'} size={30} color="#0096FF" />
             <Image style={globalStyles.iconmenuonline} />
             <Text style={globalStyles.menubuttontextonline}>Online</Text>

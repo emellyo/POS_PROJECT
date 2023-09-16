@@ -14,7 +14,7 @@ import SplashScreen from './src/screens/Splash';
 import LoginScreen from './src/screens/Login';
 import HomeScreen from './src/screens/Home';
 import Home from './src/screens/Home';
-// import SettingScreen from './src/screens/Setting';
+import MenuScreen from './src/screens/Menu';
 // import InvRecScreen from './src/screens/InvReceiving';
 // import InvOutScreen from './src/screens/InvOut';
 // import BarcodeScan from './src/screens/BarcodeScanner';
@@ -37,6 +37,10 @@ const App = () => {
         name="Home" 
         component={HomeScreen}
         options={{ title: 'Home Page'}} />
+        <Stack.Screen 
+        name="Menu" 
+        component={MenuScreen}
+        options={{ title: 'Menu Page'}} />
     </Stack.Navigator>  
     </NavigationContainer>
   );

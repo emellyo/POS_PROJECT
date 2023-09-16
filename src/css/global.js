@@ -826,7 +826,7 @@ export const globalStyles = StyleSheet.create({
 export const invrecStyles = StyleSheet.create({
   bannermenu: {
     flexDirection: 'column',
-    backgroundColor: '#021F61',
+    backgroundColor: '#0096FF',
     height: 60,
     alignContent: 'center',
     justifyContent: 'center',
