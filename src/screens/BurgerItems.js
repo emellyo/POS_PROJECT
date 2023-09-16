@@ -15,6 +15,11 @@ export default [
     iconName: 'receipt',
   },
   {
+    name: 'Discounts',
+    iconType: 'FontAwesome5',
+    iconName: 'percentage',
+  },
+  {
     name: 'Settings',
     iconType: 'FontAwesome5',
     iconName: 'cog',
