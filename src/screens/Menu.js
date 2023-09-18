@@ -27,7 +27,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 //import BarcodeScanner from 'react-native-scan-barcode';
 //import * as dbconn from '../db/dbinvout';
 
-export default function InvOut({navigation}) {
+export default function Menu({navigation}) {
   LogBox.ignoreLogs([
     'Non-serializable values were found in the navigation state',
   ]);
@@ -37,32 +37,32 @@ export default function InvOut({navigation}) {
   const increment = useRef(null);
   //const [refreshing, setRefreshing] = useState(false);
   //*BPB LOOKUP
-  const [nomorbpb, setNomorBpb] = useState('');
-  const [itembpb, setItemBpb] = useState([]);
+  // const [nomorbpb, setNomorBpb] = useState('');
+  // const [itembpb, setItemBpb] = useState([]);
   const [mdlBPB, setMdlBPB] = useState(false);
-  const [openbpb, setOpenBpb] = useState(false);
+  // const [openbpb, setOpenBpb] = useState(false);
 
   //#region //* VARIABLE
 
   const [mdlConfirm, setMdlConfirm] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [information, setInformation] = useState('');
-  const [isLoad, setLoad] = useState(false);
-  const [isInet, setInet] = useState(true);
+  //const [isLoad, setLoad] = useState(false);
+  //const [isInet, setInet] = useState(true);
   //const [fullname, setFULLNAME] = useState();
   //const [barcodescan, setBarcodeScan] = useState();
-  const [docnumbr, setDOCNUMBR] = useState('');
-  const [interid, setINTERID] = useState();
-  const [userid, setUSERID] = useState();
-  const [desc, setDesc] = useState();
-  const [list, setList] = useState([]);
-  const [data, setData] = useState([]);
-  const [reload, setReload] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
+  // const [docnumbr, setDOCNUMBR] = useState('');
+  // const [interid, setINTERID] = useState();
+  // const [userid, setUSERID] = useState();
+  // const [desc, setDesc] = useState();
+  // const [list, setList] = useState([]);
+  // const [data, setData] = useState([]);
+  //onst [reload, setReload] = useState(false);
+  //const [refreshing, setRefreshing] = useState(false);
   //#endregion
 
   useEffect(() => {
-    // StartCheck();
+    //StartCheck();
     // GetUserData();
     //handleGetItem();
     //RELOADPAGE();
@@ -77,14 +77,14 @@ export default function InvOut({navigation}) {
     };
   }, []);
 
-  const RELOADPAGE = async () => {
-    setList([]);
-    //setData([]);
-    setDOCNUMBR('');
-    setMdlConfirm(false);
-    setModalVisible(false);
-    setNomorBpb('');
-  };
+  // const RELOADPAGE = async () => {
+  //   setList([]);
+  //   //setData([]);
+  //   setDOCNUMBR('');
+  //   setMdlConfirm(false);
+  //   setModalVisible(false);
+  //   setNomorBpb('');
+  // };
 
   //   const LOADTBLINVOUT = async () => {
   //     try {
@@ -254,57 +254,57 @@ export default function InvOut({navigation}) {
   //       });
   //   };
 
-  const UpdateDataList = async (item, flag) => {
-    const db = await dbconn.getDBConnection();
-    let flagupdate = !flag;
-    let query = `UPDATE InvOut SET FLAG = ${flagupdate} WHERE NO = ${item};`;
-    await dbconn.querydynamic(db, query);
-    let dtInvOut = await dbconn.InvOut_getdata(db, 'InvOut');
-    console.info('dataupdate: ', dtInvOut);
-    setList(dtInvOut);
-  };
+  // const UpdateDataList = async (item, flag) => {
+  //   const db = await dbconn.getDBConnection();
+  //   let flagupdate = !flag;
+  //   let query = `UPDATE InvOut SET FLAG = ${flagupdate} WHERE NO = ${item};`;
+  //   await dbconn.querydynamic(db, query);
+  //   let dtInvOut = await dbconn.InvOut_getdata(db, 'InvOut');
+  //   console.info('dataupdate: ', dtInvOut);
+  //   setList(dtInvOut);
+  // };
 
-  const GetNomorBpb = async () => {
-    setLoad(true);
-    const results = [];
-    let dataitem = await AsyncStorage.getItem('@dtUser');
-    dataitem = JSON.parse(dataitem);
-    var param_interid = dataitem[0].interid;
-    setINTERID(param_interid);
-    getnomorbpb({
-      INTERID: param_interid,
-    })
-      .then(async result => {
-        if (result.status == 200) {
-          var hasil = result.data.SelectResults;
-          if (hasil.length > 0) {
-            for (let i = 0; i < hasil.length; i++) {
-              var data = hasil[i];
-              var joined = {
-                label: data.DOCNUMBR,
-                value: data.DOCNUMBR,
-                icon: () => <Icon name="hotel" size={15} color="blue" />,
-              };
-              results.push(joined);
-            }
-          }
-        }
-        setItemBpb(results);
-        setNomorBpb('');
+  // const GetNomorBpb = async () => {
+  //   setLoad(true);
+  //   const results = [];
+  //   let dataitem = await AsyncStorage.getItem('@dtUser');
+  //   dataitem = JSON.parse(dataitem);
+  //   var param_interid = dataitem[0].interid;
+  //   setINTERID(param_interid);
+  //   getnomorbpb({
+  //     INTERID: param_interid,
+  //   })
+  //     .then(async result => {
+  //       if (result.status == 200) {
+  //         var hasil = result.data.SelectResults;
+  //         if (hasil.length > 0) {
+  //           for (let i = 0; i < hasil.length; i++) {
+  //             var data = hasil[i];
+  //             var joined = {
+  //               label: data.DOCNUMBR,
+  //               value: data.DOCNUMBR,
+  //               icon: () => <Icon name="hotel" size={15} color="blue" />,
+  //             };
+  //             results.push(joined);
+  //           }
+  //         }
+  //       }
+  //       setItemBpb(results);
+  //       setNomorBpb('');
 
-        await delaynew(500);
-        setLoad(false);
-        setMdlBPB(true);
-      })
-      .catch(err => {
-        console.log('error_bpb_number', err);
-        let msg = 'Servers is not available.';
-        msg = err;
-        CallModalInfo(msg);
-      });
-    await delaynew(1000);
-    setLoad(false);
-  };
+  //       await delaynew(500);
+  //       setLoad(false);
+  //       setMdlBPB(true);
+  //     })
+  //     .catch(err => {
+  //       console.log('error_bpb_number', err);
+  //       let msg = 'Servers is not available.';
+  //       msg = err;
+  //       CallModalInfo(msg);
+  //     });
+  //   await delaynew(1000);
+  //   setLoad(false);
+  // };
 
   // const UpdateDataListBack = async(item) => {
   //     const db = await dbconn.getDBConnection();
@@ -352,59 +352,59 @@ export default function InvOut({navigation}) {
   //   }
   // };
 
-  const validInformationOk = async visible => {
-    console.log('masuk1: ');
-    //onRefresh();
-    setModalVisible(visible);
-    if (visible == false && reload == true) {
-      console.log('masuk2: ');
-      //useState().length = 0;
-      // window.location.reload(true);
-      //navigation.navigate('InvOut');
-    }
-  };
+  // const validInformationOk = async visible => {
+  //   console.log('masuk1: ');
+  //   //onRefresh();
+  //   setModalVisible(visible);
+  //   if (visible == false && reload == true) {
+  //     console.log('masuk2: ');
+  //     //useState().length = 0;
+  //     // window.location.reload(true);
+  //     //navigation.navigate('InvOut');
+  //   }
+  // };
 
-  const CallModalInfoPost = async info => {
-    // console.info('hasil message : ',info);
-    setLoad(false);
-    setInformation(info);
-    setModalVisible(true);
-  };
+  // const CallModalInfoPost = async info => {
+  //   // console.info('hasil message : ',info);
+  //   setLoad(false);
+  //   setInformation(info);
+  //   setModalVisible(true);
+  // };
 
-  const CallModalInfo = async info => {
-    // console.info('hasil message : ',info);
-    setLoad(false);
-    setInformation(info);
-    setModalVisible(true);
-  };
+  // const CallModalInfo = async info => {
+  //   // console.info('hasil message : ',info);
+  //   setLoad(false);
+  //   setInformation(info);
+  //   setModalVisible(true);
+  // };
 
-  function emptyStr(str) {
-    return !str || !/[^\s]+/.test(str);
-  }
+  // function emptyStr(str) {
+  //   return !str || !/[^\s]+/.test(str);
+  // }
 
-  const delaynew = ms => new Promise(res => setTimeout(res, ms));
+  //const delaynew = ms => new Promise(res => setTimeout(res, ms));
 
   //#endregion
 
   //#region //* EVENT
 
-  const viewConfirmPost = async () => {
-    setMdlConfirm(true);
-  };
+  // const viewConfirmPost = async () => {
+  //   setMdlConfirm(true);
+  // };
 
-  const handleLogout = async () => {
-    // StopAll();
-    navigation.replace('Login');
-  };
+  // const handleLogout = async () => {
+  //   // StopAll();
+  //   navigation.replace('Login');
+  // };
 
   function handleBackButtonClick() {
     navigation.goBack();
     return true;
   }
 
-  const viewBpbLookup = async () => {
-    GetNomorBpb();
-  };
+  // const viewBpbLookup = async () => {
+  //   GetNomorBpb();
+  // };
 
   //   function selectedBPB(nilai) {
   //     try {
@@ -467,7 +467,7 @@ export default function InvOut({navigation}) {
               style={[globalStyles.button, globalStyles.buttonClose]}
               onPress={() => {
                 setModalVisible(!modalVisible);
-                RELOADPAGE();
+                //RELOADPAGE();
               }}>
               <Text style={globalStyles.textStyle}>Ok</Text>
             </TouchableOpacity>
@@ -521,7 +521,7 @@ export default function InvOut({navigation}) {
       </Modal> */}
       {/* //* LOADER */}
       {/* //* LOOKUP BPB */}
-      <Modal animationType="fade" transparent={true} visible={mdlBPB}>
+      {/* <Modal animationType="fade" transparent={true} visible={mdlBPB}>
         <View style={globalStyles.LookupcenteredView}>
           <View style={globalStyles.LookupmodalView}>
             <View style={globalStyles.Lookupmodalheader}>
@@ -570,7 +570,7 @@ export default function InvOut({navigation}) {
             </View>
           </View>
         </View>
-      </Modal>
+      </Modal> */}
       {/* //* LOOKUP BPB */}
       <StatusBar
         backgroundColor={'#0096FF'}
@@ -592,7 +592,7 @@ export default function InvOut({navigation}) {
       <ScrollView style={{padding: 15}}>
         <SafeAreaView style={invrecStyles.form}>
           <View style={invrecStyles.menuitemfull}>
-            <TextInput
+            {/* <TextInput
               editable={false}
               style={[
                 invrecStyles.textinputlookup,
@@ -603,12 +603,31 @@ export default function InvOut({navigation}) {
               placeholderTextColor={colors.text}
               //value={nomorbpb}
               // onChangeText={text => setEmail(text)}
+            /> */}
+            <DropDownPicker
+              style={{elevation: 5, zIndex: 1, marginRight: 15}}
+              textStyle={{fontWeight: '600', fontSize: 15}}
+              showTickIcon={true}
+              listMode="SCROLLVIEW"
+              scrollViewProps={{nestedScrollEnabled: true}}
+              closeOnBackPressed={true}
+              closeAfterSelecting={true}
+              //itemSeparator={true}
+              searchable={true}
+              searchPlaceholder="All Items"
+              //mode="BADGE"
+              //badgeColors={['blue', 'green', 'orange']}
+              placeholder="All Items"
+              items={[
+                {label: 'Item 1', value: 'item1'},
+                {label: 'Item 2', value: 'item2'},
+              ]}
+              onChangeItem={item => console.log(item.label, item.value)}
             />
-            <TouchableOpacity
-              style={[invrecStyles.iconlookup, {backgroundColor: colors.card}]}
-              onPress={viewBpbLookup}>
+            {/* <TouchableOpacity
+              style={[invrecStyles.iconlookup, {backgroundColor: colors.card}]}>
               <Icon name={'search'} size={20} color="#bdbdbd" />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </SafeAreaView>
         <ScrollView nestedScrollEnabled={true}>
@@ -617,7 +636,15 @@ export default function InvOut({navigation}) {
               marginVertical: 10,
               marginHorizontal: 0,
             }}>
-            {list.map((item, index) => {
+            {/* //! MENU ITEM */}
+            <View style={{flex: 3, flexDirection: 'row', marginHorizontal: 2}}>
+              <TouchableOpacity style={globalStyles.menubuttonitemnew}>
+                <Icon name={'tshirt'} size={50} color="#0096FF" />
+                <Text style={globalStyles.menubuttontextnew}>Baju Timnas</Text>
+              </TouchableOpacity>
+            </View>
+            {/* //! MENU ITEM */}
+            {/* {list.map((item, index) => {
               return (
                 <View key={index} style={{marginBottom: 20}}>
                   <View>
@@ -850,7 +877,7 @@ export default function InvOut({navigation}) {
                   </View>
                 </View>
               );
-            })}
+            })} */}
           </View>
         </ScrollView>
         {/* <View style={[invrecStyles.form, {marginTop: 0, paddingTop: 0}]}>

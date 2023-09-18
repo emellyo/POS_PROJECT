@@ -84,7 +84,7 @@ export const globalStyles = StyleSheet.create({
     flex: 0.5,
     flexDirection: 'row',
     marginHorizontal: 2,
-    height: 150,
+    height: 100,
     backgroundColor: '#FFFFFF',
     borderRadius: 10,
     elevation: 5,
@@ -862,7 +862,7 @@ export const invrecStyles = StyleSheet.create({
   form: {
     flex: 1,
     flexDirection: 'row',
-    marginHorizontal: 10,
+    marginHorizontal: 5,
     marginBottom: 5,
   },
   menuitem: {

@@ -13,7 +13,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import SplashScreen from './src/screens/Splash';
 import LoginScreen from './src/screens/Login';
 import HomeScreen from './src/screens/Home';
-import Home from './src/screens/Home';
+//import Home from './src/screens/Home';
 import MenuScreen from './src/screens/Menu';
 // import InvRecScreen from './src/screens/InvReceiving';
 // import InvOutScreen from './src/screens/InvOut';

@@ -13,6 +13,7 @@ import {
 import {globalStyles} from '../css/global';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {useRoute, useTheme} from '@react-navigation/native';
+import DropDownPicker from 'react-native-dropdown-picker';
 import * as Utils from '../Helpers/Utils';
 // import {
 //   loadingartha,
@@ -376,7 +377,6 @@ export default function Home({navigation}) {
         {/* //! MENU ITEM */}
       </ScrollView>
       {/* //* CONTENT */}
-
       <SafeAreaView style={globalStyles.menuviewhome2}>
         <View style={{flex: 2, flexDirection: 'row', marginHorizontal: 0}}>
           <TouchableOpacity
