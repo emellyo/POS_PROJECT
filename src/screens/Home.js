@@ -383,14 +383,14 @@ export default function Home({navigation}) {
             style={globalStyles.menubuttonitembottom}
             onPress={handleWalkInandOnline}>
             <Icon name={'store'} size={30} color="#0096FF" />
-            <Image style={globalStyles.iconmenuwalkin} />
+            {/* <Image style={globalStyles.iconmenuwalkin} /> */}
             <Text style={globalStyles.menubuttontextselected}>Walk In</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={globalStyles.menubuttonitembottom}
             onPress={handleWalkInandOnline}>
             <Icon name={'globe'} size={30} color="#0096FF" />
-            <Image style={globalStyles.iconmenuonline} />
+            {/* <Image style={globalStyles.iconmenuonline} /> */}
             <Text style={globalStyles.menubuttontextonline}>Online</Text>
           </TouchableOpacity>
         </View>

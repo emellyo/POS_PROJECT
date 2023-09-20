@@ -10,52 +10,75 @@ export default function App() {
   return (
     <NavigationContainer>
       <Drawer.Navigator
-        drawerType="front"
-        initialRouteName="Home"
-        drawerContentOptions={{
-          activeTintColor: '#0096FF',
-          itemStyle: {marginVertical: 10},
-        }}>
-        {BurgerItems.map(drawer => (
-          <Drawer.Screen key={drawer.name} />
-        ))}
+        // For setting Custom Sidebar Menu
+        drawerContent={props => <CustomSidebarMenu {...props} />}>
+        <Drawer.Screen
+          name="HomePage"
+          options={{
+            drawerLabel: 'Home page Option',
+            // Section/Group Name
+            groupName: 'Home Section',
+            activeTintColor: '#0096FF',
+          }}
+          component={homescreenstack}
+        />
+        {/* <Drawer.Screen
+      name="SecondPage"
+      options={{
+        drawerLabel: 'Second page Option',
+        // Section/Group Name
+        groupName: 'Section 2',
+        activeTintColor: '#0096FF',
+      }}
+      component={secondScreenStack}
+    />
+    <Drawer.Screen
+      name="ThirdPage"
+      options={{
+        drawerLabel: 'Third page Option',
+        // Section/Group Name
+        groupName: 'Section 2',
+        activeTintColor: '#e91e63',
+      }}
+      component={thirdScreenStack}
+    /> */}
       </Drawer.Navigator>
     </NavigationContainer>
   );
 }
 
-<Drawer.Screen
-  key={drawer.name}
-  name={drawer.name}
+{
+  /* <Drawer.Screen
+  key={Drawer.name}
+  name={Drawer.name}
   options={{
     drawerIcon: ({focused}) =>
-      drawer.iconType === 'FontAwesome5' ? (
+      Drawer.iconType === 'FontAwesome5' ? (
         <FontAwesome5
-          name={drawer.iconName}
+          name={Drawer.iconName}
           size={24}
           color={focused ? '#0096FF' : 'black'}
         />
-      ) : drawer.iconType === 'FontAwesome5' ? (
+      ) : Drawer.iconType === 'FontAwesome5' ? (
         <FontAwesome5
-          name={drawer.iconName}
+          name={Drawer.iconName}
           size={24}
           color={focused ? '#0096FF' : 'black'}
         />
       ) : (
         <FontAwesome5
-          name={drawer.iconName}
+          name={Drawer.iconName}
           size={24}
           color={focused ? '#0096FF' : 'black'}
           component={
-            drawer.name === 'Home'
-            //   ? ProfileScreen
-            //   : drawer.name === 'Settings'
-            //   ? SettingsScreen
-            //   : drawer.name === 'Saved Items'
-            //   ? SavedScreen
-            //   : ReferScreen
+            Drawer.name === 'Home'
+              ? HomeScreen
+              : //   : drawer.name === 'Settings' //   ? SettingsScreen
+                //   : drawer.name === 'Saved Items' //   ? SavedScreen
+                HomeScreen
           }
         />
       ),
   }}
-/>;
+/>; */
+}

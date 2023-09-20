@@ -47,6 +47,9 @@ export default function Menu({navigation}) {
   const [mdlConfirm, setMdlConfirm] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [information, setInformation] = useState('');
+  const [mdlConfirmCust, setMdlConfirmCust] = useState(false);
+  const [mdlPayment, setMdlPayment] = useState(false);
+  const [modalCustVisible, setModalCustVisible] = useState(false);
   //const [isLoad, setLoad] = useState(false);
   //const [isInet, setInet] = useState(true);
   //const [fullname, setFULLNAME] = useState();
@@ -67,6 +70,8 @@ export default function Menu({navigation}) {
     //handleGetItem();
     //RELOADPAGE();
     //LOADTBLINVOUT();
+    //setMdlConfirmCust(true);
+    setMdlPayment(true);
     BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     return () => {
       clearInterval(increment.current);
@@ -420,10 +425,11 @@ export default function Menu({navigation}) {
   const screenWidth = Dimensions.get('window').width;
 
   return (
-    <SafeAreaView
-      style={{flex: 1, flexDirection: 'column', backgroundColor: '#FFFFFF'}}>
-      {/* //* INFORMATION */}
-      {/* <Modal animationType="fade" transparent={true} visible={modalVisible}>
+    <ScrollView style={{flex: 1, width: '100%', height: '100%', padding: 0}}>
+      <SafeAreaView
+        style={{flex: 1, flexDirection: 'column', backgroundColor: '#FFFFFF'}}>
+        {/* //* INFORMATION */}
+        {/* <Modal animationType="fade" transparent={true} visible={modalVisible}>
           <View style={globalStyles.centeredView}>
             <View style={globalStyles.modalView}>
               <View style={globalStyles.modalheader}>
@@ -454,59 +460,188 @@ export default function Menu({navigation}) {
               </View>
             </View>
         </Modal> */}
-      <Modal animationType="fade" transparent={true} visible={modalVisible}>
-        <View style={globalStyles.centeredView}>
-          <View style={globalStyles.modalView}>
-            <View style={globalStyles.modalheader}>
-              <Text style={globalStyles.modalText}>Information</Text>
-            </View>
-            <View style={{margin: 20, marginBottom: 0}}>
-              <Text style={globalStyles.textinformation}>{information}</Text>
-            </View>
-            <TouchableOpacity
-              style={[globalStyles.button, globalStyles.buttonClose]}
-              onPress={() => {
-                setModalVisible(!modalVisible);
-                //RELOADPAGE();
-              }}>
-              <Text style={globalStyles.textStyle}>Ok</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-      {/* //* CONFIRM POSTING */}
-      <Modal animationType="fade" transparent={true} visible={mdlConfirm}>
-        <View style={globalStyles.centeredView}>
-          <View style={globalStyles.modalView}>
-            <View style={globalStyles.modalheader}>
-              <Text style={globalStyles.modalText}>Confirmation</Text>
-            </View>
-            <View style={{margin: 20, marginBottom: 0}}>
-              <Text style={{color: '#212121', fontSize: 16}}>
-                Apakah anda yakin ingin mengirimkan? Proses tidak bisa
-                dikembalikan
-              </Text>
-            </View>
-            <View style={{flexDirection: 'row', marginHorizontal: 0}}>
+        <Modal animationType="fade" transparent={true} visible={modalVisible}>
+          <View style={globalStyles.centeredView}>
+            <View style={globalStyles.modalView}>
+              <View style={globalStyles.modalheader}>
+                <Text style={globalStyles.modalText}>Information</Text>
+              </View>
+              <View style={{margin: 20, marginBottom: 0}}>
+                <Text style={globalStyles.textinformation}>{information}</Text>
+              </View>
               <TouchableOpacity
-                style={[globalStyles.buttonNo]}
-                onPress={() => setMdlConfirm(!mdlConfirm)}>
-                <Text style={globalStyles.textNo}>Tidak</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[globalStyles.buttonYes]}
-                //onPress={PostDataInvOut}
-              >
-                <Text style={globalStyles.textStyle}>Ya</Text>
+                style={[globalStyles.button, globalStyles.buttonClose]}
+                onPress={() => {
+                  setModalVisible(!modalVisible);
+                  //RELOADPAGE();
+                }}>
+                <Text style={globalStyles.textStyle}>Ok</Text>
               </TouchableOpacity>
             </View>
           </View>
-        </View>
-      </Modal>
-      {/* //* CONFIRM POSTING */}
+        </Modal>
+        {/* //* CONFIRM POSTING */}
+        <Modal animationType="fade" transparent={true} visible={mdlConfirm}>
+          <View style={globalStyles.centeredView}>
+            <View style={globalStyles.modalView}>
+              <View style={globalStyles.modalheader}>
+                <Text style={globalStyles.modalText}>Confirmation</Text>
+              </View>
+              <View style={{margin: 20, marginBottom: 0}}>
+                <Text style={{color: '#212121', fontSize: 16}}>
+                  Apakah anda yakin ingin mengirimkan? Proses tidak bisa
+                  dikembalikan
+                </Text>
+              </View>
+              <View style={{flexDirection: 'row', marginHorizontal: 0}}>
+                <TouchableOpacity
+                  style={[globalStyles.buttonNo]}
+                  onPress={() => setMdlConfirm(!mdlConfirm)}>
+                  <Text style={globalStyles.textNo}>Tidak</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[globalStyles.buttonYes]}
+                  //onPress={PostDataInvOut}
+                >
+                  <Text style={globalStyles.textStyle}>Ya</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+        {/* //* CONFIRM POSTING */}
 
-      {/* //* LOADER */}
-      {/* <Modal animationType="fade" transparent={true} visible={isLoad}>
+        {/* //* CUSTOMER TRX */}
+        <Modal animationType="fade" transparent={true} visible={mdlConfirmCust}>
+          <View style={globalStyles.centeredViewCust}>
+            <View style={globalStyles.modalViewCust}>
+              <View style={globalStyles.modalheader}>
+                <Text style={globalStyles.modalText}>Customer Name</Text>
+              </View>
+              <View style={{margin: 35, marginBottom: 0}}>
+                <TextInput
+                  style={[
+                    globalStyles.textinputcustomer,
+                    {backgroundColor: colors.card, color: colors.text},
+                  ]}
+                  maxLength={100}
+                  //placeholder={'Masukkan Kata Sandi'}
+                  //placeholderTextColor={colors.text}
+                  //secureTextEntry={seePassword}
+                  //value={password}
+                  //onChangeText={text => setPassword(text)}
+                />
+              </View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  marginHorizontal: 0,
+                  marginTop: '20%',
+                }}>
+                <TouchableOpacity
+                  style={[globalStyles.buttonNo]}
+                  onPress={() => setMdlConfirmCust(!mdlConfirmCust)}>
+                  <Text style={globalStyles.textNo}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[globalStyles.buttonYes]}
+                  //onPress={PostDataInvOut}
+                >
+                  <Text style={globalStyles.textStyle}>Save</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+        {/* //* CUSTOMER TRX */}
+
+        {/* //* MODAL PAYMENT */}
+        <Modal animationType="fade" transparent={true} visible={mdlPayment}>
+          <View style={globalStyles.centeredViewPayment}>
+            <View style={globalStyles.modalViewPayment}>
+              <View style={globalStyles.modalheader}>
+                <Text style={globalStyles.modalText}>Payment</Text>
+              </View>
+              {/* <View
+                style={{
+                  margin: 35,
+                  marginTop: '12%',
+                  marginBottom: '0%',
+                  //marginRight: 40,
+                  marginLeft: '50%',
+                }}>
+                <TextInput
+                  style={[
+                    globalStyles.textinputpayment,
+                    {backgroundColor: colors.card, color: colors.text},
+                  ]}
+                  maxLength={100}
+                  //placeholder={'Masukkan Kata Sandi'}
+                  //placeholderTextColor={colors.text}
+                  //secureTextEntry={seePassword}
+                  //value={password}
+                  //onChangeText={text => setPassword(text)}
+                />
+              </View> */}
+              <SafeAreaView style={[invrecStyles.formpayment, {marginTop: 0}]}>
+                <View style={invrecStyles.menuitemfullpayment}>
+                  <Text
+                    style={[
+                      invrecStyles.labelinput,
+                      {backgroundColor: colors.card, color: colors.text},
+                    ]}>
+                    Total Amount
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    margin: 35,
+                    marginTop: '10%',
+                    marginBottom: '0%',
+                    marginRight: 40,
+                    marginLeft: '45%',
+                  }}>
+                  <TextInput
+                    style={[
+                      globalStyles.textinputpayment,
+                      {backgroundColor: colors.card, color: colors.text},
+                    ]}
+                    maxLength={100}
+                    //placeholder={'Masukkan Kata Sandi'}
+                    //placeholderTextColor={colors.text}
+                    //secureTextEntry={seePassword}
+                    //value={password}
+                    //onChangeText={text => setPassword(text)}
+                  />
+                </View>
+              </SafeAreaView>
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  //marginHorizontal: 0,
+                  //marginTop: '0%',
+                  //paddingTop: 0,
+                }}>
+                <TouchableOpacity
+                  style={[globalStyles.buttonNoPayment]}
+                  onPress={() => setMdlPayment(!mdlPayment)}>
+                  <Text style={globalStyles.textNo}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[globalStyles.buttonYesPayment]}
+                  //onPress={PostDataInvOut}
+                >
+                  <Text style={globalStyles.textStyle}>Payment</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+        {/* //* MODAL PAYMENT */}
+
+        {/* //* LOADER */}
+        {/* <Modal animationType="fade" transparent={true} visible={isLoad}>
         <View style={globalStyles.centeredView}>
           <View style={globalStyles.modalLoad}>
             <Image
@@ -519,9 +654,9 @@ export default function Menu({navigation}) {
           </View>
         </View>
       </Modal> */}
-      {/* //* LOADER */}
-      {/* //* LOOKUP BPB */}
-      {/* <Modal animationType="fade" transparent={true} visible={mdlBPB}>
+        {/* //* LOADER */}
+        {/* //* LOOKUP BPB */}
+        {/* <Modal animationType="fade" transparent={true} visible={mdlBPB}>
         <View style={globalStyles.LookupcenteredView}>
           <View style={globalStyles.LookupmodalView}>
             <View style={globalStyles.Lookupmodalheader}>
@@ -571,28 +706,28 @@ export default function Menu({navigation}) {
           </View>
         </View>
       </Modal> */}
-      {/* //* LOOKUP BPB */}
-      <StatusBar
-        backgroundColor={'#0096FF'}
-        barStyle="light-content"></StatusBar>
+        {/* //* LOOKUP BPB */}
+        <StatusBar
+          backgroundColor={'#0096FF'}
+          barStyle="light-content"></StatusBar>
 
-      {/* //* BANNER */}
-      <SafeAreaView style={invrecStyles.bannermenu}>
-        <TouchableOpacity
-          style={invrecStyles.bannerpanahback}
-          // onPress={() => navigation.replace('Home')}
-          onPress={handleBackButtonClick}>
-          <Icon name={'arrow-left'} size={20} color="#FFFFFF" />
-          <Text style={invrecStyles.bannermenutext}>Menu</Text>
-        </TouchableOpacity>
-      </SafeAreaView>
-      {/* //* BANNER */}
+        {/* //* BANNER */}
+        <SafeAreaView style={invrecStyles.bannermenu}>
+          <TouchableOpacity
+            style={invrecStyles.bannerpanahback}
+            // onPress={() => navigation.replace('Home')}
+            onPress={handleBackButtonClick}>
+            <Icon name={'arrow-left'} size={20} color="#FFFFFF" />
+            <Text style={invrecStyles.bannermenutext}>Menu</Text>
+          </TouchableOpacity>
+        </SafeAreaView>
+        {/* //* BANNER */}
 
-      {/* //* CONTENT */}
-      <ScrollView style={{padding: 15}}>
-        <SafeAreaView style={invrecStyles.form}>
-          <View style={invrecStyles.menuitemfull}>
-            {/* <TextInput
+        {/* //* CONTENT */}
+        <ScrollView style={{padding: 15}}>
+          <SafeAreaView style={invrecStyles.form}>
+            <View style={invrecStyles.menuitemfull}>
+              {/* <TextInput
               editable={false}
               style={[
                 invrecStyles.textinputlookup,
@@ -604,47 +739,50 @@ export default function Menu({navigation}) {
               //value={nomorbpb}
               // onChangeText={text => setEmail(text)}
             /> */}
-            <DropDownPicker
-              style={{elevation: 5, zIndex: 1, marginRight: 15}}
-              textStyle={{fontWeight: '600', fontSize: 15}}
-              showTickIcon={true}
-              listMode="SCROLLVIEW"
-              scrollViewProps={{nestedScrollEnabled: true}}
-              closeOnBackPressed={true}
-              closeAfterSelecting={true}
-              //itemSeparator={true}
-              searchable={true}
-              searchPlaceholder="All Items"
-              //mode="BADGE"
-              //badgeColors={['blue', 'green', 'orange']}
-              placeholder="All Items"
-              items={[
-                {label: 'Item 1', value: 'item1'},
-                {label: 'Item 2', value: 'item2'},
-              ]}
-              onChangeItem={item => console.log(item.label, item.value)}
-            />
-            {/* <TouchableOpacity
+              <DropDownPicker
+                style={{elevation: 5, zIndex: 1, marginRight: 15}}
+                textStyle={{fontWeight: '600', fontSize: 15}}
+                showTickIcon={true}
+                listMode="SCROLLVIEW"
+                scrollViewProps={{nestedScrollEnabled: true}}
+                closeOnBackPressed={true}
+                closeAfterSelecting={true}
+                //itemSeparator={true}
+                searchable={true}
+                searchPlaceholder="All Items"
+                //mode="BADGE"
+                //badgeColors={['blue', 'green', 'orange']}
+                placeholder="All Items"
+                items={[
+                  {label: 'Item 1', value: 'item1'},
+                  {label: 'Item 2', value: 'item2'},
+                ]}
+                onChangeItem={item => console.log(item.label, item.value)}
+              />
+              {/* <TouchableOpacity
               style={[invrecStyles.iconlookup, {backgroundColor: colors.card}]}>
               <Icon name={'search'} size={20} color="#bdbdbd" />
             </TouchableOpacity> */}
-          </View>
-        </SafeAreaView>
-        <ScrollView nestedScrollEnabled={true}>
-          <View
-            style={{
-              marginVertical: 10,
-              marginHorizontal: 0,
-            }}>
-            {/* //! MENU ITEM */}
-            <View style={{flex: 3, flexDirection: 'row', marginHorizontal: 2}}>
-              <TouchableOpacity style={globalStyles.menubuttonitemnew}>
-                <Icon name={'tshirt'} size={50} color="#0096FF" />
-                <Text style={globalStyles.menubuttontextnew}>Baju Timnas</Text>
-              </TouchableOpacity>
             </View>
-            {/* //! MENU ITEM */}
-            {/* {list.map((item, index) => {
+          </SafeAreaView>
+          <ScrollView nestedScrollEnabled={true}>
+            <View
+              style={{
+                marginVertical: 10,
+                marginHorizontal: 0,
+              }}>
+              {/* //! MENU ITEM */}
+              <View
+                style={{flex: 3, flexDirection: 'row', marginHorizontal: 2}}>
+                <TouchableOpacity style={globalStyles.menubuttonitemnew}>
+                  <Icon name={'tshirt'} size={50} color="#0096FF" />
+                  <Text style={globalStyles.menubuttontextnew}>
+                    Baju Timnas
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              {/* //! MENU ITEM */}
+              {/* {list.map((item, index) => {
               return (
                 <View key={index} style={{marginBottom: 20}}>
                   <View>
@@ -878,9 +1016,9 @@ export default function Menu({navigation}) {
                 </View>
               );
             })} */}
-          </View>
-        </ScrollView>
-        {/* <View style={[invrecStyles.form, {marginTop: 0, paddingTop: 0}]}>
+            </View>
+          </ScrollView>
+          {/* <View style={[invrecStyles.form, {marginTop: 0, paddingTop: 0}]}>
           <View style={[invrecStyles.menuitemsubmit2, {paddingRight: 5}]}>
             {nomorbpb == '' || list.length <= 0 ? (
               <TouchableOpacity
@@ -897,17 +1035,18 @@ export default function Menu({navigation}) {
             )}
           </View>
         </View> */}
-      </ScrollView>
-      {/* //* CONTENT */}
+        </ScrollView>
+        {/* //* CONTENT */}
 
-      {/* //* FOOTER */}
-      {/* <SafeAreaView style={[globalStyles.box5]}>
+        {/* //* FOOTER */}
+        {/* <SafeAreaView style={[globalStyles.box5]}>
         <View style={[globalStyles.footer]}>
           <Icon name={'copyright'} size={14} color="#212121" />
           <Text style={{color: colors.text, paddingLeft: 2}}>ArthaIT 2023</Text>
         </View>
       </SafeAreaView> */}
-      {/* //* FOOTER */}
-    </SafeAreaView>
+        {/* //* FOOTER */}
+      </SafeAreaView>
+    </ScrollView>
   );
 }
