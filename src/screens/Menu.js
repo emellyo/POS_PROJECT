@@ -562,78 +562,126 @@ export default function Menu({navigation}) {
               <View style={globalStyles.modalheader}>
                 <Text style={globalStyles.modalText}>Payment</Text>
               </View>
-              {/* <View
-                style={{
-                  margin: 35,
-                  marginTop: '12%',
-                  marginBottom: '0%',
-                  //marginRight: 40,
-                  marginLeft: '50%',
-                }}>
-                <TextInput
-                  style={[
-                    globalStyles.textinputpayment,
-                    {backgroundColor: colors.card, color: colors.text},
-                  ]}
-                  maxLength={100}
-                  //placeholder={'Masukkan Kata Sandi'}
-                  //placeholderTextColor={colors.text}
-                  //secureTextEntry={seePassword}
-                  //value={password}
-                  //onChangeText={text => setPassword(text)}
-                />
-              </View> */}
-              <SafeAreaView style={[invrecStyles.formpayment, {marginTop: 0}]}>
-                <View style={invrecStyles.menuitemfullpayment}>
-                  <Text
-                    style={[
-                      invrecStyles.labelinput,
-                      {backgroundColor: colors.card, color: colors.text},
-                    ]}>
-                    Total Amount
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    margin: 35,
-                    marginTop: '10%',
-                    marginBottom: '0%',
-                    marginRight: 40,
-                    marginLeft: '45%',
-                  }}>
-                  <TextInput
-                    style={[
-                      globalStyles.textinputpayment,
-                      {backgroundColor: colors.card, color: colors.text},
-                    ]}
-                    maxLength={100}
-                    //placeholder={'Masukkan Kata Sandi'}
-                    //placeholderTextColor={colors.text}
-                    //secureTextEntry={seePassword}
-                    //value={password}
-                    //onChangeText={text => setPassword(text)}
-                  />
-                </View>
-              </SafeAreaView>
-
-              <View
-                style={{
-                  flexDirection: 'row',
-                  //marginHorizontal: 0,
-                  //marginTop: '0%',
-                  //paddingTop: 0,
-                }}>
-                <TouchableOpacity
-                  style={[globalStyles.buttonNoPayment]}
-                  onPress={() => setMdlPayment(!mdlPayment)}>
-                  <Text style={globalStyles.textNo}>Cancel</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[globalStyles.buttonYesPayment]}
-                  //onPress={PostDataInvOut}
-                >
-                  <Text style={globalStyles.textStyle}>Payment</Text>
-                </TouchableOpacity>
+              <ScrollView style={globalStyles.InputTender}>
+                {/* //* TENDER INPUT*/}
+                <SafeAreaView style={[invrecStyles.inputantotalan]}>
+                  <View style={globalStyles.labelinputtotalan}>
+                    <Text
+                      style={[
+                        invrecStyles.labelinput,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      Total Amount
+                    </Text>
+                  </View>
+                  <View style={globalStyles.inputtotalan}>
+                    <TextInput
+                      style={[
+                        globalStyles.textinputpayment,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}
+                      maxLength={100}
+                      //placeholder={'Masukkan Kata Sandi'}
+                      //placeholderTextColor={colors.text}
+                      //secureTextEntry={seePassword}
+                      //value={password}
+                      //onChangeText={text => setPassword(text)}
+                    />
+                  </View>
+                </SafeAreaView>
+                {/* //* TENDER INPUT*/}
+              </ScrollView>
+              <View style={[globalStyles.InputTotalan]}>
+                <SafeAreaView style={[invrecStyles.inputantotalan]}>
+                  <View style={globalStyles.labelinputtotalan}>
+                    <Text
+                      style={[
+                        invrecStyles.labelinput,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      Total Amount
+                    </Text>
+                  </View>
+                  <View style={globalStyles.inputtotalan}>
+                    <TextInput
+                      style={[
+                        globalStyles.textinputpayment,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}
+                      maxLength={100}
+                      //placeholder={'Masukkan Kata Sandi'}
+                      //placeholderTextColor={colors.text}
+                      //secureTextEntry={seePassword}
+                      //value={password}
+                      //onChangeText={text => setPassword(text)}
+                    />
+                  </View>
+                </SafeAreaView>
+                <SafeAreaView style={[invrecStyles.inputantotalan]}>
+                  <View style={globalStyles.labelinputtotalan}>
+                    <Text
+                      style={[
+                        invrecStyles.labelinput,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      Total Amount
+                    </Text>
+                  </View>
+                  <View style={globalStyles.inputtotalan}>
+                    <TextInput
+                      style={[
+                        globalStyles.textinputpayment,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}
+                      maxLength={100}
+                      //placeholder={'Masukkan Kata Sandi'}
+                      //placeholderTextColor={colors.text}
+                      //secureTextEntry={seePassword}
+                      //value={password}
+                      //onChangeText={text => setPassword(text)}
+                    />
+                  </View>
+                </SafeAreaView>
+                <SafeAreaView style={[invrecStyles.inputantotalan]}>
+                  <View style={globalStyles.labelinputtotalan}>
+                    <Text
+                      style={[
+                        invrecStyles.labelinput,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      Total Amount
+                    </Text>
+                  </View>
+                  <View style={globalStyles.inputtotalan}>
+                    <TextInput
+                      style={[
+                        globalStyles.textinputpayment,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}
+                      maxLength={100}
+                      //placeholder={'Masukkan Kata Sandi'}
+                      //placeholderTextColor={colors.text}
+                      //secureTextEntry={seePassword}
+                      //value={password}
+                      //onChangeText={text => setPassword(text)}
+                    />
+                  </View>
+                </SafeAreaView>
+              </View>
+              <View style={globalStyles.ButtonPayment}>
+                <SafeAreaView style={[invrecStyles.buttontotalan]}>
+                  <TouchableOpacity
+                    style={[globalStyles.buttonNoPayment]}
+                    onPress={() => setMdlPayment(!mdlPayment)}>
+                    <Text style={globalStyles.textNo}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[globalStyles.buttonYesPayment]}
+                    //onPress={PostDataInvOut}
+                  >
+                    <Text style={globalStyles.textStyle}>Payment</Text>
+                  </TouchableOpacity>
+                </SafeAreaView>
               </View>
             </View>
           </View>
