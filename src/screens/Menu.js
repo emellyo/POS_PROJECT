@@ -858,8 +858,17 @@ export default function Menu({navigation}) {
                 {/* //* BILLS*/}
               </ScrollView>
               <ScrollView style={globalStyles.InputBills2}>
+                <Text style={globalStyles.TextHeaderBills2}>Discounts</Text>
                 <SafeAreaView style={[invrecStyles.inputantotalanbills]}>
-                  <Text style={globalStyles.TextHeaderBills2}>Discounts</Text>
+                  <View style={globalStyles.labelinputtotalanbillsdisc}>
+                    <Text
+                      style={[
+                        invrecStyles.labelinputbills,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      Discounts A 20%
+                    </Text>
+                  </View>
                 </SafeAreaView>
               </ScrollView>
               <View style={globalStyles.ButtonPayment}>

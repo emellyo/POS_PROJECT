@@ -1049,6 +1049,14 @@ export const globalStyles = StyleSheet.create({
     height: 60,
     verticalAlign: 'middle',
   },
+  labelinputtotalanbillsdisc: {
+    width: '50%',
+    padding: 5,
+    display: 'flex',
+    justifyContent: 'center',
+    height: 40,
+    verticalAlign: 'middle',
+  },
   labelinputvariant: {
     width: '50%',
     padding: 0,
