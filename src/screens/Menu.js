@@ -49,6 +49,8 @@ export default function Menu({navigation}) {
   const [information, setInformation] = useState('');
   const [mdlConfirmCust, setMdlConfirmCust] = useState(false);
   const [mdlPayment, setMdlPayment] = useState(false);
+  const [mdlVariant, setMdlVariant] = useState(false);
+  const [mdlBills, setMdlBills] = useState(false);
   const [modalCustVisible, setModalCustVisible] = useState(false);
   //const [isLoad, setLoad] = useState(false);
   //const [isInet, setInet] = useState(true);
@@ -71,7 +73,8 @@ export default function Menu({navigation}) {
     //RELOADPAGE();
     //LOADTBLINVOUT();
     //setMdlConfirmCust(true);
-    setMdlPayment(true);
+    setMdlBills(true);
+    setMdlPayment(false);
     BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     return () => {
       clearInterval(increment.current);
@@ -397,6 +400,10 @@ export default function Menu({navigation}) {
   //   setMdlConfirm(true);
   // };
 
+  const viewModalVariant = async () => {
+    setMdlVariant(true);
+  };
+
   // const handleLogout = async () => {
   //   // StopAll();
   //   navigation.replace('Login');
@@ -624,7 +631,7 @@ export default function Menu({navigation}) {
                         invrecStyles.labelinput,
                         {backgroundColor: colors.card, color: colors.text},
                       ]}>
-                      Total Amount
+                      Total Tendered
                     </Text>
                   </View>
                   <View style={globalStyles.inputtotalan}>
@@ -649,7 +656,7 @@ export default function Menu({navigation}) {
                         invrecStyles.labelinput,
                         {backgroundColor: colors.card, color: colors.text},
                       ]}>
-                      Total Amount
+                      Changes
                     </Text>
                   </View>
                   <View style={globalStyles.inputtotalan}>
@@ -687,6 +694,193 @@ export default function Menu({navigation}) {
           </View>
         </Modal>
         {/* //* MODAL PAYMENT */}
+
+        {/* //* MODAL VARIANT */}
+        <Modal animationType="fade" transparent={true} visible={mdlVariant}>
+          <View style={globalStyles.centeredViewPayment}>
+            <View style={globalStyles.modalViewPayment}>
+              <View style={globalStyles.modalheader}>
+                <Text style={globalStyles.modalText}>Variant</Text>
+              </View>
+              <Text style={globalStyles.TextHeaderVariant}>Variant</Text>
+              <ScrollView style={globalStyles.InputVariant}>
+                {/* //* VARIANT*/}
+                <SafeAreaView style={[invrecStyles.inputantotalan]}>
+                  <View style={globalStyles.inputtotalan}>
+                    <TextInput
+                      style={[
+                        globalStyles.textinputpayment,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}
+                      maxLength={100}
+                      //placeholder={'Masukkan Kata Sandi'}
+                      //placeholderTextColor={colors.text}
+                      //secureTextEntry={seePassword}
+                      //value={password}
+                      //onChangeText={text => setPassword(text)}
+                    />
+                  </View>
+                </SafeAreaView>
+                {/* //* VARIANT*/}
+              </ScrollView>
+              <View style={[globalStyles.InputTotalanVariant]}>
+                <SafeAreaView style={[invrecStyles.inputanvariant]}>
+                  <View style={globalStyles.inputtotalan}>
+                    <TextInput
+                      style={[
+                        globalStyles.textinputcomment,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}
+                      maxLength={100}
+                      placeholder={'Comment'}
+                      //placeholderTextColor={colors.text}
+                      //secureTextEntry={seePassword}
+                      //value={password}
+                      //onChangeText={text => setPassword(text)}
+                    />
+                  </View>
+                </SafeAreaView>
+                <SafeAreaView style={[invrecStyles.inputanqty]}>
+                  <TouchableOpacity style={[globalStyles.buttonQTYMinus]}>
+                    <Text style={globalStyles.textNo}> - </Text>
+                  </TouchableOpacity>
+                  <TextInput
+                    style={[
+                      globalStyles.textinputqty,
+                      {backgroundColor: colors.card, color: colors.text},
+                    ]}
+                    maxLength={100}
+                    keyboardType="numeric"
+                  />
+                  <TouchableOpacity style={[globalStyles.buttonQTYPlus]}>
+                    <Text style={globalStyles.textNo}> + </Text>
+                  </TouchableOpacity>
+                </SafeAreaView>
+              </View>
+              <View style={globalStyles.ButtonPayment}>
+                <SafeAreaView style={[invrecStyles.buttontotalan]}>
+                  <TouchableOpacity
+                    style={[globalStyles.buttonNoPayment]}
+                    onPress={() => setMdlVariant(!mdlVariant)}>
+                    <Text style={globalStyles.textNo}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[globalStyles.buttonYesPayment]}
+                    //onPress={PostDataInvOut}
+                  >
+                    <Text style={globalStyles.textStyle}>Add Item</Text>
+                  </TouchableOpacity>
+                </SafeAreaView>
+              </View>
+            </View>
+          </View>
+        </Modal>
+        {/* //* MODAL VARIANT */}
+
+        {/* //* MODAL BILLS */}
+        <Modal animationType="fade" transparent={true} visible={mdlBills}>
+          <View style={globalStyles.centeredViewPayment}>
+            <View style={globalStyles.modalViewPayment}>
+              <View style={globalStyles.modalheader}>
+                <Text style={globalStyles.modalText}>Invoice</Text>
+              </View>
+              <Text style={globalStyles.TextHeaderBills}>Tipe Transaksi</Text>
+              <ScrollView style={globalStyles.InputBills}>
+                {/* //* BILLS*/}
+                <SafeAreaView style={[invrecStyles.inputantotalanbills]}>
+                  <View style={globalStyles.labelinputtotalanbills}>
+                    <Text
+                      style={[
+                        invrecStyles.labelinputbills,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      Baju Timnas
+                    </Text>
+                    <Text
+                      style={[
+                        invrecStyles.labelinputbills,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      X3
+                    </Text>
+                    <Text
+                      style={[
+                        invrecStyles.labelinputbills,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      S, M, L, XL
+                    </Text>
+                  </View>
+                  <View style={globalStyles.inputtotalanbills}>
+                    <Text
+                      style={[
+                        invrecStyles.labelinputbills,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      Rp 25.000.000
+                    </Text>
+                  </View>
+                </SafeAreaView>
+                <SafeAreaView style={[invrecStyles.inputantotalanbills]}>
+                  <View style={globalStyles.labelinputtotalanbills}>
+                    <Text
+                      style={[
+                        invrecStyles.labelinputbills,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      Baju Timnas
+                    </Text>
+                    <Text
+                      style={[
+                        invrecStyles.labelinputbills,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      X3
+                    </Text>
+                    <Text
+                      style={[
+                        invrecStyles.labelinputbills,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      S, M, L, XL
+                    </Text>
+                  </View>
+                  <View style={globalStyles.inputtotalanbills}>
+                    <Text
+                      style={[
+                        invrecStyles.labelinputbills,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      Rp 25.000.000
+                    </Text>
+                  </View>
+                </SafeAreaView>
+                {/* //* BILLS*/}
+              </ScrollView>
+              <ScrollView style={globalStyles.InputBills2}>
+                <SafeAreaView style={[invrecStyles.inputantotalanbills]}>
+                  <Text style={globalStyles.TextHeaderBills2}>Discounts</Text>
+                </SafeAreaView>
+              </ScrollView>
+              <View style={globalStyles.ButtonPayment}>
+                <SafeAreaView style={[invrecStyles.buttontotalan]}>
+                  <TouchableOpacity
+                    style={[globalStyles.buttonNoPayment]}
+                    onPress={() => setMdlBills(!mdlBills)}>
+                    <Text style={globalStyles.textNo}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[globalStyles.buttonYesPayment]}
+                    //onPress={PostDataInvOut}
+                  >
+                    <Text style={globalStyles.textStyle}>Add Item</Text>
+                  </TouchableOpacity>
+                </SafeAreaView>
+              </View>
+            </View>
+          </View>
+        </Modal>
+        {/* //* MODAL BILLS */}
 
         {/* //* LOADER */}
         {/* <Modal animationType="fade" transparent={true} visible={isLoad}>
@@ -768,6 +962,12 @@ export default function Menu({navigation}) {
             <Icon name={'arrow-left'} size={20} color="#FFFFFF" />
             <Text style={invrecStyles.bannermenutext}>Menu</Text>
           </TouchableOpacity>
+          {/* <TouchableOpacity
+            style={invrecStyles.bannerinvoice}
+            //onPress={handleBackButtonClick}
+          >
+            <Icon name={'file-invoice'} size={20} color="#FFFFFF" />
+          </TouchableOpacity> */}
         </SafeAreaView>
         {/* //* BANNER */}
 
@@ -822,7 +1022,9 @@ export default function Menu({navigation}) {
               {/* //! MENU ITEM */}
               <View
                 style={{flex: 3, flexDirection: 'row', marginHorizontal: 2}}>
-                <TouchableOpacity style={globalStyles.menubuttonitemnew}>
+                <TouchableOpacity
+                  style={globalStyles.menubuttonitemnew}
+                  onPress={viewModalVariant}>
                   <Icon name={'tshirt'} size={50} color="#0096FF" />
                   <Text style={globalStyles.menubuttontextnew}>
                     Baju Timnas
