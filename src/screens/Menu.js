@@ -19,6 +19,7 @@ import {
 import {globalStyles, invrecStyles} from '../css/global';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {useRoute, useTheme} from '@react-navigation/native';
+import CheckBox from '@react-native-community/checkbox';
 import * as Utils from '../Helpers/Utils';
 //import {loadingartha, wmsclear} from '../images/images';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -52,6 +53,7 @@ export default function Menu({navigation}) {
   const [mdlVariant, setMdlVariant] = useState(false);
   const [mdlBills, setMdlBills] = useState(false);
   const [modalCustVisible, setModalCustVisible] = useState(false);
+  const [toggleCheckBox, setToggleCheckBox] = useState(false);
   //const [isLoad, setLoad] = useState(false);
   //const [isInet, setInet] = useState(true);
   //const [fullname, setFULLNAME] = useState();
@@ -780,7 +782,7 @@ export default function Menu({navigation}) {
         {/* //* MODAL BILLS */}
         <Modal animationType="fade" transparent={true} visible={mdlBills}>
           <View style={globalStyles.centeredViewPayment}>
-            <View style={globalStyles.modalViewPayment}>
+            <View style={globalStyles.modalViewBills}>
               <View style={globalStyles.modalheader}>
                 <Text style={globalStyles.modalText}>Invoice</Text>
               </View>
@@ -859,7 +861,7 @@ export default function Menu({navigation}) {
               </ScrollView>
               <ScrollView style={globalStyles.InputBills2}>
                 <Text style={globalStyles.TextHeaderBills2}>Discounts</Text>
-                <SafeAreaView style={[invrecStyles.inputantotalanbills]}>
+                <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
                   <View style={globalStyles.labelinputtotalanbillsdisc}>
                     <Text
                       style={[
@@ -868,6 +870,31 @@ export default function Menu({navigation}) {
                       ]}>
                       Discounts A 20%
                     </Text>
+                  </View>
+                  <View style={globalStyles.viewinput2}>
+                    <CheckBox
+                      tintColors={{true: '#0096FF', false: 'black'}}
+                      //value={toggleCheckBox}
+                      onValueChange={newValue => setToggleCheckBox(newValue)}
+                    />
+                  </View>
+                </SafeAreaView>
+                <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
+                  <View style={globalStyles.labelinputtotalanbillsdisc}>
+                    <Text
+                      style={[
+                        invrecStyles.labelinputbills,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      Discounts B 20%
+                    </Text>
+                  </View>
+                  <View style={globalStyles.viewinput2}>
+                    <CheckBox
+                      tintColors={{true: '#0096FF', false: 'black'}}
+                      //value={toggleCheckBox}
+                      onValueChange={newValue => setToggleCheckBox(newValue)}
+                    />
                   </View>
                 </SafeAreaView>
               </ScrollView>
@@ -1025,12 +1052,40 @@ export default function Menu({navigation}) {
           <ScrollView nestedScrollEnabled={true}>
             <View
               style={{
-                marginVertical: 10,
-                marginHorizontal: 0,
+                flexDirection: 'row',
               }}>
               {/* //! MENU ITEM */}
-              <View
-                style={{flex: 3, flexDirection: 'row', marginHorizontal: 2}}>
+              <View style={{flex: 3, flexDirection: 'column'}}>
+                <TouchableOpacity
+                  style={globalStyles.menubuttonitemnew}
+                  onPress={viewModalVariant}>
+                  <Icon name={'tshirt'} size={50} color="#0096FF" />
+                  <Text style={globalStyles.menubuttontextnew}>
+                    Baju Timnas
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View style={{flex: 3, flexDirection: 'column'}}>
+                <TouchableOpacity
+                  style={globalStyles.menubuttonitemnew}
+                  onPress={viewModalVariant}>
+                  <Icon name={'tshirt'} size={50} color="#0096FF" />
+                  <Text style={globalStyles.menubuttontextnew}>
+                    Baju Timnas
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View style={{flex: 3, flexDirection: 'column'}}>
+                <TouchableOpacity
+                  style={globalStyles.menubuttonitemnew}
+                  onPress={viewModalVariant}>
+                  <Icon name={'tshirt'} size={50} color="#0096FF" />
+                  <Text style={globalStyles.menubuttontextnew}>
+                    Baju Timnas
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View style={{flex: 3, flexDirection: 'column'}}>
                 <TouchableOpacity
                   style={globalStyles.menubuttonitemnew}
                   onPress={viewModalVariant}>

@@ -370,6 +370,12 @@ export const globalStyles = StyleSheet.create({
     marginHorizontal: 0,
     marginTop: 10,
   },
+  viewinput2: {
+    flexDirection: 'row',
+    width: '10%',
+    marginHorizontal: '40%',
+    //marginTop: 10,
+  },
   viewbutton: {
     flexDirection: 'column',
     marginHorizontal: 0,
@@ -982,6 +988,21 @@ export const globalStyles = StyleSheet.create({
     width: '80%',
     height: '90%',
   },
+  modalViewBills: {
+    backgroundColor: 'white',
+    borderRadius: 5,
+    paddingBottom: 10,
+    alignItems: 'center',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 20,
+    width: '60%',
+    height: '100%',
+  },
   InputTender: {
     width: '100%',
     height: '10%',
@@ -1043,7 +1064,7 @@ export const globalStyles = StyleSheet.create({
   },
   labelinputtotalanbills: {
     width: '50%',
-    padding: 10,
+    //padding: 10,
     display: 'flex',
     justifyContent: 'center',
     height: 60,
@@ -1051,10 +1072,10 @@ export const globalStyles = StyleSheet.create({
   },
   labelinputtotalanbillsdisc: {
     width: '50%',
-    padding: 5,
+    //padding: 5,
     display: 'flex',
     justifyContent: 'center',
-    height: 40,
+    //height: 40,
     verticalAlign: 'middle',
   },
   labelinputvariant: {
@@ -1074,7 +1095,7 @@ export const globalStyles = StyleSheet.create({
     width: '50%',
     height: 42,
     verticalAlign: 'middle',
-    marginLeft: '30%',
+    marginLeft: '20%',
   },
   modalheader: {
     backgroundColor: '#0096FF',
@@ -1180,6 +1201,15 @@ export const invrecStyles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%',
     padding: 10,
+    //height: '50%',
+    // borderBottomWidth: 1,
+    // borderBottomColor: '#212121',
+  },
+  inputantotalanbills2: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
+    //padding: 10,
     //height: '50%',
     // borderBottomWidth: 1,
     // borderBottomColor: '#212121',
