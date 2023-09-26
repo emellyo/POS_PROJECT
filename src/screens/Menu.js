@@ -789,72 +789,42 @@ export default function Menu({navigation}) {
               <Text style={globalStyles.TextHeaderBills}>Tipe Transaksi</Text>
               <ScrollView style={globalStyles.InputBills}>
                 {/* //* BILLS*/}
-                <SafeAreaView style={[invrecStyles.inputantotalanbills]}>
-                  <View style={globalStyles.labelinputtotalanbills}>
-                    <Text
-                      style={[
-                        invrecStyles.labelinputbills,
-                        {backgroundColor: colors.card, color: colors.text},
-                      ]}>
-                      Baju Timnas
-                    </Text>
-                    <Text
-                      style={[
-                        invrecStyles.labelinputbills,
-                        {backgroundColor: colors.card, color: colors.text},
-                      ]}>
-                      X3
-                    </Text>
-                    <Text
-                      style={[
-                        invrecStyles.labelinputbills,
-                        {backgroundColor: colors.card, color: colors.text},
-                      ]}>
-                      S, M, L, XL
-                    </Text>
-                  </View>
-                  <View style={globalStyles.inputtotalanbills}>
-                    <Text
-                      style={[
-                        invrecStyles.labelinputbills,
-                        {backgroundColor: colors.card, color: colors.text},
-                      ]}>
-                      Rp 25.000.000
-                    </Text>
-                  </View>
-                </SafeAreaView>
-                <SafeAreaView style={[invrecStyles.inputantotalanbills]}>
-                  <View style={globalStyles.labelinputtotalanbills}>
-                    <Text
-                      style={[
-                        invrecStyles.labelinputbills,
-                        {backgroundColor: colors.card, color: colors.text},
-                      ]}>
-                      Baju Timnas
-                    </Text>
-                    <Text
-                      style={[
-                        invrecStyles.labelinputbills,
-                        {backgroundColor: colors.card, color: colors.text},
-                      ]}>
-                      X3
-                    </Text>
-                    <Text
-                      style={[
-                        invrecStyles.labelinputbills,
-                        {backgroundColor: colors.card, color: colors.text},
-                      ]}>
-                      S, M, L, XL
-                    </Text>
-                  </View>
-                  <View style={globalStyles.inputtotalanbills}>
-                    <Text
-                      style={[
-                        invrecStyles.labelinputbills,
-                        {backgroundColor: colors.card, color: colors.text},
-                      ]}>
-                      Rp 25.000.000
-                    </Text>
+                <SafeAreaView style={[invrecStyles.inputantotalanbillskiri]}>
+                  <View style={globalStyles.cartlist}>
+                    <View style={globalStyles.kiri}>
+                      <View style={globalStyles.itemqty}>
+                        <Text
+                          style={[
+                            invrecStyles.labelinputbills,
+                            {backgroundColor: colors.card, color: colors.text},
+                          ]}>
+                          Kopi Susu
+                        </Text>
+                        <Text
+                          style={[
+                            invrecStyles.labelinputbills,
+                            {backgroundColor: colors.card, color: colors.text},
+                          ]}>
+                          x3
+                        </Text>
+                      </View>
+                      <Text
+                        style={[
+                          invrecStyles.labelinputbills,
+                          {backgroundColor: colors.card, color: colors.text},
+                        ]}>
+                        NM, LI, LS
+                      </Text>
+                    </View>
+                    <View style={globalStyles.kanan}>
+                      <Text
+                        style={[
+                          invrecStyles.labelinputbills,
+                          {backgroundColor: colors.card, color: colors.text},
+                        ]}>
+                        Rp 18.000
+                      </Text>
+                    </View>
                   </View>
                 </SafeAreaView>
                 {/* //* BILLS*/}
@@ -1052,47 +1022,75 @@ export default function Menu({navigation}) {
           <ScrollView nestedScrollEnabled={true}>
             <View
               style={{
+                flex: 1,
+                display: 'flex',
                 flexDirection: 'row',
+                flexWrap: 'wrap',
+                gap: 5,
               }}>
               {/* //! MENU ITEM */}
-              <View style={{flex: 3, flexDirection: 'column'}}>
+              <View style={globalStyles.menuitemlist}>
                 <TouchableOpacity
                   style={globalStyles.menubuttonitemnew}
                   onPress={viewModalVariant}>
                   <Icon name={'tshirt'} size={50} color="#0096FF" />
-                  <Text style={globalStyles.menubuttontextnew}>
-                    Baju Timnas
-                  </Text>
+                  <Text style={globalStyles.menubuttontextnew}>Kopi Susu</Text>
                 </TouchableOpacity>
               </View>
-              <View style={{flex: 3, flexDirection: 'column'}}>
+              <View style={globalStyles.menuitemlist}>
                 <TouchableOpacity
                   style={globalStyles.menubuttonitemnew}
                   onPress={viewModalVariant}>
                   <Icon name={'tshirt'} size={50} color="#0096FF" />
-                  <Text style={globalStyles.menubuttontextnew}>
-                    Baju Timnas
-                  </Text>
+                  <Text style={globalStyles.menubuttontextnew}>Kopi Susu</Text>
                 </TouchableOpacity>
               </View>
-              <View style={{flex: 3, flexDirection: 'column'}}>
+              <View style={globalStyles.menuitemlist}>
                 <TouchableOpacity
                   style={globalStyles.menubuttonitemnew}
                   onPress={viewModalVariant}>
                   <Icon name={'tshirt'} size={50} color="#0096FF" />
-                  <Text style={globalStyles.menubuttontextnew}>
-                    Baju Timnas
-                  </Text>
+                  <Text style={globalStyles.menubuttontextnew}>Kopi Susu</Text>
                 </TouchableOpacity>
               </View>
-              <View style={{flex: 3, flexDirection: 'column'}}>
+              <View style={globalStyles.menuitemlist}>
                 <TouchableOpacity
                   style={globalStyles.menubuttonitemnew}
                   onPress={viewModalVariant}>
                   <Icon name={'tshirt'} size={50} color="#0096FF" />
-                  <Text style={globalStyles.menubuttontextnew}>
-                    Baju Timnas
-                  </Text>
+                  <Text style={globalStyles.menubuttontextnew}>Kopi Susu</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={globalStyles.menuitemlist}>
+                <TouchableOpacity
+                  style={globalStyles.menubuttonitemnew}
+                  onPress={viewModalVariant}>
+                  <Icon name={'tshirt'} size={50} color="#0096FF" />
+                  <Text style={globalStyles.menubuttontextnew}>Kopi Susu</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={globalStyles.menuitemlist}>
+                <TouchableOpacity
+                  style={globalStyles.menubuttonitemnew}
+                  onPress={viewModalVariant}>
+                  <Icon name={'tshirt'} size={50} color="#0096FF" />
+                  <Text style={globalStyles.menubuttontextnew}>Kopi Susu</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={globalStyles.menuitemlist}>
+                <TouchableOpacity
+                  style={globalStyles.menubuttonitemnew}
+                  onPress={viewModalVariant}>
+                  <Icon name={'tshirt'} size={50} color="#0096FF" />
+                  <Text style={globalStyles.menubuttontextnew}>Kopi Susu</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={globalStyles.menuitemlist}>
+                <TouchableOpacity
+                  style={globalStyles.menubuttonitemnew}
+                  onPress={viewModalVariant}>
+                  <Icon name={'tshirt'} size={50} color="#0096FF" />
+                  <Text style={globalStyles.menubuttontextnew}>Kopi Susu</Text>
                 </TouchableOpacity>
               </View>
               {/* //! MENU ITEM */}
