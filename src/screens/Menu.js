@@ -75,7 +75,7 @@ export default function Menu({navigation}) {
     //RELOADPAGE();
     //LOADTBLINVOUT();
     //setMdlConfirmCust(true);
-    setMdlBills(true);
+    //setMdlBills(true);
     setMdlPayment(false);
     BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     return () => {
@@ -406,6 +406,10 @@ export default function Menu({navigation}) {
     setMdlVariant(true);
   };
 
+  const viewModalBills = async () => {
+    setMdlBills(true);
+  };
+
   // const handleLogout = async () => {
   //   // StopAll();
   //   navigation.replace('Login');
@@ -709,18 +713,59 @@ export default function Menu({navigation}) {
                 {/* //* VARIANT*/}
                 <SafeAreaView style={[invrecStyles.inputantotalan]}>
                   <View style={globalStyles.inputtotalan}>
-                    <TextInput
-                      style={[
-                        globalStyles.textinputpayment,
-                        {backgroundColor: colors.card, color: colors.text},
-                      ]}
-                      maxLength={100}
-                      //placeholder={'Masukkan Kata Sandi'}
-                      //placeholderTextColor={colors.text}
-                      //secureTextEntry={seePassword}
-                      //value={password}
-                      //onChangeText={text => setPassword(text)}
-                    />
+                    <TouchableOpacity>
+                      <TextInput
+                        editable={false}
+                        style={[
+                          globalStyles.textinputpayment,
+                          {backgroundColor: colors.card, color: colors.text},
+                        ]}
+                        maxLength={100}
+                        //placeholder={'Masukkan Kata Sandi'}
+                        //placeholderTextColor={colors.text}
+                        //secureTextEntry={seePassword}
+                        //value={password}
+                        //onChangeText={text => setPassword(text)}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </SafeAreaView>
+                <SafeAreaView style={[invrecStyles.inputantotalan]}>
+                  <View style={globalStyles.inputtotalan}>
+                    <TouchableOpacity>
+                      <TextInput
+                        editable={false}
+                        style={[
+                          globalStyles.textinputpayment,
+                          {backgroundColor: colors.card, color: colors.text},
+                        ]}
+                        maxLength={100}
+                        //placeholder={'Masukkan Kata Sandi'}
+                        //placeholderTextColor={colors.text}
+                        //secureTextEntry={seePassword}
+                        //value={password}
+                        //onChangeText={text => setPassword(text)}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </SafeAreaView>
+                <SafeAreaView style={[invrecStyles.inputantotalan]}>
+                  <View style={globalStyles.inputtotalan}>
+                    <TouchableOpacity>
+                      <TextInput
+                        editable={false}
+                        style={[
+                          globalStyles.textinputpayment,
+                          {backgroundColor: colors.card, color: colors.text},
+                        ]}
+                        maxLength={100}
+                        //placeholder={'Masukkan Kata Sandi'}
+                        //placeholderTextColor={colors.text}
+                        //secureTextEntry={seePassword}
+                        //value={password}
+                        //onChangeText={text => setPassword(text)}
+                      />
+                    </TouchableOpacity>
                   </View>
                 </SafeAreaView>
                 {/* //* VARIANT*/}
@@ -735,7 +780,7 @@ export default function Menu({navigation}) {
                       ]}
                       maxLength={100}
                       placeholder={'Comment'}
-                      //placeholderTextColor={colors.text}
+                      placeholderTextColor={colors.text}
                       //secureTextEntry={seePassword}
                       //value={password}
                       //onChangeText={text => setPassword(text)}
@@ -782,13 +827,129 @@ export default function Menu({navigation}) {
         {/* //* MODAL BILLS */}
         <Modal animationType="fade" transparent={true} visible={mdlBills}>
           <View style={globalStyles.centeredViewPayment}>
-            <View style={globalStyles.modalViewBills}>
+            <View
+              style={globalStyles.modalViewBills}
+              nestedScrollEnabled={true}>
               <View style={globalStyles.modalheader}>
                 <Text style={globalStyles.modalText}>Invoice</Text>
               </View>
               <Text style={globalStyles.TextHeaderBills}>Tipe Transaksi</Text>
               <ScrollView style={globalStyles.InputBills}>
                 {/* //* BILLS*/}
+                <SafeAreaView style={[invrecStyles.inputantotalanbillskiri]}>
+                  <View style={globalStyles.cartlist}>
+                    <View style={globalStyles.kiri}>
+                      <View style={globalStyles.itemqty}>
+                        <Text
+                          style={[
+                            invrecStyles.labelinputbills,
+                            {backgroundColor: colors.card, color: colors.text},
+                          ]}>
+                          Kopi Susu
+                        </Text>
+                        <Text
+                          style={[
+                            invrecStyles.labelinputbills,
+                            {backgroundColor: colors.card, color: colors.text},
+                          ]}>
+                          x3
+                        </Text>
+                      </View>
+                      <Text
+                        style={[
+                          invrecStyles.labelinputbills,
+                          {backgroundColor: colors.card, color: colors.text},
+                        ]}>
+                        NM, LI, LS
+                      </Text>
+                    </View>
+                    <View style={globalStyles.kanan}>
+                      <Text
+                        style={[
+                          invrecStyles.labelinputbills,
+                          {backgroundColor: colors.card, color: colors.text},
+                        ]}>
+                        Rp 18.000
+                      </Text>
+                    </View>
+                  </View>
+                </SafeAreaView>
+                <SafeAreaView style={[invrecStyles.inputantotalanbillskiri]}>
+                  <View style={globalStyles.cartlist}>
+                    <View style={globalStyles.kiri}>
+                      <View style={globalStyles.itemqty}>
+                        <Text
+                          style={[
+                            invrecStyles.labelinputbills,
+                            {backgroundColor: colors.card, color: colors.text},
+                          ]}>
+                          Kopi Susu
+                        </Text>
+                        <Text
+                          style={[
+                            invrecStyles.labelinputbills,
+                            {backgroundColor: colors.card, color: colors.text},
+                          ]}>
+                          x3
+                        </Text>
+                      </View>
+                      <Text
+                        style={[
+                          invrecStyles.labelinputbills,
+                          {backgroundColor: colors.card, color: colors.text},
+                        ]}>
+                        NM, LI, LS
+                      </Text>
+                    </View>
+                    <View style={globalStyles.kanan}>
+                      <Text
+                        style={[
+                          invrecStyles.labelinputbills,
+                          {backgroundColor: colors.card, color: colors.text},
+                        ]}>
+                        Rp 18.000
+                      </Text>
+                    </View>
+                  </View>
+                </SafeAreaView>
+                <SafeAreaView style={[invrecStyles.inputantotalanbillskiri]}>
+                  <View style={globalStyles.cartlist}>
+                    <View style={globalStyles.kiri}>
+                      <View style={globalStyles.itemqty}>
+                        <Text
+                          style={[
+                            invrecStyles.labelinputbills,
+                            {backgroundColor: colors.card, color: colors.text},
+                          ]}>
+                          Kopi Susu
+                        </Text>
+                        <Text
+                          style={[
+                            invrecStyles.labelinputbills,
+                            {backgroundColor: colors.card, color: colors.text},
+                          ]}>
+                          x3
+                        </Text>
+                      </View>
+                      <Text
+                        style={[
+                          invrecStyles.labelinputbills,
+                          {backgroundColor: colors.card, color: colors.text},
+                        ]}>
+                        NM, LI, LS
+                      </Text>
+                    </View>
+                    <View style={globalStyles.kanan}>
+                      <Text
+                        style={[
+                          invrecStyles.labelinputbills,
+                          {backgroundColor: colors.card, color: colors.text},
+                        ]}>
+                        Rp 18.000
+                      </Text>
+                    </View>
+                  </View>
+                </SafeAreaView>
                 <SafeAreaView style={[invrecStyles.inputantotalanbillskiri]}>
                   <View style={globalStyles.cartlist}>
                     <View style={globalStyles.kiri}>
@@ -856,7 +1017,43 @@ export default function Menu({navigation}) {
                         invrecStyles.labelinputbills,
                         {backgroundColor: colors.card, color: colors.text},
                       ]}>
+                      Discounts A 20%
+                    </Text>
+                  </View>
+                  <View style={globalStyles.viewinput2}>
+                    <CheckBox
+                      tintColors={{true: '#0096FF', false: 'black'}}
+                      //value={toggleCheckBox}
+                      onValueChange={newValue => setToggleCheckBox(newValue)}
+                    />
+                  </View>
+                </SafeAreaView>
+                <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
+                  <View style={globalStyles.labelinputtotalanbillsdisc}>
+                    <Text
+                      style={[
+                        invrecStyles.labelinputbills,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
                       Discounts B 20%
+                    </Text>
+                  </View>
+                  <View style={globalStyles.viewinput2}>
+                    <CheckBox
+                      tintColors={{true: '#0096FF', false: 'black'}}
+                      //value={toggleCheckBox}
+                      onValueChange={newValue => setToggleCheckBox(newValue)}
+                    />
+                  </View>
+                </SafeAreaView>
+                <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
+                  <View style={globalStyles.labelinputtotalanbillsdisc}>
+                    <Text
+                      style={[
+                        invrecStyles.labelinputbills,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      Discounts A 20%
                     </Text>
                   </View>
                   <View style={globalStyles.viewinput2}>
@@ -879,7 +1076,7 @@ export default function Menu({navigation}) {
                     style={[globalStyles.buttonYesPayment]}
                     //onPress={PostDataInvOut}
                   >
-                    <Text style={globalStyles.textStyle}>Add Item</Text>
+                    <Text style={globalStyles.textStyle}>Payment</Text>
                   </TouchableOpacity>
                 </SafeAreaView>
               </View>
@@ -966,8 +1163,16 @@ export default function Menu({navigation}) {
             // onPress={() => navigation.replace('Home')}
             onPress={handleBackButtonClick}>
             <Icon name={'arrow-left'} size={20} color="#FFFFFF" />
-            <Text style={invrecStyles.bannermenutext}>Menu</Text>
           </TouchableOpacity>
+          <View>
+            <Text style={invrecStyles.bannerpanahback2}> Bills </Text>
+            <TouchableOpacity
+              style={invrecStyles.bannerinvoice}
+              onPress={viewModalBills}>
+              <Icon name={'file-invoice'} size={20} color="#FFFFFF" />
+            </TouchableOpacity>
+          </View>
+          <Text style={invrecStyles.bannermenutext}>Menu</Text>
           {/* <TouchableOpacity
             style={invrecStyles.bannerinvoice}
             //onPress={handleBackButtonClick}
@@ -975,6 +1180,7 @@ export default function Menu({navigation}) {
             <Icon name={'file-invoice'} size={20} color="#FFFFFF" />
           </TouchableOpacity> */}
         </SafeAreaView>
+
         {/* //* BANNER */}
 
         {/* //* CONTENT */}
