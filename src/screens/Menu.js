@@ -1065,6 +1065,27 @@ export default function Menu({navigation}) {
                   </View>
                 </SafeAreaView>
               </ScrollView>
+              <ScrollView style={globalStyles.InputBills3}>
+                <Text style={globalStyles.TextHeaderBills2}>Discounts</Text>
+                <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
+                  <View style={globalStyles.labelinputtotalanbillsdisc}>
+                    <Text
+                      style={[
+                        invrecStyles.labelinputbills,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      Sub Total
+                    </Text>
+                  </View>
+                  <View style={globalStyles.viewinput2}>
+                    <CheckBox
+                      tintColors={{true: '#0096FF', false: 'black'}}
+                      //value={toggleCheckBox}
+                      onValueChange={newValue => setToggleCheckBox(newValue)}
+                    />
+                  </View>
+                </SafeAreaView>
+              </ScrollView>
               <View style={globalStyles.ButtonPayment}>
                 <SafeAreaView style={[invrecStyles.buttontotalan]}>
                   <TouchableOpacity
@@ -1164,21 +1185,22 @@ export default function Menu({navigation}) {
             onPress={handleBackButtonClick}>
             <Icon name={'arrow-left'} size={20} color="#FFFFFF" />
           </TouchableOpacity>
-          <View>
-            <Text style={invrecStyles.bannerpanahback2}> Bills </Text>
+          <View
+            style={{
+              display: 'flex',
+              justifyContent: 'space-around',
+              width: '100%',
+              flexDirection: 'row',
+            }}>
             <TouchableOpacity
               style={invrecStyles.bannerinvoice}
               onPress={viewModalBills}>
+              <Text style={invrecStyles.bannerpanahback2}> Bills </Text>
               <Icon name={'file-invoice'} size={20} color="#FFFFFF" />
             </TouchableOpacity>
+            <Text style={invrecStyles.bannermenutext}>Menu</Text>
+            <Text style={invrecStyles.bannermenutext}></Text>
           </View>
-          <Text style={invrecStyles.bannermenutext}>Menu</Text>
-          {/* <TouchableOpacity
-            style={invrecStyles.bannerinvoice}
-            //onPress={handleBackButtonClick}
-          >
-            <Icon name={'file-invoice'} size={20} color="#FFFFFF" />
-          </TouchableOpacity> */}
         </SafeAreaView>
 
         {/* //* BANNER */}
