@@ -19,12 +19,12 @@ import {
 import {useTheme, useRoute} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import CheckBox from '@react-native-community/checkbox';
-//import {imgback, logoartha3, loadingartha} from '../images/images';
+import {imglogo} from '../images/images';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // import {user_login} from '../api/loginapi';
 // import {getcompanyapi} from '../api/getcompanyapi';
-import {globalStyles} from '../css/global';
+import {globalStyles, invrecStyles} from '../css/global';
 
 //#region //*DB
 import SQLite from 'react-native-sqlite-storage';
@@ -287,35 +287,40 @@ const Login = ({navigation}) => {
   //#endregion
   //const flexD = 'column';
   return (
-    <SafeAreaView
-      style={{flex: 1, flexDirection: 'column', backgroundColor: '#FFFFFF'}}>
-      {/* <ImageBackground style={globalStyles.imagebackground}> */}
-      <ScrollView style={{flex: 1, width: '100%', height: '100%', padding: 15}}>
-        <SafeAreaView style={{flex: 1, width: '100%', height: '100%'}}>
-          {/* //* INFORMATION */}
-          <Modal animationType="fade" transparent={true} visible={modalVisible}>
-            <View style={globalStyles.centeredView}>
-              <View style={globalStyles.modalView}>
-                <View style={globalStyles.modalheader}>
-                  <Text style={globalStyles.modalText}>Information</Text>
-                </View>
-                <View style={{margin: 20, marginBottom: 0}}>
-                  <Text style={globalStyles.textinformation}>
-                    {information}
-                  </Text>
-                </View>
-                <TouchableOpacity
-                  style={[globalStyles.button, globalStyles.buttonClose]}
-                  onPress={() => setModalVisible(!modalVisible)}>
-                  <Text style={globalStyles.textStyle}>Ok</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Modal>
-          {/* //* INFORMATION */}
+    <SafeAreaView style={globalStyles.halamanfulllogin}>
+      <View style={globalStyles.cartlist}>
+        <View style={globalStyles.kirilogin}>
+          <View style={globalStyles.logincontent}>
+            <ScrollView
+              style={{flex: 1, width: '100%', height: '100%', padding: 15}}>
+              <SafeAreaView style={{flex: 1, width: '50%', height: '100%'}}>
+                {/* //* INFORMATION */}
+                <Modal
+                  animationType="fade"
+                  transparent={true}
+                  visible={modalVisible}>
+                  <View style={globalStyles.centeredView}>
+                    <View style={globalStyles.modalView}>
+                      <View style={globalStyles.modalheader}>
+                        <Text style={globalStyles.modalText}>Information</Text>
+                      </View>
+                      <View style={{margin: 20, marginBottom: 0}}>
+                        <Text style={globalStyles.textinformation}>
+                          {information}
+                        </Text>
+                      </View>
+                      <TouchableOpacity
+                        style={[globalStyles.button, globalStyles.buttonClose]}
+                        onPress={() => setModalVisible(!modalVisible)}>
+                        <Text style={globalStyles.textStyle}>Ok</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </Modal>
+                {/* //* INFORMATION */}
 
-          {/* //* LOADER */}
-          {/* <Modal animationType="fade" transparent={true} visible={isLoad}>
+                {/* //* LOADER */}
+                {/* <Modal animationType="fade" transparent={true} visible={isLoad}>
             <View style={globalStyles.centeredView}>
               <View style={globalStyles.modalLoad}>
                 <Image
@@ -327,109 +332,116 @@ const Login = ({navigation}) => {
                 </Text>
               </View>
             </View>
-          </Modal> */}
-          {/* //* LOADER */}
+           </Modal> */}
+                {/* //* LOADER */}
 
-          <StatusBar
-            backgroundColor={'#FFF'}
-            barStyle="dark-content"></StatusBar>
-          {/* //! LOGO */}
-          <View style={globalStyles.logoview}>
-            {/* <Image source={logoartha3} style={globalStyles.logoimage}
+                <StatusBar
+                  backgroundColor={'#FFF'}
+                  barStyle="dark-content"></StatusBar>
+                {/* //! LOGO */}
+                <View style={globalStyles.logoview}>
+                  {/* <Image source={logoartha3} style={globalStyles.logoimage}
              /> */}
-            <Text style={[globalStyles.logotext, {color: colors.text}]}>
-              Point Of Sale
-            </Text>
-          </View>
-          <View style={globalStyles.logoview2}>
-            {/* <Image source={logoartha3} style={globalStyles.logoimage}
+                  <Text style={[globalStyles.logotext, {color: colors.text}]}>
+                    Point Of Sale
+                  </Text>
+                </View>
+                <View style={globalStyles.logoview2}>
+                  {/* <Image source={logoartha3} style={globalStyles.logoimage}
              /> */}
-            <Text style={[globalStyles.logotext, {color: colors.text}]}>
-              Login
-            </Text>
-          </View>
-          {/* //! LOGO */}
+                  <Text style={[globalStyles.logotext, {color: colors.text}]}>
+                    Login
+                  </Text>
+                </View>
+                {/* //! LOGO */}
 
-          {/* //! EMAIL/USERID */}
-          <View style={globalStyles.viewinput}>
-            <View
-              style={[globalStyles.iconinput, {backgroundColor: colors.card}]}>
-              <Icon name={'user'} size={20} color="#0096FF" />
-            </View>
-            <TextInput
-              style={[
-                globalStyles.textinput,
-                {backgroundColor: colors.card, color: colors.text},
-              ]}
-              maxLength={100}
-              placeholder={'Masukkan User ID'}
-              placeholderTextColor={colors.text}
-              value={email}
-              onChangeText={text => setEmail(text)}
-              isPassword={false}
-            />
-          </View>
-          {/* //! EMAIL/USERID */}
+                {/* //! EMAIL/USERID */}
+                <View style={globalStyles.viewinput}>
+                  <View
+                    style={[
+                      globalStyles.iconinput,
+                      {backgroundColor: colors.card},
+                    ]}>
+                    <Icon name={'user'} size={20} color="#0096FF" />
+                  </View>
+                  <TextInput
+                    style={[
+                      globalStyles.textinput,
+                      {backgroundColor: colors.card, color: colors.text},
+                    ]}
+                    maxLength={100}
+                    placeholder={'Masukkan User ID'}
+                    placeholderTextColor={colors.text}
+                    value={email}
+                    onChangeText={text => setEmail(text)}
+                    isPassword={false}
+                  />
+                </View>
+                {/* //! EMAIL/USERID */}
 
-          {/* //! PASSWORD */}
-          <View style={globalStyles.viewinput}>
-            <View
-              style={[globalStyles.iconinput, {backgroundColor: colors.card}]}>
-              <Icon name={'lock'} size={20} color="#0096FF" />
-            </View>
-            <TextInput
-              style={[
-                globalStyles.textinput,
-                {backgroundColor: colors.card, color: colors.text},
-              ]}
-              maxLength={100}
-              placeholder={'Masukkan Kata Sandi'}
-              placeholderTextColor={colors.text}
-              secureTextEntry={seePassword}
-              value={password}
-              onChangeText={text => setPassword(text)}
-            />
-            <TouchableOpacity
-              style={globalStyles.wrapperIcon}
-              onPress={() => setSeePassword(!seePassword)}>
-              <Icon
-                name={seePassword ? 'eye' : 'eye-slash'}
-                size={25}
-                color="#0096FF"
-                style={{marginRight: 8}}
-              />
-            </TouchableOpacity>
-          </View>
-          {/* //! PASSWORD */}
+                {/* //! PASSWORD */}
+                <View style={globalStyles.viewinput}>
+                  <View
+                    style={[
+                      globalStyles.iconinput,
+                      {backgroundColor: colors.card},
+                    ]}>
+                    <Icon name={'lock'} size={20} color="#0096FF" />
+                  </View>
+                  <TextInput
+                    style={[
+                      globalStyles.textinput,
+                      {backgroundColor: colors.card, color: colors.text},
+                    ]}
+                    maxLength={100}
+                    placeholder={'Masukkan Kata Sandi'}
+                    placeholderTextColor={colors.text}
+                    secureTextEntry={seePassword}
+                    value={password}
+                    onChangeText={text => setPassword(text)}
+                  />
+                  <TouchableOpacity
+                    style={globalStyles.wrapperIcon}
+                    onPress={() => setSeePassword(!seePassword)}>
+                    <Icon
+                      name={seePassword ? 'eye' : 'eye-slash'}
+                      size={25}
+                      color="#0096FF"
+                      style={{marginRight: 8}}
+                    />
+                  </TouchableOpacity>
+                </View>
+                {/* //! PASSWORD */}
 
-          {/* //? REMEMBER ME */}
-          <View style={globalStyles.viewinput}>
-            <CheckBox
-              tintColors={{true: '#0096FF', false: 'black'}}
-              value={toggleCheckBox}
-              onValueChange={newValue => setToggleCheckBox(newValue)}
-            />
-            <TouchableOpacity
-              onPress={() => {
-                setToggleCheckBox(!toggleCheckBox);
-              }}>
-              <Text style={[globalStyles.textremember, {color: colors.text}]}>
-                Remember Me
-              </Text>
-            </TouchableOpacity>
-          </View>
-          {/* //? REMEMBER ME */}
+                {/* //? REMEMBER ME */}
+                <View style={globalStyles.viewinput}>
+                  <CheckBox
+                    tintColors={{true: '#0096FF', false: 'black'}}
+                    value={toggleCheckBox}
+                    onValueChange={newValue => setToggleCheckBox(newValue)}
+                  />
+                  <TouchableOpacity
+                    onPress={() => {
+                      setToggleCheckBox(!toggleCheckBox);
+                    }}>
+                    <Text
+                      style={[globalStyles.textremember, {color: colors.text}]}>
+                      Remember Me
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                {/* //? REMEMBER ME */}
 
-          {/* //* BUTTON LOGIN */}
-          <View style={globalStyles.viewbutton}>
-            <TouchableOpacity
-              style={globalStyles.buttonLogin}
-              onPress={handleLoginTemp}
-              // onPress={handleTest}
-            >
-              <Text style={globalStyles.text}>Login</Text>
-            </TouchableOpacity>
-            {/* {email == '' || password == '' || isLoad == true ? (
+                {/* //* BUTTON LOGIN */}
+                <View style={globalStyles.viewbutton}>
+                  <TouchableOpacity
+                    style={globalStyles.buttonLogin}
+                    onPress={handleLoginTemp}
+                    // onPress={handleTest}
+                  >
+                    <Text style={globalStyles.text}>Login</Text>
+                  </TouchableOpacity>
+                  {/* {email == '' || password == '' || isLoad == true ? (
               <TouchableOpacity
                 disabled
                 style={globalStyles.buttonDisable}
@@ -446,35 +458,42 @@ const Login = ({navigation}) => {
                 <Text style={globalStyles.text}>Login</Text>
               </TouchableOpacity>
             )} */}
-          </View>
-          {/* //* BUTTON LOGIN */}
+                </View>
+                {/* //* BUTTON LOGIN */}
 
-          {/* //* NOT USE */}
-          <View
-            style={{
-              marginHorizontal: 25,
-              flexDirection: 'row',
-              marginTop: 10,
-              display: 'none',
-            }}>
-            {/* <TouchableOpacity style={{flex: 1}}>
-          <Text style={{fontWeight: 'bold'}}>Signup</Text>
-        </TouchableOpacity> */}
-            <TouchableOpacity
-              style={{
-                flex: 1,
-                justifyContent: 'center',
-                alignItems: 'flex-end',
-              }}>
-              <Text style={{fontWeight: 'bold'}}>Forgot Password?</Text>
-            </TouchableOpacity>
+                {/* //* NOT USE */}
+                <View
+                  style={{
+                    marginHorizontal: 25,
+                    flexDirection: 'row',
+                    marginTop: 10,
+                    display: 'none',
+                  }}>
+                  {/* <TouchableOpacity style={{flex: 1}}>
+           <Text style={{fontWeight: 'bold'}}>Signup</Text>
+            </TouchableOpacity> */}
+                  <TouchableOpacity
+                    style={{
+                      flex: 1,
+                      justifyContent: 'center',
+                      alignItems: 'flex-end',
+                    }}>
+                    <Text style={{fontWeight: 'bold'}}>Forgot Password?</Text>
+                  </TouchableOpacity>
+                </View>
+                {/* //* NOT USE */}
+              </SafeAreaView>
+            </ScrollView>
+            {/* //* FOOTER */}
+            {/* //* FOOTER */}
           </View>
-          {/* //* NOT USE */}
-        </SafeAreaView>
-      </ScrollView>
-      {/* //* FOOTER */}
-      {/* //* FOOTER */}
-      {/* </ImageBackground> */}
+        </View>
+        <View style={globalStyles.kananlogin}>
+          <Image
+            source={imglogo}
+            style={{width: '150%', height: '100%'}}></Image>
+        </View>
+      </View>
     </SafeAreaView>
   );
 };

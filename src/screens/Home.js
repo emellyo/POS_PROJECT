@@ -9,11 +9,18 @@ import {
   Modal,
   ScrollView,
   SafeAreaView,
+  Dimensions,
+  TextInput,
+  Component,
+  RefreshControl,
+  Alert,
+  LogBox,
 } from 'react-native';
-import {globalStyles} from '../css/global';
+import {globalStyles, invrecStyles} from '../css/global';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {useRoute, useTheme} from '@react-navigation/native';
 import DropDownPicker from 'react-native-dropdown-picker';
+import CheckBox from '@react-native-community/checkbox';
 import * as Utils from '../Helpers/Utils';
 // import {
 //   loadingartha,
@@ -38,6 +45,7 @@ export default function Home({navigation}) {
 
   const [mdlConfirm, setMdlConfirm] = useState(false);
   const [mdlConfirmSync, setMdlConfirmSync] = useState(false);
+  const [mdlPrinter, setMdlPrinter] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [information, setInformation] = useState('');
   const [isLoad, setLoad] = useState(false);
@@ -48,14 +56,16 @@ export default function Home({navigation}) {
   const [guid, setGUID] = useState();
   const [username, setUsername] = useState();
   const [interid, setINTERID] = useState();
+  const [toggleCheckBox, setToggleCheckBox] = useState(false);
   //#endregion
 
   useEffect(() => {
-    setModalVisible(false);
+    //setModalVisible(false);
     // LOADTBLINVOUT();
     // LOADTBLINVRCV();
     // LOADTBLSTOCK();
     // GetUserData();
+    //setMdlPrinter(true);
 
     BackHandler.addEventListener('hardwareBackPress', viewConfirmLogout);
     return () => {
@@ -174,6 +184,10 @@ export default function Home({navigation}) {
 
   const viewConfirmSync = async () => {
     setMdlConfirmSync(true);
+  };
+
+  const ViewHidePrinter = async () => {
+    setMdlPrinter(false);
   };
 
   const handleLogout = async () => {
@@ -302,6 +316,126 @@ export default function Home({navigation}) {
         </View>
       </Modal>
       {/* //* MODAL SYNC DATA */}
+
+      {/* //* PRINTER SETTING */}
+      <Modal animationType="fade" transparent={true} visible={mdlPrinter}>
+        <View style={globalStyles.centeredViewPrinter}>
+          <View style={globalStyles.modalViewPrinter}>
+            <View style={globalStyles.modalheaderPrinter}>
+              <TouchableOpacity
+                style={invrecStyles.bannerpanahbackprinter}
+                onPress={() => setMdlPrinter(!mdlPrinter)}>
+                <Icon name={'arrow-left'} size={25} color="#FFFFFF" />
+              </TouchableOpacity>
+              <Text style={globalStyles.modalText}>Printer Setup</Text>
+            </View>
+            <SafeAreaView style={[invrecStyles.inputanprinter]}>
+              <View style={globalStyles.labelinputprinter}>
+                <Text
+                  style={[
+                    invrecStyles.labelinputprinter,
+                    {backgroundColor: colors.card, color: colors.text},
+                  ]}>
+                  Name
+                </Text>
+              </View>
+              <View style={globalStyles.inputprinter}>
+                <TextInput
+                  style={[
+                    globalStyles.textinputprinter,
+                    {backgroundColor: colors.card, color: colors.text},
+                  ]}
+                  maxLength={100}
+                  //placeholder={'Masukkan Kata Sandi'}
+                  //placeholderTextColor={colors.text}
+                  //secureTextEntry={seePassword}
+                  //value={password}
+                  //onChangeText={text => setPassword(text)}
+                />
+              </View>
+            </SafeAreaView>
+            <SafeAreaView style={[invrecStyles.inputanprinter2]}>
+              <View style={globalStyles.labelinputprinter}>
+                <Text
+                  style={[
+                    invrecStyles.labelinputprinter,
+                    {backgroundColor: colors.card, color: colors.text},
+                  ]}>
+                  Printer
+                </Text>
+              </View>
+              <View style={globalStyles.inputprinter}>
+                <DropDownPicker
+                  style={{elevation: 5, zIndex: 1, marginRight: 15}}
+                  textStyle={{fontWeight: '600', fontSize: 15}}
+                  showTickIcon={true}
+                  listMode="SCROLLVIEW"
+                  scrollViewProps={{nestedScrollEnabled: true}}
+                  closeOnBackPressed={true}
+                  closeAfterSelecting={true}
+                  //itemSeparator={true}
+                  searchable={true}
+                  searchPlaceholder="No Printer"
+                  //mode="BADGE"
+                  //badgeColors={['blue', 'green', 'orange']}
+                  placeholder="Printers"
+                  items={[
+                    {label: 'Item 1', value: 'item1'},
+                    {label: 'Item 2', value: 'item2'},
+                  ]}
+                  onChangeItem={item => console.log(item.label, item.value)}
+                />
+              </View>
+            </SafeAreaView>
+            <SafeAreaView
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                width: '100%',
+                borderWidth: 1,
+                borderColor: '#212121',
+                marginTop: 10,
+              }}></SafeAreaView>
+            <SafeAreaView style={[invrecStyles.inputanprinter2]}>
+              <View style={globalStyles.labelinputtotalanbillsdisc}>
+                <Text
+                  style={[
+                    invrecStyles.labelinputprinter,
+                    {backgroundColor: colors.card, color: colors.text},
+                  ]}>
+                  Print Receipt and Bills
+                </Text>
+              </View>
+              <View style={globalStyles.viewinput2}>
+                <CheckBox
+                  tintColors={{true: '#0096FF', false: 'black'}}
+                  //value={toggleCheckBox}
+                  onValueChange={newValue => setToggleCheckBox(newValue)}
+                />
+              </View>
+            </SafeAreaView>
+            <View
+              style={{
+                flexDirection: 'row',
+                marginHorizontal: 0,
+                marginTop: '20%',
+              }}>
+              <TouchableOpacity
+                style={[globalStyles.buttonNo]}
+                onPress={() => setMdlPrinter(!mdlPrinter)}>
+                <Text style={globalStyles.textNo}>Save</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[globalStyles.buttonYes]}
+                //onPress={PostDataInvOut}
+              >
+                <Text style={globalStyles.textStyle}>Test Print</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      {/* //* PRINTER SETTING */}
 
       {/* //* LOADER */}
       {/* <Modal animationType="fade" transparent={true} visible={isLoad}>

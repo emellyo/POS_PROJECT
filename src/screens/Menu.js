@@ -1066,7 +1066,6 @@ export default function Menu({navigation}) {
                 </SafeAreaView>
               </ScrollView>
               <ScrollView style={globalStyles.InputBills3}>
-                <Text style={globalStyles.TextHeaderBills2}>Discounts</Text>
                 <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
                   <View style={globalStyles.labelinputtotalanbillsdisc}>
                     <Text
@@ -1074,15 +1073,77 @@ export default function Menu({navigation}) {
                         invrecStyles.labelinputbills,
                         {backgroundColor: colors.card, color: colors.text},
                       ]}>
-                      Sub Total
+                      Total
                     </Text>
                   </View>
-                  <View style={globalStyles.viewinput2}>
-                    <CheckBox
-                      tintColors={{true: '#0096FF', false: 'black'}}
-                      //value={toggleCheckBox}
-                      onValueChange={newValue => setToggleCheckBox(newValue)}
-                    />
+                  <View style={globalStyles.kanan2}>
+                    <Text
+                      style={[
+                        invrecStyles.labelinputbills,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      Rp 75.000
+                    </Text>
+                  </View>
+                </SafeAreaView>
+                <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
+                  <View style={globalStyles.labelinputtotalanbillsdisc}>
+                    <Text
+                      style={[
+                        invrecStyles.labelinputbills,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      Discount
+                    </Text>
+                  </View>
+                  <View style={globalStyles.kanan2}>
+                    <Text
+                      style={[
+                        invrecStyles.labelinputbills,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      Rp 0
+                    </Text>
+                  </View>
+                </SafeAreaView>
+                <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
+                  <View style={globalStyles.labelinputtotalanbillsdisc}>
+                    <Text
+                      style={[
+                        invrecStyles.labelinputbills,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      PPN 11%
+                    </Text>
+                  </View>
+                  <View style={globalStyles.kanan2}>
+                    <Text
+                      style={[
+                        invrecStyles.labelinputbills,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      Rp 8.250
+                    </Text>
+                  </View>
+                </SafeAreaView>
+                <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
+                  <View style={globalStyles.labelinputtotalanbillsdisc}>
+                    <Text
+                      style={[
+                        invrecStyles.labelinputbills,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      Grand Total
+                    </Text>
+                  </View>
+                  <View style={globalStyles.kanan2}>
+                    <Text
+                      style={[
+                        invrecStyles.labelinputbills,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      Rp 75.000
+                    </Text>
                   </View>
                 </SafeAreaView>
               </ScrollView>
