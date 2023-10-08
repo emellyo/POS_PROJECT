@@ -16,7 +16,7 @@ import {
   ActivityIndicator,
   LogBox,
 } from 'react-native';
-import {useTheme, useRoute} from '@react-navigation/native';
+import {useTheme, useRoute, useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import CheckBox from '@react-native-community/checkbox';
 import {imglogo} from '../images/images';
@@ -41,7 +41,7 @@ const db = SQLite.openDatabase(
 );
 //#endregion
 
-const Login = ({navigation}) => {
+const Login = () => {
   LogBox.ignoreLogs([
     'Non-serializable values were found in the navigation state',
     'Image source "null" doesn' + '' + 't exist',
@@ -78,9 +78,11 @@ const Login = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [information, setInformation] = useState('');
   const [isLoad, setLoad] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const colors = useTheme().colors;
-  const route = useRoute();
+  //const route = useRoute();
+  const navigation = useNavigation();
 
   //#endregion
 
@@ -197,9 +199,10 @@ const Login = ({navigation}) => {
     return true;
   }
 
-  const handleLoginTemp = async () => {
+  const handleLoginTemp = () => {
     // StopAll();
-    navigation.replace('Home');
+    navigation.navigate('SideBar');
+    setIsLoggedIn(true);
   };
 
   const handleTest = async () => {

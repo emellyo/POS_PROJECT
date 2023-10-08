@@ -18,7 +18,7 @@ import {
 } from 'react-native';
 import {globalStyles, invrecStyles} from '../css/global';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import {useRoute, useTheme} from '@react-navigation/native';
+import {useRoute, useTheme, useNavigation} from '@react-navigation/native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import CheckBox from '@react-native-community/checkbox';
 import * as Utils from '../Helpers/Utils';

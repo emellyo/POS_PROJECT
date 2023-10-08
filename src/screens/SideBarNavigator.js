@@ -1,14 +1,15 @@
 import React from 'react';
 import {createDrawerNavigator} from '@react-navigation/drawer';
-import StackNavigator from './StackNavigator'; // Import your StackNavigator component here
+import HomeScreen from './HomeScreen'; // Import your HomeScreen component
+import SidebarContent from './SidebarContent'; // Import your sidebar content component
 
 const Drawer = createDrawerNavigator();
 
 const SidebarNavigator = () => {
   return (
-    <Drawer.Navigator initialRouteName="Main">
-      <Drawer.Screen name="Main" component={StackNavigator} />
-      {/* Add more screens here */}
+    <Drawer.Navigator drawerContent={props => <SidebarContent {...props} />}>
+      <Drawer.Screen name="Home" component={HomeScreen} />
+      {/* Add more screens for the sidebar as needed */}
     </Drawer.Navigator>
   );
 };

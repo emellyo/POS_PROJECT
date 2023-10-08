@@ -11,7 +11,8 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
-//import SplashScreen from './src/screens/Splash';
+import SplashScreen from './src/screens/Splash';
+import SidebarNavigator from './src/screens/SideBarNavigator';
 import LoginScreen from './src/screens/Login';
 import HomeScreen from './src/screens/Home';
 //import Home from './src/screens/Home';
@@ -48,6 +49,5 @@ const App = () => {
     </NavigationContainer>
   );
 }
-
 export default App;
 
