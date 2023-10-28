@@ -201,7 +201,7 @@ const Login = () => {
 
   const handleLoginTemp = () => {
     // StopAll();
-    navigation.navigate('SideBar');
+    navigation.navigate('Home');
     setIsLoggedIn(true);
   };
 

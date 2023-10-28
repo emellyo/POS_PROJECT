@@ -153,12 +153,19 @@ export const globalStyles = StyleSheet.create({
     fontWeight: 'bold',
     width: 100,
   },
+  sidebartitle: {
+    marginTop: 20,
+    fontSize: 20,
+    color: '#212121',
+    fontWeight: 'bold',
+    width: 100,
+  },
   title1view: {flex: 2, flexDirection: 'row', margin: 0},
   title1text: {color: '#212121', fontSize: 13},
   title1text2: {color: 'red', fontSize: 16, textAlign: 'right'},
   viewmenu: {
     flex: 3,
-    marginVertical: 65,
+    marginVertical: 40,
     marginHorizontal: 0,
     padding: 15,
     // borderWidth: 1, borderColor: 'red'

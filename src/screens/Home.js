@@ -21,7 +21,9 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import {useRoute, useTheme, useNavigation} from '@react-navigation/native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import CheckBox from '@react-native-community/checkbox';
+import Sidebar from '../screens/SideBar';
 import * as Utils from '../Helpers/Utils';
+import {createDrawerNavigator} from '@react-navigation/drawer';
 // import {
 //   loadingartha,
 //   invenreceiving,
@@ -36,10 +38,11 @@ import * as Utils from '../Helpers/Utils';
 // import * as dbconn2 from '../db/dbinvout';
 // import * as dbconn3 from '../db/dbstock';
 
-export default function Home({navigation}) {
+const Home = () => {
   const colors = useTheme().colors;
   const route = useRoute();
   const increment = useRef(null);
+  const navigation = useNavigation();
 
   //#region //* VARIABLE
 
@@ -57,6 +60,7 @@ export default function Home({navigation}) {
   const [username, setUsername] = useState();
   const [interid, setINTERID] = useState();
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   //#endregion
 
   useEffect(() => {
@@ -66,7 +70,7 @@ export default function Home({navigation}) {
     // LOADTBLSTOCK();
     // GetUserData();
     //setMdlPrinter(true);
-
+    setIsSidebarOpen(!isSidebarOpen);
     BackHandler.addEventListener('hardwareBackPress', viewConfirmLogout);
     return () => {
       clearInterval(increment.current);
@@ -190,9 +194,19 @@ export default function Home({navigation}) {
     setMdlPrinter(false);
   };
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     // StopAll();
-    navigation.replace('Login');
+    navigation.navigate('Login');
+  };
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const openSidebar = () => {
+    toggleSidebar();
+    navigation.navigate('Sidebar'); // This opens the sidebar (drawer navigator)
+    //setSidebarOpen(true);
   };
 
   const handleSetting = async () => {
@@ -231,6 +245,7 @@ export default function Home({navigation}) {
   return (
     <SafeAreaView
       style={{flex: 1, flexDirection: 'column', backgroundColor: '#FFFFFF'}}>
+      <Sidebar />
       {/* //* INFORMATION */}
       <Modal animationType="fade" transparent={true} visible={modalVisible}>
         <View style={globalStyles.centeredView}>
@@ -459,6 +474,17 @@ export default function Home({navigation}) {
 
       {/* //* BANNER */}
       <SafeAreaView style={globalStyles.bannerhome}>
+        <View style={{position: 'absolute', left: 10}}>
+          <TouchableOpacity onPress={openSidebar}>
+            {/* This is the icon trigger for the sidebar */}
+            <Icon name={'bars'} size={25} color="white"></Icon>
+          </TouchableOpacity>
+          {isSidebarOpen && (
+            <View>
+              <TouchableOpacity onPress={openSidebar}></TouchableOpacity>
+            </View>
+          )}
+        </View>
         <Text style={globalStyles.bannertext}>POS</Text>
         <View style={{position: 'absolute', right: 10}}>
           <TouchableOpacity onPress={viewConfirmSync}>
@@ -469,7 +495,7 @@ export default function Home({navigation}) {
       {/* //* BANNER */}
 
       {/* //* CONTENT */}
-      <ScrollView style={globalStyles.viewmenu}>
+      <SafeAreaView style={globalStyles.viewmenu}>
         <View style={globalStyles.title1view}>
           <Text style={globalStyles.title1text}>
             Selamat Datang, <Text style={{fontWeight: 'bold'}}>{fullname}</Text>
@@ -509,7 +535,7 @@ export default function Home({navigation}) {
             </TouchableOpacity>
           </View> */}
         {/* //! MENU ITEM */}
-      </ScrollView>
+      </SafeAreaView>
       {/* //* CONTENT */}
       <SafeAreaView style={globalStyles.menuviewhome2}>
         <View style={{flex: 2, flexDirection: 'row', marginHorizontal: 0}}>
@@ -540,4 +566,5 @@ export default function Home({navigation}) {
       {/* //* FOOTER */}
     </SafeAreaView>
   );
-}
+};
+export default Home;
