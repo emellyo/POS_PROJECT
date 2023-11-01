@@ -19,6 +19,7 @@ import AppNavigator from './src/screens/AppNavigator';
 //import Home from './src/screens/Home';
 import MenuScreen from './src/screens/Menu';
 import Sidebar from './src/screens/SideBar';
+import SidebarContent from './src/screens/SideBarContent';
 // import InvRecScreen from './src/screens/InvReceiving';
 // import InvOutScreen from './src/screens/InvOut';
 // import BarcodeScan from './src/screens/BarcodeScanner';
@@ -27,12 +28,12 @@ import Sidebar from './src/screens/SideBar';
 const Stack = createNativeStackNavigator()
 const Drawer = createDrawerNavigator();
 
-const HomeStack = () => (
-  <Stack.Navigator initialRouteName="Home">
-    <Stack.Screen name="Home" component={HomeScreen} />
-    {/* Add more screens to the stack as needed */}
-  </Stack.Navigator>
-);
+// const HomeStack = () => (
+//   <Stack.Navigator initialRouteName="Home">
+//     <Stack.Screen name="Home" component={HomeScreen} />
+//     {/* Add more screens to the stack as needed */}
+//   </Stack.Navigator>
+// );
 
 const App = () => {
   // return (
@@ -58,7 +59,7 @@ const App = () => {
   // );
 return (
     <NavigationContainer>
-  <Stack.Navigator initialRouteName="Login"
+    <Stack.Navigator initialRouteName="Login"
       screenOptions={{headerShown: false}}>
         {/* You can add a Login screen here */}
         <Stack.Screen 
@@ -70,12 +71,16 @@ return (
         name="Menu" 
         component={MenuScreen}
         options={{ title: 'Menu Page'}} />
-        <Stack.Screen name="Home" 
-        component={HomeScreen} 
-        //options={{ headerLeft: () => <Sidebar />, }} 
-        options={{title: 'Home Page'}}
-        />
-        <Stack.Screen name="Sidebar" component={Sidebar} />
+        <Stack.Screen name="Home">
+          {() => (
+            <Drawer.Navigator drawerContent={props => <SidebarContent {...props} />}>
+              <Drawer.Screen name=" " component={HomeScreen} />
+            </Drawer.Navigator> 
+          )}
+          </Stack.Screen> 
+        {/* //options={{ headerLeft: () => <Sidebar />, }}  */}
+        
+        {/* <Stack.Screen name="Sidebar" component={Sidebar} /> */}
       </Stack.Navigator>
       {/* <Drawer.Navigator>
         <Drawer.Screen name="Home" component={HomeScreen} />

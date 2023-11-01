@@ -67,10 +67,10 @@ def enableProguardInReleaseBuilds = false
  * this variant is about 6MiB larger per architecture than default.
  */
 def jscFlavor = 'org.webkit:android-jsc:+'
-
+// def enableHermes = project.ext.react.get("enableHermes", true)
+// def extraPackagerArgs = project.ext.react.get("extraPackagerArgs", [])
 android {
     ndkVersion rootProject.ext.ndkVersion
-
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     namespace "com.pos_peoject"
@@ -122,3 +122,4 @@ dependencies {
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
+//apply from: file("../node_modules/react-native/hermes.gradle")

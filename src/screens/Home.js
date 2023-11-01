@@ -24,6 +24,8 @@ import CheckBox from '@react-native-community/checkbox';
 import Sidebar from '../screens/SideBar';
 import * as Utils from '../Helpers/Utils';
 import {createDrawerNavigator} from '@react-navigation/drawer';
+import {HeaderButtons, Item} from 'react-navigation-header-buttons';
+import HeaderButton from '../screens/HeaderButton';
 // import {
 //   loadingartha,
 //   invenreceiving,
@@ -204,8 +206,9 @@ const Home = () => {
   };
 
   const openSidebar = () => {
-    toggleSidebar();
-    navigation.navigate('Sidebar'); // This opens the sidebar (drawer navigator)
+    //toggleSidebar();
+    //navigation.navigate('Sidebar'); // This opens the sidebar (drawer navigator)
+    navigation.openDrawer();
     //setSidebarOpen(true);
   };
 
@@ -474,17 +477,19 @@ const Home = () => {
 
       {/* //* BANNER */}
       <SafeAreaView style={globalStyles.bannerhome}>
-        <View style={{position: 'absolute', left: 10}}>
-          <TouchableOpacity onPress={openSidebar}>
-            {/* This is the icon trigger for the sidebar */}
-            <Icon name={'bars'} size={25} color="white"></Icon>
-          </TouchableOpacity>
-          {isSidebarOpen && (
+        {/* <HeaderButtons style={{position: 'absolute', left: 10}}> */}
+        <HeaderButtons HeaderButtonComponent={HeaderButton}>
+          {/* <TouchableOpacity onPress={openSidebar}> */}
+          {/* This is the icon trigger for the sidebar */}
+          {/* <Icon name={'bars'} size={25} color="white"></Icon>
+          </TouchableOpacity> */}
+          {/* {isSidebarOpen && (
             <View>
               <TouchableOpacity onPress={openSidebar}></TouchableOpacity>
             </View>
-          )}
-        </View>
+          )} */}
+          <Item iconName="ios-menu" onPress={openSidebar} />
+        </HeaderButtons>
         <Text style={globalStyles.bannertext}>POS</Text>
         <View style={{position: 'absolute', right: 10}}>
           <TouchableOpacity onPress={viewConfirmSync}>
