@@ -2,7 +2,7 @@ import axios, { AxiosResponse, AxiosError } from 'axios';
 import * as Utils from '../Helpers/Utils';
 
 const ApiManager = axios.create({
-    //baseURL: 'https://aipoweroperation.com/BIRAPI/api',    
+    baseURL: 'https://blueverseapi.azurewebsites.net/api',    
     //responseType:'json'
     withCredentials: true,
     timeout: 2000, // only wait for 2s

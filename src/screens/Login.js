@@ -22,7 +22,7 @@ import CheckBox from '@react-native-community/checkbox';
 import {imglogo} from '../images/images';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// import {user_login} from '../api/loginapi';
+import {user_login} from '../api/loginapi';
 // import {getcompanyapi} from '../api/getcompanyapi';
 import {globalStyles, invrecStyles} from '../css/global';
 
@@ -230,30 +230,29 @@ const Login = () => {
     setLoad(true);
     // /*
     user_login({
-      username: email,
-      password: password,
-      domainname: '',
+      EmailAddress: email,
+      PASSWORD: password,
     })
       .then(async result => {
         var datauserall = [];
         if (result.status == 200) {
-          console.log('data:', result.data.LoginResults);
-          var hasil = result.data.LoginResults;
+          console.log('data:', result.data);
+          var hasil = result.data;
           console.info('hasil:', JSON.stringify(hasil));
           var len = hasil.length;
           if (len > 0) {
             let username = email;
             let datauserlogin = hasil;
-            let userid = datauserlogin[0].USERID.toString();
-            let fullname = datauserlogin[0].USERNAME.toString();
-            let guid = datauserlogin[0].GUID.toString();
+            let userid = datauserlogin[0].userID.toString();
+            let emailAddress = datauserlogin[0].emailAddress.toString();
+            let business_Name = datauserlogin[0].business_Name.toString();
+            let country = datauserlogin[0].country.toString();
 
             var dataparams = {
-              username: username,
+              username: emailAddress,
               userid: userid,
-              fullname: fullname,
-              guid: guid,
-              interid: interid,
+              fullname: business_Name,
+              country: country,
             };
             datauserall.push(dataparams);
 
@@ -439,8 +438,8 @@ const Login = () => {
                 <View style={globalStyles.viewbutton}>
                   <TouchableOpacity
                     style={globalStyles.buttonLogin}
-                    onPress={handleLoginTemp}
-                    // onPress={handleTest}
+                    onPress={handleLogin}
+                    //onPress={handhandleTest}
                   >
                     <Text style={globalStyles.text}>Login</Text>
                   </TouchableOpacity>

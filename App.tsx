@@ -18,6 +18,7 @@ import HomeScreen from './src/screens/Home';
 import AppNavigator from './src/screens/AppNavigator';
 //import Home from './src/screens/Home';
 import MenuScreen from './src/screens/Menu';
+import PrinterScreen from './src/screens/PrinterSetup';
 import Sidebar from './src/screens/SideBar';
 import SidebarContent from './src/screens/SideBarContent';
 // import InvRecScreen from './src/screens/InvReceiving';
@@ -71,6 +72,10 @@ return (
         name="Menu" 
         component={MenuScreen}
         options={{ title: 'Menu Page'}} />
+        <Stack.Screen 
+        name="Printer" 
+        component={PrinterScreen}
+        options={{ title: 'Printer Page'}} />
         <Stack.Screen name="Home">
           {() => (
             <Drawer.Navigator drawerContent={props => <SidebarContent {...props} />}>

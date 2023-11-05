@@ -146,7 +146,7 @@ export const globalStyles = StyleSheet.create({
   },
   menutitletexthome: {
     marginLeft: 0,
-    marginTop: 40,
+    marginTop: 0,
     marginBottom: 20,
     fontSize: 20,
     color: '#212121',
@@ -165,7 +165,7 @@ export const globalStyles = StyleSheet.create({
   title1text2: {color: 'red', fontSize: 16, textAlign: 'right'},
   viewmenu: {
     flex: 3,
-    marginVertical: 40,
+    marginVertical: 30,
     marginHorizontal: 0,
     padding: 15,
     // borderWidth: 1, borderColor: 'red'
@@ -705,6 +705,8 @@ export const globalStyles = StyleSheet.create({
     color: '#FFFFFF',
     paddingHorizontal: 0,
     marginHorizontal: 0,
+    //top: 0,
+    bottom: 15,
     textAlign: 'center',
     fontWeight: 'bold',
   },
@@ -1030,7 +1032,7 @@ export const globalStyles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 20,
-    width: '50%',
+    width: '60%',
     height: '95%',
   },
   modalViewPayment: {
@@ -1257,7 +1259,7 @@ export const globalStyles = StyleSheet.create({
     backgroundColor: '#0096FF',
     marginTop: 0,
     width: '100%',
-    padding: 15,
+    //padding: 10,
     justifyContent: 'center',
     borderTopLeftRadius: 5,
     borderTopRightRadius: 5,
@@ -1294,8 +1296,9 @@ export const invrecStyles = StyleSheet.create({
     //paddingLeft: 10,
     //paddingTop: 10,
     //alignItems: 'flex-start',
-    position: 'absolute',
+    //position: 'relative',
     left: 20,
+    top: 10,
   },
   bannerpanahbackbills: {
     paddingLeft: 10,
@@ -1426,8 +1429,8 @@ export const invrecStyles = StyleSheet.create({
     width: '100%',
     marginTop: 5,
     //gap: 5,
-    // borderBottomWidth: 1,
-    // borderBottomColor: '#212121',
+    //borderBottomWidth: 1,
+    //borderBottomColor: '#212121',
   },
   inputantotalanbills: {
     display: 'flex',
