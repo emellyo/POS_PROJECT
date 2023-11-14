@@ -241,7 +241,7 @@ const Login = () => {
           console.info('hasil:', JSON.stringify(hasil));
           var len = hasil.length;
           if (len > 0) {
-            let username = email;
+            //let username = email;
             let datauserlogin = hasil;
             let userid = datauserlogin[0].userID.toString();
             let emailAddress = datauserlogin[0].emailAddress.toString();
@@ -266,7 +266,7 @@ const Login = () => {
             setEmail('');
             setPassword('');
             setToggleCheckBox(false);
-
+            console.log('isi dataparams: ', dataparams);
             navigation.navigate('Home', {
               dataparams,
             });

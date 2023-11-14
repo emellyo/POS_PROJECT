@@ -1263,7 +1263,6 @@ export default function Menu({navigation}) {
             <Text style={invrecStyles.bannermenutext}></Text>
           </View>
         </SafeAreaView>
-
         {/* //* BANNER */}
 
         {/* //* CONTENT */}

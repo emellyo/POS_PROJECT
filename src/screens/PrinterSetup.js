@@ -64,6 +64,25 @@ export default function Printer({navigation}) {
 
   return (
     <SafeAreaView>
+      {/* //* BANNER */}
+      <SafeAreaView style={invrecStyles.bannermenu}>
+        <TouchableOpacity
+          style={invrecStyles.bannerpanahback}
+          // onPress={() => navigation.replace('Home')}
+          onPress={handleBackButtonClick}>
+          <Icon name={'arrow-left'} size={20} color="#FFFFFF" />
+        </TouchableOpacity>
+        <View
+          style={{
+            display: 'flex',
+            justifyContent: 'space-around',
+            width: '100%',
+            flexDirection: 'row',
+          }}>
+          <Text style={invrecStyles.bannermenutext}>Printer Setup</Text>
+        </View>
+      </SafeAreaView>
+      {/* //* BANNER */}
       {/* //* PRINTER SETTING */}
       <Modal animationType="fade" transparent={true} visible={mdlPrinter}>
         <View style={globalStyles.centeredViewPrinter}>

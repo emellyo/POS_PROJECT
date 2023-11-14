@@ -35,7 +35,7 @@ const SidebarContent = props => {
           </Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigateToScreen('Home')}>
+      <TouchableOpacity onPress={() => navigateToScreen('Shifts')}>
         <View
           style={{
             flexDirection: 'row',
@@ -61,7 +61,7 @@ const SidebarContent = props => {
           </Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigateToScreen('Home')}>
+      <TouchableOpacity onPress={() => navigateToScreen('Discount')}>
         <View
           style={{
             flexDirection: 'row',

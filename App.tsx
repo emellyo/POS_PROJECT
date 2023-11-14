@@ -19,6 +19,8 @@ import AppNavigator from './src/screens/AppNavigator';
 //import Home from './src/screens/Home';
 import MenuScreen from './src/screens/Menu';
 import PrinterScreen from './src/screens/PrinterSetup';
+import DiscountScreen from './src/screens/Discount';
+import ShiftsScreen from './src/screens/Shifts';
 import Sidebar from './src/screens/SideBar';
 import SidebarContent from './src/screens/SideBarContent';
 // import InvRecScreen from './src/screens/InvReceiving';
@@ -76,6 +78,14 @@ return (
         name="Printer" 
         component={PrinterScreen}
         options={{ title: 'Printer Page'}} />
+        <Stack.Screen 
+        name="Discount" 
+        component={DiscountScreen}
+        options={{ title: 'Discount Page'}} />
+        <Stack.Screen 
+        name="Shifts" 
+        component={ShiftsScreen}
+        options={{ title: 'Shifts Page'}} />
         <Stack.Screen name="Home">
           {() => (
             <Drawer.Navigator drawerContent={props => <SidebarContent {...props} />}>

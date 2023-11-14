@@ -70,7 +70,7 @@ const Home = () => {
     // LOADTBLINVOUT();
     // LOADTBLINVRCV();
     // LOADTBLSTOCK();
-    // GetUserData();
+    GetUserData();
     //setMdlPrinter(true);
     setIsSidebarOpen(!isSidebarOpen);
     BackHandler.addEventListener('hardwareBackPress', viewConfirmLogout);
@@ -196,9 +196,43 @@ const Home = () => {
     setMdlPrinter(false);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     // StopAll();
-    navigation.navigate('Login');
+    navigation.replace('Login');
+  };
+
+  const GetUserData = () => {
+    try {
+      setLoad(true);
+      var dataall = route.params.dataparams;
+      // console.info('datauser: ',JSON.stringify(dataall));
+      var param_userid = dataall.userid;
+      setUSERID(param_userid);
+      var param_interid = dataall.interid;
+      setINTERID(param_interid);
+      var param_username = dataall.username;
+      setUsername(param_username);
+      // var param_fullname = dataall.fullname;
+      // setFULLNAME(param_fullname);
+
+      // if(emptyStr(param_userid) || emptyStr(param_interid)){
+      //   console.log('no data');
+      // }
+      // else{
+      //   var mdl = {
+      //     interid: param_interid,
+      //     userid: param_userid
+      //   };
+      //   // console.log('mdl:',JSON.stringify(mdl));
+      //   GetOutStanding(mdl);
+      // }
+    } catch (err) {
+      console.log(err);
+      setLoad(false);
+    }
+
+    delaynew(500);
+    setLoad(false);
   };
 
   const toggleSidebar = () => {
@@ -222,22 +256,6 @@ const Home = () => {
   const handleWalkInandOnline = async () => {
     try {
       navigation.navigate('Menu');
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const handleInvRec = async () => {
-    try {
-      var dataparams = {
-        username: username,
-        userid: userid,
-        fullname: fullname,
-        guid: guid,
-        interid: interid,
-      };
-
-      navigation.navigate('InvReceiving', {dataparams});
     } catch (err) {
       console.log(err);
     }
