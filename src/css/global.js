@@ -247,6 +247,18 @@ export const globalStyles = StyleSheet.create({
     elevation: 10,
     marginTop: 25,
   },
+  buttoncashmanag: {
+    width: '100%',
+    paddingVertical: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#ffff',
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#0096FF',
+    elevation: 10,
+    marginTop: 25,
+  },
   buttonIcon: {
     paddingVertical: 14,
     paddingHorizontal: 10,
@@ -669,6 +681,11 @@ export const globalStyles = StyleSheet.create({
   },
   text: {
     color: 'white',
+    fontWeight: '800',
+    fontSize: 20,
+  },
+  textbut: {
+    color: '#0096FF',
     fontWeight: '800',
     fontSize: 20,
   },
@@ -1551,7 +1568,12 @@ export const invrecStyles = StyleSheet.create({
   },
   menuitemsubmit2: {
     flexDirection: 'row',
-    width: '88%',
+    width: '40%',
+    backgroundColor: '#FFFFFF',
+  },
+  menuitemsubmit3: {
+    flexDirection: 'row',
+    width: '100%',
     backgroundColor: '#FFFFFF',
   },
   labelinput: {

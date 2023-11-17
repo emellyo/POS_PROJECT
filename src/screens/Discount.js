@@ -25,6 +25,9 @@ import * as Utils from '../Helpers/Utils';
 //import {loadingartha, wmsclear} from '../images/images';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {getdiscount} from '../api/getdiscount';
+
+import SQLite from 'react-native-sqlite-storage';
 
 export default function Discount({navigation}) {
   LogBox.ignoreLogs([
@@ -37,9 +40,11 @@ export default function Discount({navigation}) {
 
   const [mdlDiscount, setMdlDiscount] = useState(false);
   const [search, setSearch] = useState('');
+  const [discount, setDiscount] = useState([]);
 
   useEffect(() => {
     setMdlDiscount(true);
+    getDiscount();
     BackHandler.addEventListener(
       'hardwareBackPress',
       handleBackButtonClick,
@@ -57,6 +62,16 @@ export default function Discount({navigation}) {
 
   const updateSearch = search => {
     setSearch(search);
+  };
+
+  const getDiscount = async () => {
+    getdiscount({}).then(async result => {
+      if (result.status == 200) {
+        var hasil = result.data;
+        console.info('hasil getdiscount: ', hasil);
+        setDiscount(hasil);
+      }
+    });
   };
 
   function handleBackButtonClick() {
@@ -112,47 +127,35 @@ export default function Discount({navigation}) {
                 autoCorrect={false}
               />
             </View>
-            <ScrollView style={globalStyles.InputBills5}>
-              <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
-                <View style={globalStyles.labelinputtotalanbillsdisc}>
-                  <Text
-                    style={[
-                      invrecStyles.labelinputbills,
-                      {backgroundColor: colors.card, color: colors.text},
-                    ]}>
-                    Best Friend
-                  </Text>
-                </View>
-                <View style={globalStyles.viewinput2}>
-                  <Text
-                    style={[
-                      invrecStyles.labelinputbills,
-                      {backgroundColor: colors.card, color: colors.text},
-                    ]}>
-                    20%
-                  </Text>
-                </View>
-              </SafeAreaView>
-              <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
-                <View style={globalStyles.labelinputtotalanbillsdisc}>
-                  <Text
-                    style={[
-                      invrecStyles.labelinputbills,
-                      {backgroundColor: colors.card, color: colors.text},
-                    ]}>
-                    Good Friend
-                  </Text>
-                </View>
-                <View style={globalStyles.viewinput2}>
-                  <Text
-                    style={[
-                      invrecStyles.labelinputbills,
-                      {backgroundColor: colors.card, color: colors.text},
-                    ]}>
-                    20%
-                  </Text>
-                </View>
-              </SafeAreaView>
+            <ScrollView
+              style={globalStyles.InputBills5}
+              nestedScrollEnabled={true}>
+              {discount.map((disc, index) => {
+                return (
+                  <SafeAreaView
+                    key={index}
+                    style={[invrecStyles.inputantotalanbills2]}>
+                    <View style={globalStyles.labelinputtotalanbillsdisc}>
+                      <Text
+                        style={[
+                          invrecStyles.labelinputbills,
+                          {backgroundColor: colors.card, color: colors.text},
+                        ]}>
+                        {disc.discount_Name}
+                      </Text>
+                    </View>
+                    <View style={globalStyles.viewinput2}>
+                      <Text
+                        style={[
+                          invrecStyles.labelinputbills,
+                          {backgroundColor: colors.card, color: colors.text},
+                        ]}>
+                        {disc.discount_Value}
+                      </Text>
+                    </View>
+                  </SafeAreaView>
+                );
+              })}
             </ScrollView>
             <View
               style={{

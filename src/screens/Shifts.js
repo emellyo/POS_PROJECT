@@ -335,11 +335,185 @@ export default function Discount({navigation}) {
             </View>
           </SafeAreaView>
         </View>
+        <View style={{borderBottomWidth: 1, borderBottomColor: '#212121'}}>
+          <SafeAreaView style={invrecStyles.form}>
+            <View style={globalStyles.kiri}>
+              <View style={globalStyles.textshift}>
+                <Text
+                  style={[
+                    invrecStyles.labelinputshifthdr,
+                    {backgroundColor: colors.card, color: colors.text},
+                  ]}>
+                  Sales Summary
+                </Text>
+              </View>
+            </View>
+          </SafeAreaView>
+          <SafeAreaView style={invrecStyles.form}>
+            <View style={globalStyles.kiri}>
+              <View style={globalStyles.textshift}>
+                <Text
+                  style={[
+                    invrecStyles.labelinputshift,
+                    {backgroundColor: colors.card, color: colors.text},
+                  ]}>
+                  Gross Sales
+                </Text>
+              </View>
+            </View>
+            <View style={globalStyles.kanan}>
+              <Text
+                style={[
+                  invrecStyles.labelinputshift,
+                  {backgroundColor: colors.card, color: colors.text},
+                ]}>
+                Rp 225.000
+              </Text>
+            </View>
+          </SafeAreaView>
+          <SafeAreaView style={invrecStyles.form}>
+            <View style={globalStyles.kiri}>
+              <View style={globalStyles.textshift}>
+                <Text
+                  style={[
+                    invrecStyles.labelinputshift,
+                    {backgroundColor: colors.card, color: colors.text},
+                  ]}>
+                  Refunds
+                </Text>
+              </View>
+            </View>
+            <View style={globalStyles.kanan}>
+              <Text
+                style={[
+                  invrecStyles.labelinputshift,
+                  {backgroundColor: colors.card, color: colors.text},
+                ]}>
+                Rp 0
+              </Text>
+            </View>
+          </SafeAreaView>
+          <SafeAreaView style={invrecStyles.form}>
+            <View style={globalStyles.kiri}>
+              <View style={globalStyles.textshift}>
+                <Text
+                  style={[
+                    invrecStyles.labelinputshift,
+                    {backgroundColor: colors.card, color: colors.text},
+                  ]}>
+                  Discounts
+                </Text>
+              </View>
+            </View>
+            <View style={globalStyles.kanan}>
+              <Text
+                style={[
+                  invrecStyles.labelinputshift,
+                  {backgroundColor: colors.card, color: colors.text},
+                ]}>
+                Rp 0
+              </Text>
+            </View>
+          </SafeAreaView>
+        </View>
+        <ScrollView
+          style={{borderBottomWidth: 1, borderBottomColor: '#212121'}}>
+          <SafeAreaView style={invrecStyles.form}>
+            <View style={globalStyles.kiri}>
+              <View style={globalStyles.textshift}>
+                <Text
+                  style={[
+                    invrecStyles.labelinputshifthdr,
+                    {backgroundColor: colors.card, color: colors.text},
+                  ]}>
+                  Net Sales
+                </Text>
+              </View>
+            </View>
+          </SafeAreaView>
+          <SafeAreaView style={invrecStyles.form}>
+            <View style={globalStyles.kiri}>
+              <View style={globalStyles.textshift}>
+                <Text
+                  style={[
+                    invrecStyles.labelinputshift,
+                    {backgroundColor: colors.card, color: colors.text},
+                  ]}>
+                  Cash
+                </Text>
+              </View>
+            </View>
+            <View style={globalStyles.kanan}>
+              <Text
+                style={[
+                  invrecStyles.labelinputshift,
+                  {backgroundColor: colors.card, color: colors.text},
+                ]}>
+                Rp 150.000
+              </Text>
+            </View>
+          </SafeAreaView>
+          <SafeAreaView style={invrecStyles.form}>
+            <View style={globalStyles.kiri}>
+              <View style={globalStyles.textshift}>
+                <Text
+                  style={[
+                    invrecStyles.labelinputshift,
+                    {backgroundColor: colors.card, color: colors.text},
+                  ]}>
+                  BCA
+                </Text>
+              </View>
+            </View>
+            <View style={globalStyles.kanan}>
+              <Text
+                style={[
+                  invrecStyles.labelinputshift,
+                  {backgroundColor: colors.card, color: colors.text},
+                ]}>
+                Rp 75.000
+              </Text>
+            </View>
+          </SafeAreaView>
+        </ScrollView>
+        <View style={{borderBottomWidth: 1, borderBottomColor: '#212121'}}>
+          <SafeAreaView style={invrecStyles.form}>
+            <View style={globalStyles.kiri}>
+              <View style={globalStyles.textshift}>
+                <Text
+                  style={[
+                    invrecStyles.labelinputshift,
+                    {backgroundColor: colors.card, color: colors.text},
+                  ]}>
+                  Taxes
+                </Text>
+              </View>
+            </View>
+            <View style={globalStyles.kanan}>
+              <Text
+                style={[
+                  invrecStyles.labelinputshift,
+                  {backgroundColor: colors.card, color: colors.text},
+                ]}>
+                Rp 22.500
+              </Text>
+            </View>
+          </SafeAreaView>
+        </View>
         <View style={[invrecStyles.form]}>
-          <View style={[invrecStyles.menuitemsubmit2, {paddingRight: 5}]}>
-            <TouchableOpacity disabled style={globalStyles.buttonSubmitDisable}>
-              <Text style={globalStyles.text}>Kirim</Text>
-            </TouchableOpacity>
+          <View style={globalStyles.kiri}>
+            <View style={[invrecStyles.menuitemsubmit2]}>
+              <TouchableOpacity style={globalStyles.buttoncashmanag}>
+                <Text style={globalStyles.textbut}>CASH MANAGEMENT</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={globalStyles.kanan}>
+            <View style={[invrecStyles.menuitemsubmit3]}>
+              <TouchableOpacity style={globalStyles.buttoncashmanag}>
+                <Text style={globalStyles.textbut}>CLOSE SHIFT</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </ScrollView>
