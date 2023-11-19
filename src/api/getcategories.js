@@ -1,9 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import ApiManager from './ApiManager';
 
-export const getdiscount = async data => {
+export const getcategories = async data => {
   try {
-    const urlapi = 'Service/getDataDiscount';
+    const urlapi = 'Service/GetDataCategories';
     console.log('data: ', data);
     console.info(ApiManager.defaults.baseURL.concat('/', urlapi));
 

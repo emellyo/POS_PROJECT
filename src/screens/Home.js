@@ -496,18 +496,13 @@ const Home = () => {
       {/* //* BANNER */}
       <SafeAreaView style={globalStyles.bannerhome}>
         {/* <HeaderButtons style={{position: 'absolute', left: 10}}> */}
-        <HeaderButtons HeaderButtonComponent={HeaderButton}>
-          {/* <TouchableOpacity onPress={openSidebar}> */}
-          {/* This is the icon trigger for the sidebar */}
-          {/* <Icon name={'bars'} size={25} color="white"></Icon>
-          </TouchableOpacity> */}
-          {/* {isSidebarOpen && (
-            <View>
-              <TouchableOpacity onPress={openSidebar}></TouchableOpacity>
-            </View>
-          )} */}
-          <Item iconName="ios-menu" onPress={openSidebar} />
-        </HeaderButtons>
+        <View style={{backgroundColor: '#0096FF'}}>
+          <HeaderButtons
+            style={{backgroundColor: '#0096FF'}}
+            HeaderButtonComponent={HeaderButton}>
+            <Item iconName="ios-menu" onPress={openSidebar} />
+          </HeaderButtons>
+        </View>
         <Text style={globalStyles.bannertext}>POS</Text>
         <View style={{position: 'absolute', right: 10}}>
           <TouchableOpacity onPress={viewConfirmSync}>

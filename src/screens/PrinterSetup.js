@@ -58,6 +58,11 @@ export default function Printer({navigation}) {
     return true;
   }
 
+  const handleBack = async () => {
+    // StopAll();
+    navigation.replace('Home');
+  };
+
   function HideModalPrinter() {
     setMdlPrinter(false);
   }
@@ -69,7 +74,7 @@ export default function Printer({navigation}) {
         <TouchableOpacity
           style={invrecStyles.bannerpanahback}
           // onPress={() => navigation.replace('Home')}
-          onPress={handleBackButtonClick}>
+          onPress={handleBack}>
           <Icon name={'arrow-left'} size={20} color="#FFFFFF" />
         </TouchableOpacity>
         <View

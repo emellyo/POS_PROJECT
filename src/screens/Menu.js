@@ -24,6 +24,8 @@ import * as Utils from '../Helpers/Utils';
 //import {loadingartha, wmsclear} from '../images/images';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {getcategories} from '../api/getcategories';
+import {Item} from 'react-navigation-header-buttons';
 //import {SQLiteDatabase, enablePromise, openDatabase } from 'react-native-sqlite-storage';
 //import BarcodeScanner from 'react-native-scan-barcode';
 //import * as dbconn from '../db/dbinvout';
@@ -54,18 +56,10 @@ export default function Menu({navigation}) {
   const [mdlBills, setMdlBills] = useState(false);
   const [modalCustVisible, setModalCustVisible] = useState(false);
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
-  //const [isLoad, setLoad] = useState(false);
-  //const [isInet, setInet] = useState(true);
-  //const [fullname, setFULLNAME] = useState();
-  //const [barcodescan, setBarcodeScan] = useState();
-  // const [docnumbr, setDOCNUMBR] = useState('');
-  // const [interid, setINTERID] = useState();
-  // const [userid, setUSERID] = useState();
-  // const [desc, setDesc] = useState();
-  // const [list, setList] = useState([]);
-  // const [data, setData] = useState([]);
-  //onst [reload, setReload] = useState(false);
-  //const [refreshing, setRefreshing] = useState(false);
+  const [category, setCategory] = useState([]);
+  const [jmlcat, setJmlCat] = useState(0);
+  const [open, setOpen] = useState(false);
+  const [domain, setDomain] = useState('');
   //#endregion
 
   useEffect(() => {
@@ -77,6 +71,7 @@ export default function Menu({navigation}) {
     //setMdlConfirmCust(true);
     //setMdlBills(true);
     setMdlPayment(false);
+    Categories();
     BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     return () => {
       clearInterval(increment.current);
@@ -87,320 +82,47 @@ export default function Menu({navigation}) {
     };
   }, []);
 
-  // const RELOADPAGE = async () => {
-  //   setList([]);
-  //   //setData([]);
-  //   setDOCNUMBR('');
-  //   setMdlConfirm(false);
-  //   setModalVisible(false);
-  //   setNomorBpb('');
-  // };
-
-  //   const LOADTBLINVOUT = async () => {
-  //     try {
-  //       const db = await dbconn.getDBConnection();
-  //       await dbconn.deletedataAllTbl(db, 'InvOut');
-  //       await dbconn.InvOut_CreateTbl(db, 'InvOut');
-
-  //       const storedTbl = await dbconn.InvOut_getdata(db, 'InvOut');
-  //       if (storedTbl.length) {
-  //         console.log('datastored: ', storedTbl);
-  //       } else {
-  //         console.log('no data');
-  //       }
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
   //#region //* FUNCTION
 
-  //   const GetUserData = () => {
-  //     try {
-  //       setLoad(true);
-  //       var dataall = route.params.dataparams;
-  //       // console.info('datauser: ',JSON.stringify(dataall));
-  //       // var param_userid = dataall.userid;setUSERID(param_userid);
-  //       //var param_interid = dataall.interid;setINTERID(param_interid);
-  //       // var param_urlapi = dataall.urlapi;setURLAPI(param_urlapi);
-  //       // var param_username = dataall.username;setUSERNAME(param_username);
-  //       // var param_password = dataall.fullname;setPASSWORD(param_password);
-  //       // var param_fullname = dataall.fullname;setFULLNAME(param_fullname);
-
-  //       // if(emptyStr(param_userid) || emptyStr(param_interid)){
-  //       //   console.log('no data');
-  //       // }
-  //       // else{
-  //       //   var mdl = {
-  //       //     interid: param_interid,
-  //       //     userid: param_userid
-  //       //   };
-  //       //   // console.log('mdl:',JSON.stringify(mdl));
-  //       //   GetOutStanding(mdl);
-  //       // }
-  //     } catch (err) {
-  //       console.log(err);
-  //       setLoad(false);
-  //     }
-
-  //     delaynew(1000);
-  //     setLoad(false);
-  //   };
-
-  //   const GetItemListOut = async docnumbr => {
-  //     setLoad(true);
-  //     const results = [];
-  //     setList([]);
-  //     console.log('docnumbr :', docnumbr);
-  //     getitemlistout({
-  //       INTERID: interid,
-  //       DOCNUMBR: docnumbr,
-  //     })
-  //       .then(async result => {
-  //         // console.log('datalistitem :', result);
-  //         var dataitem = [];
-  //         if (result.status == 200) {
-  //           var hasil = result.data.SelectResults;
-  //           //console.log('datalistitem :', hasil);
-  //           if (hasil.length > 0) {
-  //             for (let i = 0; i < hasil.length; i++) {
-  //               var list = hasil[i];
-  //               dataitem.push(list);
-  //               //handleAddItemList(list);
-  //             }
-  //             // handleAddItemList(dataitem);
-  //             //setList(dataitem);
-  //             //FillDataListItem(dataitem);
-  //             console.log('dataitem: ', dataitem);
-  //             let dtInvOut = [];
-  //             const db = await dbconn.getDBConnection();
-  //             await dbconn.InvOut_savedata(db, 'InvOut', dataitem);
-  //             dtInvOut = await dbconn.InvOut_getdata(db, 'InvOut');
-  //             console.log('database: ', dtInvOut);
-  //             setList(dataitem);
-  //           }
-  //         }
-  //         //AsyncStorage.setItem('@dtListItem', JSON.stringify(dataitem));
-  //       })
-  //       .catch(async err => {
-  //         console.log('respon: ' + err.response);
-  //         let msg = 'Servers is not available.';
-  //         if (!emptyStr(err.message)) {
-  //           //get from message
-  //           msg = err.message;
-  //           if (err.message.trim().toLowerCase().includes('timeout of')) {
-  //             msg = 'Servers is not available.';
-  //           } else if (err.message.trim().toLowerCase() == 'network error') {
-  //             if (isInet == true) {
-  //               msg = 'Server is not available.';
-  //             } else {
-  //               msg = err.message.trim();
-  //             }
-  //           } else if (err.message.trim().toLowerCase().includes('status code')) {
-  //             //have data message
-  //             msg = err.response.data.replace('Auth :', '');
-  //             if (emptyStr(msg)) {
-  //               msg = err.message;
-  //             }
-  //           }
-  //         } else {
-  //           msg = err.response.data.replace('Auth :', '');
-  //         }
-
-  //         let inet = await CheckInternet();
-  //         // console.log('inet com:'+ inet);
-  //         if (inet == false) {
-  //           msg = 'Please Check Your Connection.';
-  //         }
-  //         console.info('info message: ' + msg);
-  //         CallModalInfo(msg);
-  //       })
-  //       .finally(() => {
-  //         setTimeout(() => {
-  //           setLoad(false);
-  //         }, 500);
-  //       });
-  //     await delaynew(500);
-  //     setLoad(false);
-  //   };
-
-  //   const PostDataInvOut = async () => {
-  //     // setReload(true);
-  //     // CallModalInfo('Success');
-  //     const db = await dbconn.getDBConnection();
-  //     let datacheck = await dbconn.queryselectInvOut(
-  //       db,
-  //       `SELECT DOCNUMBR, ITEMNMBR, ITEMDESC, LNITMSEQ, UOFM, QUANTITY, LOCNCODE from InvOut where FLAG = 1;`,
-  //     );
-  //     console.log('datapost: ', datacheck);
-  //     setData(datacheck);
-  //     let dataitem = await AsyncStorage.getItem('@dtUser');
-  //     dataitem = JSON.parse(dataitem);
-  //     var param_userid = dataitem[0].userid;
-  //     var param_interid = dataitem[0].interid;
-  //     setUSERID(param_userid);
-  //     setINTERID(param_interid);
-  //     console.log('masukdata: ', datacheck);
-  //     postinvout({
-  //       INTERID: param_interid,
-  //       USERID: param_userid,
-  //       detail: datacheck,
-  //     })
-  //       .then(async result => {
-  //         if (result.status == 200) {
-  //           var hasil = result.data.SelectResults;
-  //           if (hasil.length > 0) {
-  //             let desc = hasil[0].desc;
-  //             setDesc(desc);
-  //             setReload(true);
-  //             CallModalInfoPost(desc);
-  //           }
-  //         }
-  //       })
-  //       .catch(err => {
-  //         console.log(err);
-  //         let msg = 'Server is not available.';
-  //         msg = err.message;
-  //         CallModalInfo(msg);
-  //       });
-  //   };
-
-  // const UpdateDataList = async (item, flag) => {
-  //   const db = await dbconn.getDBConnection();
-  //   let flagupdate = !flag;
-  //   let query = `UPDATE InvOut SET FLAG = ${flagupdate} WHERE NO = ${item};`;
-  //   await dbconn.querydynamic(db, query);
-  //   let dtInvOut = await dbconn.InvOut_getdata(db, 'InvOut');
-  //   console.info('dataupdate: ', dtInvOut);
-  //   setList(dtInvOut);
-  // };
-
-  // const GetNomorBpb = async () => {
-  //   setLoad(true);
-  //   const results = [];
-  //   let dataitem = await AsyncStorage.getItem('@dtUser');
-  //   dataitem = JSON.parse(dataitem);
-  //   var param_interid = dataitem[0].interid;
-  //   setINTERID(param_interid);
-  //   getnomorbpb({
-  //     INTERID: param_interid,
-  //   })
-  //     .then(async result => {
-  //       if (result.status == 200) {
-  //         var hasil = result.data.SelectResults;
-  //         if (hasil.length > 0) {
-  //           for (let i = 0; i < hasil.length; i++) {
-  //             var data = hasil[i];
-  //             var joined = {
-  //               label: data.DOCNUMBR,
-  //               value: data.DOCNUMBR,
-  //               icon: () => <Icon name="hotel" size={15} color="blue" />,
-  //             };
-  //             results.push(joined);
-  //           }
-  //         }
-  //       }
-  //       setItemBpb(results);
-  //       setNomorBpb('');
-
-  //       await delaynew(500);
-  //       setLoad(false);
-  //       setMdlBPB(true);
-  //     })
-  //     .catch(err => {
-  //       console.log('error_bpb_number', err);
-  //       let msg = 'Servers is not available.';
-  //       msg = err;
-  //       CallModalInfo(msg);
-  //     });
-  //   await delaynew(1000);
-  //   setLoad(false);
-  // };
-
-  // const UpdateDataListBack = async(item) => {
-  //     const db = await dbconn.getDBConnection();
-  //     let query = `UPDATE InvOut SET FLAG = 0 WHERE NO = ${item};`;
-  //     await dbconn.querydynamic(db, query);
-  //     let dtInvOut = await dbconn.InvOut_getdata(db, 'InvOut');
-  //     console.info('dataupdate: ', dtInvOut);
-  //     setList(dtInvOut);
-  // };
-
-  // const FillDataListItem = async(hasil) =>{
-  //   try {
-  //     let dtInvOut = [];
-  //     const db = await dbconn.getDBConnection();
-  //     dtInvOut = await dbconn.InvOut_getdata (db, 'InvOut');
-
-  //     let datacheck = await dbconn.queryselectInvOut(db, `select * from InvOut where DOCNUMBR= '${hasil[0].DOCNUMBR}'`);
-  //     let noitem = 0;
-
-  //     if (datacheck.length > 0) {
-  //       throw new Error("Data sudah ada");
-  //     }
-  //     else if(dtInvOut.length == 0){
-  //       noitem = noitem + 1;
-  //     }
-  //     else {
-  //       let datamax = await dbconn.queryselectInvOut(db, `select * from InvOut order by NO desc;`);
-  //       noitem = datamax[0].NO + 1;
-  //     }
-  //     hasil[0].NO = noitem;
-
-  //     await dbconn.InvOut_savedata(db, 'InvOut', hasil);
-  //     dtInvOut = await dbconn.InvOut_getdata(db, 'InvOut');
-
-  //     console.info('datainvout: ', dtInvOut);
-  //     setList(dtInvOut);
-  //   } catch (error) {
-  //     let msg = 'Servers is not available.';
-  //     msg = error.message;
-  //     CallModalInfo(msg);
-  //   }
-  //   finally {
-  //     await delaynew(1000);
-  //     setLoad(false);
-  //   }
-  // };
-
-  // const validInformationOk = async visible => {
-  //   console.log('masuk1: ');
-  //   //onRefresh();
-  //   setModalVisible(visible);
-  //   if (visible == false && reload == true) {
-  //     console.log('masuk2: ');
-  //     //useState().length = 0;
-  //     // window.location.reload(true);
-  //     //navigation.navigate('InvOut');
-  //   }
-  // };
-
-  // const CallModalInfoPost = async info => {
-  //   // console.info('hasil message : ',info);
-  //   setLoad(false);
-  //   setInformation(info);
-  //   setModalVisible(true);
-  // };
-
-  // const CallModalInfo = async info => {
-  //   // console.info('hasil message : ',info);
-  //   setLoad(false);
-  //   setInformation(info);
-  //   setModalVisible(true);
-  // };
-
-  // function emptyStr(str) {
-  //   return !str || !/[^\s]+/.test(str);
-  // }
-
-  //const delaynew = ms => new Promise(res => setTimeout(res, ms));
+  const Categories = async () => {
+    getcategories({})
+      .then(async result => {
+        if (result.status == 200) {
+          const results = [{label: 'All Categories', value: ''}];
+          var catfirst;
+          var hasil = result.data;
+          console.log('hasil return: ', hasil);
+          if (hasil.length > 0) {
+            for (let i = 0; i < hasil.length; i++) {
+              let data = hasil[i];
+              let value = data.category_Name;
+              if (i == 0) {
+                catfirst = value;
+              }
+              var joined = {
+                label: data.category_Name,
+                value: value,
+              };
+              results.push(joined);
+            }
+          }
+          setCategory(results);
+          setJmlCat(results.length);
+          if (results.length > 0) {
+            setDomain(catfirst);
+          }
+        }
+      })
+      .catch(async err => {
+        console.log('respon: ' + err.message);
+        let msg = 'Servers is not available.';
+        msg = err.message;
+      });
+  };
 
   //#endregion
 
   //#region //* EVENT
-
-  // const viewConfirmPost = async () => {
-  //   setMdlConfirm(true);
-  // };
 
   const viewModalVariant = async () => {
     setMdlVariant(true);
@@ -410,29 +132,11 @@ export default function Menu({navigation}) {
     setMdlBills(true);
   };
 
-  // const handleLogout = async () => {
-  //   // StopAll();
-  //   navigation.replace('Login');
-  // };
-
   function handleBackButtonClick() {
     navigation.goBack();
     return true;
   }
 
-  // const viewBpbLookup = async () => {
-  //   GetNomorBpb();
-  // };
-
-  //   function selectedBPB(nilai) {
-  //     try {
-  //       setMdlBPB(false);
-  //       setDOCNUMBR(nilai);
-  //       GetItemListOut(nilai);
-  //     } catch (error) {
-  //       CallModalInfo(error);
-  //     }
-  //   }
   //#endregion
 
   const screenWidth = Dimensions.get('window').width;
@@ -1166,74 +870,6 @@ export default function Menu({navigation}) {
           </View>
         </Modal>
         {/* //* MODAL BILLS */}
-
-        {/* //* LOADER */}
-        {/* <Modal animationType="fade" transparent={true} visible={isLoad}>
-        <View style={globalStyles.centeredView}>
-          <View style={globalStyles.modalLoad}>
-            <Image
-              //source={loadingartha}
-              style={globalStyles.imageloader}
-              imageStyle={{opacity: 0.5}}></Image>
-            <Text style={[globalStyles.textloader, {color: colors.text}]}>
-              Loading...
-            </Text>
-          </View>
-        </View>
-      </Modal> */}
-        {/* //* LOADER */}
-        {/* //* LOOKUP BPB */}
-        {/* <Modal animationType="fade" transparent={true} visible={mdlBPB}>
-        <View style={globalStyles.LookupcenteredView}>
-          <View style={globalStyles.LookupmodalView}>
-            <View style={globalStyles.Lookupmodalheader}>
-              <TouchableOpacity
-                style={invrecStyles.bannerpanahback}
-                onPress={() => setMdlBPB(!mdlBPB)}>
-                <Icon name={'arrow-left'} size={20} color="#FFFFFF" />
-                <Text style={invrecStyles.bannermenutext}>No. BPB </Text>
-              </TouchableOpacity>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                margin: 5,
-                zIndex: 1,
-                height: '100%',
-              }}>
-              <DropDownPicker
-                style={{elevation: 5, zIndex: 1}}
-                textStyle={{fontWeight: '600', fontSize: 15}}
-                showTickIcon={true}
-                listMode="SCROLLVIEW"
-                scrollViewProps={{nestedScrollEnabled: true}}
-                closeOnBackPressed={true}
-                closeAfterSelecting={true}
-                // itemSeparator={true}
-                searchable={true}
-                searchPlaceholder="Cari..."
-                // searchable={true}
-                // mode="BADGE"
-                // badgeColors={['blue','green','orange']}
-                placeholder="Pilih Nomor BPB"
-                selectedValue={itembpb}
-                open={openbpb}
-                value={nomorbpb}
-                items={itembpb}
-                setOpen={setOpenBpb}
-                setValue={setNomorBpb}
-                setItems={setItemBpb}
-                onSelectItem={item => {
-                  selectedBPB(item.value);
-                }}
-                // onSelectItem={(item) => {console.info('nilaidata: '+item.value)}}
-                // onChangeValue={(value) => {console.info('info nilai'+value)}}
-              />
-            </View>
-          </View>
-        </View>
-      </Modal> */}
-        {/* //* LOOKUP BPB */}
         <StatusBar
           backgroundColor={'#0096FF'}
           barStyle="light-content"></StatusBar>
@@ -1267,46 +903,43 @@ export default function Menu({navigation}) {
 
         {/* //* CONTENT */}
         <ScrollView style={{padding: 15}}>
-          <SafeAreaView style={invrecStyles.form}>
-            <View style={invrecStyles.menuitemfull}>
-              {/* <TextInput
-              editable={false}
-              style={[
-                invrecStyles.textinputlookup,
-                {backgroundColor: colors.card, color: colors.text},
-              ]}
-              maxLength={100}
-              placeholder={'All Items'}
-              placeholderTextColor={colors.text}
-              //value={nomorbpb}
-              // onChangeText={text => setEmail(text)}
-            /> */}
-              <DropDownPicker
-                style={{elevation: 5, zIndex: 1, marginRight: 15}}
-                textStyle={{fontWeight: '600', fontSize: 15}}
-                showTickIcon={true}
-                listMode="SCROLLVIEW"
-                scrollViewProps={{nestedScrollEnabled: true}}
-                closeOnBackPressed={true}
-                closeAfterSelecting={true}
-                //itemSeparator={true}
-                searchable={true}
-                searchPlaceholder="All Items"
-                //mode="BADGE"
-                //badgeColors={['blue', 'green', 'orange']}
-                placeholder="All Items"
-                items={[
-                  {label: 'Item 1', value: 'item1'},
-                  {label: 'Item 2', value: 'item2'},
-                ]}
-                onChangeItem={item => console.log(item.label, item.value)}
-              />
-              {/* <TouchableOpacity
+          <View
+            style={
+              (invrecStyles.menucatdropdown, {minHeight: open ? '50%' : '20%'})
+            }>
+            <DropDownPicker
+              style={{elevation: 5, zIndex: 1, marginRight: 0}}
+              textStyle={{fontWeight: '600', fontSize: 15}}
+              showTickIcon={true}
+              listMode="SCROLLVIEW"
+              scrollViewProps={{
+                nestedScrollEnabled: true,
+                decelerationRate: 'fast',
+              }}
+              closeOnBackPressed={true}
+              closeAfterSelecting={true}
+              //itemSeparator={true}
+              searchable={true}
+              //mode="BADGE"
+              //badgeColors={['blue', 'green', 'orange']}
+              //placeholder="Select your category"
+              open={open}
+              items={category}
+              setOpen={setOpen}
+              value={domain}
+              setValue={setDomain}
+              setItems={setCategory}
+              onSelectItem={item => {
+                console.log('nilai cat:' + item.value);
+              }}
+              dropDownStyle={{maxHeight: 500, backgroundColor: 'white'}}
+            />
+            {/* <TouchableOpacity
               style={[invrecStyles.iconlookup, {backgroundColor: colors.card}]}>
               <Icon name={'search'} size={20} color="#bdbdbd" />
             </TouchableOpacity> */}
-            </View>
-          </SafeAreaView>
+          </View>
+          {/* <SafeAreaView style={invrecStyles.form}></SafeAreaView> */}
           <ScrollView nestedScrollEnabled={true}>
             <View
               style={{

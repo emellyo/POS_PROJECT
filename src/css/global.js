@@ -1450,6 +1450,14 @@ export const invrecStyles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#FFFFFF',
   },
+  menucatdropdown: {
+    flexDirection: 'row',
+    // flexWrap: 'wrap',
+    // marginVertical: 0,
+    width: '100%',
+    backgroundColor: '#FFFFFF',
+    zIndex: 1,
+  },
   menuitemfullpayment: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -1525,6 +1533,7 @@ export const invrecStyles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     width: '100%',
+    marginBottom: 16,
     //padding: 10,
     //height: '50%',
     // borderBottomWidth: 1,

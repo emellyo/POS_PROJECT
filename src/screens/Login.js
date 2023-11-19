@@ -338,7 +338,7 @@ const Login = () => {
                 {/* //* LOADER */}
 
                 <StatusBar
-                  backgroundColor={'#FFF'}
+                  backgroundColor={'#0096FF'}
                   barStyle="dark-content"></StatusBar>
                 {/* //! LOGO */}
                 <View style={globalStyles.logoview}>

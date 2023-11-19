@@ -12,7 +12,7 @@ const CustomHeaderButton = props => {
       IconComponent={bars}
       iconSize={23}
       color="white"
-      style={globalStyles.bannerhome}
+      style={{...globalStyles.bannerhome, backgroundColor: '#0096FF'}}
     />
   );
 };

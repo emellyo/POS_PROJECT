@@ -65,19 +65,30 @@ export default function Discount({navigation}) {
   };
 
   const getDiscount = async () => {
-    getdiscount({}).then(async result => {
-      if (result.status == 200) {
-        var hasil = result.data;
-        console.info('hasil getdiscount: ', hasil);
-        setDiscount(hasil);
-      }
-    });
+    getdiscount({})
+      .then(async result => {
+        if (result.status == 200) {
+          var hasil = result.data;
+          console.info('hasil getdiscount: ', hasil);
+          setDiscount(hasil);
+        }
+      })
+      .catch(async err => {
+        console.log('respon: ' + err.message);
+        let msg = 'Servers is not available.';
+        msg = err.message;
+      });
   };
 
   function handleBackButtonClick() {
     navigation.goBack();
     return true;
   }
+
+  const handleBack = async () => {
+    // StopAll();
+    navigation.replace('Home');
+  };
 
   function HideModalDiscount() {
     setMdlDiscount(false);
@@ -90,7 +101,7 @@ export default function Discount({navigation}) {
         <TouchableOpacity
           style={invrecStyles.bannerpanahback}
           // onPress={() => navigation.replace('Home')}
-          onPress={handleBackButtonClick}>
+          onPress={handleBack}>
           <Icon name={'arrow-left'} size={20} color="#FFFFFF" />
         </TouchableOpacity>
         <View
