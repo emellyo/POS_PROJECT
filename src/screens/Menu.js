@@ -120,6 +120,8 @@ export default function Menu({navigation}) {
       });
   };
 
+  const GetItems = async () => {};
+
   //#endregion
 
   //#region //* EVENT

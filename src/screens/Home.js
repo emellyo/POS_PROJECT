@@ -518,15 +518,14 @@ const Home = () => {
           <Text style={globalStyles.title1text}>
             Selamat Datang, <Text style={{fontWeight: 'bold'}}>{fullname}</Text>
           </Text>
+          <Text style={globalStyles.menutitletexthome}>Sales Type</Text>
           <TouchableOpacity
             style={{position: 'absolute', right: 0}}
             onPress={viewConfirmLogout}>
             <Text style={globalStyles.title1text2}>Keluar</Text>
           </TouchableOpacity>
         </View>
-        <SafeAreaView style={globalStyles.menuviewhome}>
-          <Text style={globalStyles.menutitletexthome}>Sales Type</Text>
-        </SafeAreaView>
+        <SafeAreaView style={globalStyles.menuviewhome}></SafeAreaView>
         {/* //! MENU ITEM */}
         {/* <View style={{flex: 3, flexDirection: 'row', marginHorizontal: 2}}>
             <TouchableOpacity
@@ -556,18 +555,18 @@ const Home = () => {
       </SafeAreaView>
       {/* //* CONTENT */}
       <SafeAreaView style={globalStyles.menuviewhome2}>
-        <View style={{flex: 2, flexDirection: 'row', marginHorizontal: 0}}>
+        <View style={{flex: 2, flexDirection: 'row', marginHorizontal: 20}}>
           <TouchableOpacity
             style={globalStyles.menubuttonitembottom}
             onPress={handleWalkInandOnline}>
-            <Icon name={'store'} size={30} color="#0096FF" />
+            <Icon name={'store'} size={40} color="#0096FF" />
             {/* <Image style={globalStyles.iconmenuwalkin} /> */}
             <Text style={globalStyles.menubuttontextselected}>Walk In</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={globalStyles.menubuttonitembottom}
+            style={globalStyles.menubuttonitembottom2}
             onPress={handleWalkInandOnline}>
-            <Icon name={'globe'} size={30} color="#0096FF" />
+            <Icon name={'globe'} size={40} color="#0096FF" />
             {/* <Image style={globalStyles.iconmenuonline} /> */}
             <Text style={globalStyles.menubuttontextonline}>Online</Text>
           </TouchableOpacity>
