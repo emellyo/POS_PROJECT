@@ -25,6 +25,7 @@ import * as Utils from '../Helpers/Utils';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {getcategories} from '../api/getcategories';
+import {getitem} from '../api/getitem';
 import {Item} from 'react-navigation-header-buttons';
 //import {SQLiteDatabase, enablePromise, openDatabase } from 'react-native-sqlite-storage';
 //import BarcodeScanner from 'react-native-scan-barcode';
@@ -57,6 +58,7 @@ export default function Menu({navigation}) {
   const [modalCustVisible, setModalCustVisible] = useState(false);
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const [category, setCategory] = useState([]);
+  const [item, setItem] = useState([]);
   const [jmlcat, setJmlCat] = useState(0);
   const [open, setOpen] = useState(false);
   const [domain, setDomain] = useState('');
@@ -72,6 +74,7 @@ export default function Menu({navigation}) {
     //setMdlBills(true);
     setMdlPayment(false);
     Categories();
+    GetItems();
     BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     return () => {
       clearInterval(increment.current);
@@ -120,7 +123,18 @@ export default function Menu({navigation}) {
       });
   };
 
-  const GetItems = async () => {};
+  const GetItems = async () => {
+    getitem({
+      UserID: '',
+      Item_Number: '',
+      Category_ID: '',
+      LowStock: 0,
+    }).then(async result => {
+      var hasil = result.data;
+      console.info('hasil get item: ', hasil);
+      setItem(hasil);
+    });
+  };
 
   //#endregion
 
@@ -952,70 +966,21 @@ export default function Menu({navigation}) {
                 gap: 5,
               }}>
               {/* //! MENU ITEM */}
-              <View style={globalStyles.menuitemlist}>
-                <TouchableOpacity
-                  style={globalStyles.menubuttonitemnew}
-                  onPress={viewModalVariant}>
-                  <Icon name={'tshirt'} size={50} color="#0096FF" />
-                  <Text style={globalStyles.menubuttontextnew}>Kopi Susu</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={globalStyles.menuitemlist}>
-                <TouchableOpacity
-                  style={globalStyles.menubuttonitemnew}
-                  onPress={viewModalVariant}>
-                  <Icon name={'tshirt'} size={50} color="#0096FF" />
-                  <Text style={globalStyles.menubuttontextnew}>Kopi Susu</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={globalStyles.menuitemlist}>
-                <TouchableOpacity
-                  style={globalStyles.menubuttonitemnew}
-                  onPress={viewModalVariant}>
-                  <Icon name={'tshirt'} size={50} color="#0096FF" />
-                  <Text style={globalStyles.menubuttontextnew}>Kopi Susu</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={globalStyles.menuitemlist}>
-                <TouchableOpacity
-                  style={globalStyles.menubuttonitemnew}
-                  onPress={viewModalVariant}>
-                  <Icon name={'tshirt'} size={50} color="#0096FF" />
-                  <Text style={globalStyles.menubuttontextnew}>Kopi Susu</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={globalStyles.menuitemlist}>
-                <TouchableOpacity
-                  style={globalStyles.menubuttonitemnew}
-                  onPress={viewModalVariant}>
-                  <Icon name={'tshirt'} size={50} color="#0096FF" />
-                  <Text style={globalStyles.menubuttontextnew}>Kopi Susu</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={globalStyles.menuitemlist}>
-                <TouchableOpacity
-                  style={globalStyles.menubuttonitemnew}
-                  onPress={viewModalVariant}>
-                  <Icon name={'tshirt'} size={50} color="#0096FF" />
-                  <Text style={globalStyles.menubuttontextnew}>Kopi Susu</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={globalStyles.menuitemlist}>
-                <TouchableOpacity
-                  style={globalStyles.menubuttonitemnew}
-                  onPress={viewModalVariant}>
-                  <Icon name={'tshirt'} size={50} color="#0096FF" />
-                  <Text style={globalStyles.menubuttontextnew}>Kopi Susu</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={globalStyles.menuitemlist}>
-                <TouchableOpacity
-                  style={globalStyles.menubuttonitemnew}
-                  onPress={viewModalVariant}>
-                  <Icon name={'tshirt'} size={50} color="#0096FF" />
-                  <Text style={globalStyles.menubuttontextnew}>Kopi Susu</Text>
-                </TouchableOpacity>
-              </View>
+              {item.map((item, index) => {
+                return (
+                  <View key={index} style={globalStyles.menuitemlist}>
+                    <TouchableOpacity
+                      style={globalStyles.menubuttonitemnew}
+                      onPress={viewModalVariant}>
+                      <Icon name={'tshirt'} size={50} color="#0096FF" />
+                      <Text style={globalStyles.menubuttontextnew}>
+                        {item.item_Name}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                );
+              })}
+
               {/* //! MENU ITEM */}
               {/* {list.map((item, index) => {
               return (
