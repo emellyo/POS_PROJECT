@@ -62,6 +62,7 @@ export default function Menu({navigation}) {
   const [jmlcat, setJmlCat] = useState(0);
   const [open, setOpen] = useState(false);
   const [domain, setDomain] = useState('');
+  const [cat, setCat] = useState('');
   //#endregion
 
   useEffect(() => {
@@ -98,7 +99,7 @@ export default function Menu({navigation}) {
           if (hasil.length > 0) {
             for (let i = 0; i < hasil.length; i++) {
               let data = hasil[i];
-              let value = data.category_Name;
+              let value = data.category_ID;
               if (i == 0) {
                 catfirst = value;
               }
@@ -135,6 +136,27 @@ export default function Menu({navigation}) {
       setItem(hasil);
     });
   };
+
+  const GetItemsbyCat = async category => {
+    setItem([]);
+    console.log('category: ', category);
+    getitem({
+      UserID: '',
+      Item_Number: '',
+      Category_ID: category,
+      LowStock: 0,
+    }).then(async result => {
+      var hasil = result.data;
+      setItem(hasil);
+    });
+  };
+
+  function selectedCat(nilai) {
+    try {
+      setCat(nilai);
+      GetItemsbyCat(nilai);
+    } catch (error) {}
+  }
 
   //#endregion
 
@@ -946,6 +968,7 @@ export default function Menu({navigation}) {
               setValue={setDomain}
               setItems={setCategory}
               onSelectItem={item => {
+                selectedCat(item.value);
                 console.log('nilai cat:' + item.value);
               }}
               dropDownStyle={{maxHeight: 500, backgroundColor: 'white'}}
