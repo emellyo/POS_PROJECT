@@ -15,6 +15,13 @@ export const globalStyles = StyleSheet.create({
     paddingLeft: 10,
     alignItems: 'flex-start',
   },
+
+  bannerpanahbackcashman: {
+    position: 'flex-start',
+    top: 10,
+    bottom: 0,
+  },
+
   bannermenutext: {
     color: '#FFFFFF',
     fontSize: 20,
@@ -105,7 +112,7 @@ export const globalStyles = StyleSheet.create({
   },
   menuitemlist: {
     flex: 1,
-    flexBasis: '24%',
+    flexBasis: '30%',
     //width: '24%',
     flexDirection: 'column',
   },
@@ -184,7 +191,7 @@ export const globalStyles = StyleSheet.create({
     // borderWidth: 1, borderColor: 'red'
   },
   bannertext: {
-    color: 'white',
+    color: '#0096FF',
     fontSize: 22,
     fontWeight: 'bold',
     textAlign: 'center',
@@ -192,7 +199,7 @@ export const globalStyles = StyleSheet.create({
   bannerhome: {
     position: 'absolute',
     top: 0,
-    backgroundColor: '#0096FF',
+    backgroundColor: '#FFFF',
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
@@ -441,16 +448,30 @@ export const globalStyles = StyleSheet.create({
   textinputcustomer: {
     fontWeight: '600',
     flex: 0,
-    borderTopLeftRadius: 3,
-    borderBottomLeftRadius: 3,
+    //borderBottomLeftRadius: 3,
+    //borderTopLeftRadius: 3,
     //elevation: 5,
     borderWidth: 1,
     //borderColor: '#212121',
-    padding: 0,
+    //padding: 0,
     fontSize: 13,
     paddingBottom: 10,
     width: 300,
     marginTop: '20%',
+  },
+  textinputcashclose: {
+    fontWeight: '600',
+    flex: 0,
+    //borderBottomLeftRadius: 3,
+    //borderTopLeftRadius: 3,
+    //elevation: 5,
+    borderWidth: 1,
+    //borderColor: '#212121',
+    //padding: 0,
+    fontSize: 13,
+    paddingBottom: 5,
+    width: 300,
+    marginTop: '5%',
   },
   textinputprinter: {
     fontWeight: '600',
@@ -730,6 +751,12 @@ export const globalStyles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
   },
+  textpayout: {
+    color: '#FF0000',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    fontSize: 20,
+  },
   modalText: {
     fontSize: 18,
     color: '#FFFFFF',
@@ -737,6 +764,16 @@ export const globalStyles = StyleSheet.create({
     marginHorizontal: 0,
     //top: 0,
     bottom: 0,
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  modalTextcashman: {
+    fontSize: 18,
+    color: '#FFFFFF',
+    paddingHorizontal: 0,
+    marginHorizontal: 0,
+    //top: 0,
+    bottom: 15,
     textAlign: 'center',
     fontWeight: 'bold',
   },
@@ -764,6 +801,17 @@ export const globalStyles = StyleSheet.create({
     width: '97%',
     fontSize: 18,
     color: '#0096FF',
+    paddingHorizontal: 0,
+    marginHorizontal: 0,
+    textAlign: 'left',
+    fontWeight: 'bold',
+    // borderWidth: 1,
+    // borderBottomColor: '#212121',
+  },
+  Payinout: {
+    width: '97%',
+    fontSize: 18,
+    color: '#212121',
     paddingHorizontal: 0,
     marginHorizontal: 0,
     textAlign: 'left',
@@ -846,7 +894,7 @@ export const globalStyles = StyleSheet.create({
   },
   box5: {
     position: 'absolute',
-    bottom: 10,
+    bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
@@ -898,6 +946,22 @@ export const globalStyles = StyleSheet.create({
     borderWidth: 1,
     backgroundColor: '#FFFFFF',
   },
+  buttonclose: {
+    width: '50%',
+    height: 40,
+    borderWidth: 1,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#0096FF',
+  },
+  buttonpayout: {
+    width: '50%',
+    height: 40,
+    borderWidth: 1,
+    backgroundColor: '#FFFF',
+    borderWidth: 1,
+    borderColor: '#FF0000',
+  },
   buttonYesPayment: {
     width: '50%',
     height: 40,
@@ -921,6 +985,12 @@ export const globalStyles = StyleSheet.create({
   },
   textNo: {
     color: '#212121',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    fontSize: 20,
+  },
+  textCloseShift: {
+    color: '#0096FF',
     fontWeight: 'bold',
     textAlign: 'center',
     fontSize: 20,
@@ -1037,8 +1107,9 @@ export const globalStyles = StyleSheet.create({
   },
   modalViewCust: {
     backgroundColor: 'white',
-    borderRadius: 5,
+    //borderRadius: 5,
     paddingBottom: 20,
+    //height: 50,
     alignItems: 'center',
     shadowOffset: {
       width: 0,
@@ -1118,6 +1189,15 @@ export const globalStyles = StyleSheet.create({
     // borderBottomWidth: 1,
     // borderBottomColor: '#212121',
   },
+  InputClose: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    height: '5%',
+    //padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#212121',
+  },
   InputBills2: {
     width: '100%',
     height: '10%',
@@ -1130,20 +1210,10 @@ export const globalStyles = StyleSheet.create({
   InputBills3: {
     width: '100%',
     height: '10%',
-    //padding: 5,
-    borderBottomWidth: 1,
-    borderBottomColor: '#212121',
-    borderTopWidth: 1,
-    borderTopColor: '#212121',
   },
   InputBills4: {
     width: '100%',
     height: '10%',
-    //padding: 5,
-    // borderBottomWidth: 1,
-    // borderBottomColor: '#212121',
-    // borderTopWidth: 1,
-    // borderTopColor: '#212121',
   },
   InputBills5: {
     width: '100%',
@@ -1169,6 +1239,13 @@ export const globalStyles = StyleSheet.create({
     padding: 10,
   },
   ButtonPayment: {
+    width: '100%',
+    height: '15%',
+    display: 'flex',
+    gap: 5,
+    padding: 10,
+  },
+  ButtonCloseShift: {
     width: '100%',
     height: '15%',
     display: 'flex',
@@ -1308,6 +1385,16 @@ export const globalStyles = StyleSheet.create({
     borderTopLeftRadius: 5,
     borderTopRightRadius: 5,
   },
+  modalheadercashman: {
+    backgroundColor: '#0096FF',
+    //marginTop: 0,
+    width: '100%',
+    padding: 10,
+    SjustifyContent: 'center',
+    borderTopLeftRadius: 5,
+    borderTopRightRadius: 5,
+    height: '10%',
+  },
   modalheaderPrinter: {
     backgroundColor: '#0096FF',
     marginTop: 0,
@@ -1344,6 +1431,12 @@ export const invrecStyles = StyleSheet.create({
     //alignItems: 'flex-start',
     position: 'absolute',
     left: 20,
+  },
+  bannerpanahbackcashman: {
+    position: 'flex-start',
+    zIndex: 1,
+    top: 10,
+    bottom: 0,
   },
   bannerpanahbackprinter: {
     //paddingLeft: 10,
@@ -1578,6 +1671,13 @@ export const invrecStyles = StyleSheet.create({
     borderBottomColor: '#212121',
   },
   buttontotalan: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
+    gap: 5,
+    padding: 5,
+  },
+  buttontotalanclose: {
     display: 'flex',
     flexDirection: 'row',
     width: '100%',

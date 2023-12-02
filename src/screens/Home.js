@@ -72,64 +72,20 @@ const Home = () => {
     // LOADTBLSTOCK();
     GetUserData();
     //setMdlPrinter(true);
+    if (route.params?.showModal) {
+      setMdlConfirm(true);
+    }
+    //setIsSidebarOpen(false);
     setIsSidebarOpen(!isSidebarOpen);
     BackHandler.addEventListener('hardwareBackPress', viewConfirmLogout);
     return () => {
       clearInterval(increment.current);
+      //backHandler.remove();
       BackHandler.removeEventListener('hardwareBackPress', viewConfirmLogout);
     };
-  }, []);
+  }, [route.params]);
 
   //#region //* FUNCTION
-
-  //   const LOADTBLINVRCV = async () => {
-  //     try {
-  //       const db = await dbconn.getDBConnection();
-  //       //await dbconn.dropTbl(db, 'InvRcv');
-  //       await dbconn.InvRcv_CreateTbl(db, 'InvRcv');
-  //       // await dbconn.deletedataAllTbl(db, 'InvRcv');
-  //       const storedTbl = await dbconn.InvRcv_getdata(db, 'InvRcv');
-  //       if (storedTbl.length) {
-  //         console.log('datastored:', storedTbl);
-  //       } else {
-  //         console.log('no data');
-  //       }
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
-
-  //   const LOADTBLINVOUT = async () => {
-  //     try {
-  //       const db = await dbconn2.getDBConnection();
-  //       //await dbconn.dropTbl(db, 'InvOut');
-  //       await dbconn2.InvOut_CreateTbl(db, 'InvOut');
-  //       const storedTbl = await dbconn2.InvOut_getdata(db, 'InvOut');
-  //       if (storedTbl.length) {
-  //         console.log('datastored: ', storedTbl);
-  //       } else {
-  //         console.log('no data');
-  //       }
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
-
-  //   const LOADTBLSTOCK = async () => {
-  //     try {
-  //       const db = await dbconn3.getDBConnection();
-  //       //await dbconn.dropTbl(db, 'ItemStock');
-  //       await dbconn3.ItemStock_CreateTbl(db, 'ItemStock');
-  //       const storedTbl = await dbconn3.ItemStock_getdata(db, 'ItemStock');
-  //       if (storedTbl.length) {
-  //         console.log('datastored: ', storedTbl);
-  //       } else {
-  //         console.log('no data');
-  //       }
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
 
   //   const GetUserData = () => {
   //     try {
@@ -506,7 +462,7 @@ const Home = () => {
         <Text style={globalStyles.bannertext}>POS</Text>
         <View style={{position: 'absolute', right: 10}}>
           <TouchableOpacity onPress={viewConfirmSync}>
-            <Icon name={'sync'} size={25} color="white"></Icon>
+            <Icon name={'sync'} size={25} color="#0096FF"></Icon>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -515,10 +471,6 @@ const Home = () => {
       {/* //* CONTENT */}
       <SafeAreaView style={globalStyles.viewmenu}>
         <View style={globalStyles.title1view}>
-          <Text style={globalStyles.title1text}>
-            Selamat Datang, <Text style={{fontWeight: 'bold'}}>{fullname}</Text>
-          </Text>
-          <Text style={globalStyles.menutitletexthome}>Sales Type</Text>
           <TouchableOpacity
             style={{position: 'absolute', right: 0}}
             onPress={viewConfirmLogout}>
@@ -526,32 +478,6 @@ const Home = () => {
           </TouchableOpacity>
         </View>
         <SafeAreaView style={globalStyles.menuviewhome}></SafeAreaView>
-        {/* //! MENU ITEM */}
-        {/* <View style={{flex: 3, flexDirection: 'row', marginHorizontal: 2}}>
-            <TouchableOpacity
-              style={globalStyles.menubuttonitemnew}
-              onPress={handleInvRec}>
-              <Image style={globalStyles.iconmenu} />
-              <Text style={globalStyles.menubuttontextnew}>
-                Inventory Receiving
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={globalStyles.menubuttonitemnew}
-              //onPress={handleInvOut}
-            >
-              <Image style={globalStyles.iconmenu} />
-              <Text style={globalStyles.menubuttontextnew}>Inventory Out</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={globalStyles.menubuttonitemnew}
-              //onPress={StockCount}
-            >
-              <Image style={globalStyles.iconmenu} />
-              <Text style={globalStyles.menubuttontextnew}>Stock Opname</Text>
-            </TouchableOpacity>
-          </View> */}
-        {/* //! MENU ITEM */}
       </SafeAreaView>
       {/* //* CONTENT */}
       <SafeAreaView style={globalStyles.menuviewhome2}>

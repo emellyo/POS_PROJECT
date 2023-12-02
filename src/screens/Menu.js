@@ -71,7 +71,7 @@ export default function Menu({navigation}) {
     //handleGetItem();
     //RELOADPAGE();
     //LOADTBLINVOUT();
-    //setMdlConfirmCust(true);
+    setMdlConfirmCust(true);
     //setMdlBills(true);
     setMdlPayment(false);
     Categories();
@@ -273,7 +273,7 @@ export default function Menu({navigation}) {
               <View style={globalStyles.modalheader}>
                 <Text style={globalStyles.modalText}>Customer Name</Text>
               </View>
-              <View style={{margin: 35, marginBottom: 0}}>
+              <View style={{margin: 0, marginBottom: 0}}>
                 <TextInput
                   style={[
                     globalStyles.textinputcustomer,
@@ -291,7 +291,7 @@ export default function Menu({navigation}) {
                 style={{
                   flexDirection: 'row',
                   marginHorizontal: 0,
-                  marginTop: '20%',
+                  marginTop: '10%',
                 }}>
                 <TouchableOpacity
                   style={[globalStyles.buttonNo]}
@@ -300,6 +300,7 @@ export default function Menu({navigation}) {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[globalStyles.buttonYes]}
+                  onPress={() => setMdlConfirmCust(!mdlConfirmCust)}
                   //onPress={PostDataInvOut}
                 >
                   <Text style={globalStyles.textStyle}>Save</Text>
@@ -940,7 +941,7 @@ export default function Menu({navigation}) {
         {/* //* BANNER */}
 
         {/* //* CONTENT */}
-        <ScrollView style={{padding: 15}}>
+        <ScrollView style={{flex: 3, padding: 15, height: '100%'}}>
           <View
             style={
               (invrecStyles.menucatdropdown, {minHeight: open ? '50%' : '20%'})
@@ -982,7 +983,7 @@ export default function Menu({navigation}) {
           <ScrollView nestedScrollEnabled={true}>
             <View
               style={{
-                flex: 1,
+                flex: 3,
                 display: 'flex',
                 flexDirection: 'row',
                 flexWrap: 'wrap',
@@ -1262,12 +1263,6 @@ export default function Menu({navigation}) {
         {/* //* CONTENT */}
 
         {/* //* FOOTER */}
-        {/* <SafeAreaView style={[globalStyles.box5]}>
-        <View style={[globalStyles.footer]}>
-          <Icon name={'copyright'} size={14} color="#212121" />
-          <Text style={{color: colors.text, paddingLeft: 2}}>ArthaIT 2023</Text>
-        </View>
-      </SafeAreaView> */}
         {/* //* FOOTER */}
       </SafeAreaView>
     </ScrollView>

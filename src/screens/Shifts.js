@@ -36,6 +36,8 @@ export default function Discount({navigation}) {
   //const navigation = useNavigation();
 
   const [mdlDiscount, setMdlDiscount] = useState(false);
+  const [mdlCloseShift, setMdlCloseShift] = useState(false);
+  const [mdlCashMan, setMdlCashMan] = useState(false);
   const [search, setSearch] = useState('');
 
   useEffect(() => {
@@ -58,9 +60,14 @@ export default function Discount({navigation}) {
   const updateSearch = search => {
     setSearch(search);
   };
-
+  const viewModalCloseShift = async () => {
+    setMdlCloseShift(true);
+  };
+  const viewModalCashMan = async () => {
+    setMdlCashMan(true);
+  };
   function handleBackButtonClick() {
-    navigation.goBack();
+    navigation.replace('Home');
     return true;
   }
 
@@ -75,6 +82,232 @@ export default function Discount({navigation}) {
       <StatusBar
         backgroundColor={'#0096FF'}
         barStyle="light-content"></StatusBar>
+
+      {/* //* MODAL CLOSE SHIFT */}
+      <Modal animationType="fade" transparent={true} visible={mdlCloseShift}>
+        <View style={globalStyles.centeredViewPayment}>
+          <View style={globalStyles.modalViewBills} nestedScrollEnabled={true}>
+            <View style={globalStyles.modalheader}>
+              <Text style={globalStyles.modalText}>Close Shift</Text>
+            </View>
+            <ScrollView style={globalStyles.InputClose}>
+              {/* //* BILLS*/}
+              <SafeAreaView style={[invrecStyles.inputantotalanbillskiri]}>
+                <View style={globalStyles.cartlist}>
+                  <View style={globalStyles.kiri}>
+                    <View style={globalStyles.itemqty}>
+                      <Text
+                        style={[
+                          invrecStyles.labelinputbills,
+                          {backgroundColor: colors.card, color: colors.text},
+                        ]}>
+                        Expected
+                      </Text>
+                    </View>
+                    <Text
+                      style={[
+                        invrecStyles.labelinputbills,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      Cash Amount
+                    </Text>
+                  </View>
+                  <View style={globalStyles.kanan}>
+                    <TextInput
+                      style={[
+                        globalStyles.textinputcashclose,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}
+                      maxLength={100}
+                      keyboardType="numeric"
+                      //value={password}
+                      //onChangeText={text => setPassword(text)}
+                    />
+                  </View>
+                </View>
+              </SafeAreaView>
+              <SafeAreaView style={[invrecStyles.inputantotalanbillskiri]}>
+                <View style={globalStyles.cartlist}>
+                  <View style={globalStyles.kiri}>
+                    <View style={globalStyles.itemqty}>
+                      <Text
+                        style={[
+                          invrecStyles.labelinputbills,
+                          {backgroundColor: colors.card, color: colors.text},
+                        ]}>
+                        Actual
+                      </Text>
+                    </View>
+                    <Text
+                      style={[
+                        invrecStyles.labelinputbills,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      Cash Amount
+                    </Text>
+                  </View>
+                  <View style={globalStyles.kanan}>
+                    <TextInput
+                      style={[
+                        globalStyles.textinputcashclose,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}
+                      maxLength={100}
+                      keyboardType="numeric"
+                      //value={password}
+                      //onChangeText={text => setPassword(text)}
+                    />
+                  </View>
+                </View>
+              </SafeAreaView>
+              {/* //* BILLS*/}
+            </ScrollView>
+            <ScrollView style={globalStyles.InputBills2}>
+              <SafeAreaView style={[invrecStyles.inputantotalanbillskiri]}>
+                <View style={globalStyles.cartlist}>
+                  <View style={globalStyles.kiri}>
+                    <View style={globalStyles.itemqty}>
+                      <Text
+                        style={[
+                          invrecStyles.labelinputbills,
+                          {backgroundColor: colors.card, color: colors.text},
+                        ]}>
+                        Difference
+                      </Text>
+                    </View>
+                  </View>
+                  <View style={globalStyles.kanan}>
+                    <TextInput
+                      style={[
+                        globalStyles.textinputcashclose,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}
+                      maxLength={100}
+                      keyboardType="numeric"
+                      //value={password}
+                      //onChangeText={text => setPassword(text)}
+                    />
+                  </View>
+                </View>
+              </SafeAreaView>
+            </ScrollView>
+            <View style={globalStyles.ButtonCloseShift}>
+              <SafeAreaView style={[invrecStyles.buttontotalanclose]}>
+                <TouchableOpacity
+                  style={[globalStyles.buttonclose]}
+                  onPress={() => setMdlCloseShift(!mdlCloseShift)}>
+                  <Text style={globalStyles.textCloseShift}>CLOSE SHIFT</Text>
+                </TouchableOpacity>
+              </SafeAreaView>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      {/* //* MODAL CLOSE SHIFT */}
+
+      {/* //* MODAL CASH MANGEMENT */}
+      <Modal animationType="fade" transparent={true} visible={mdlCashMan}>
+        <View style={globalStyles.centeredViewPayment}>
+          <View style={globalStyles.modalViewBills} nestedScrollEnabled={true}>
+            <View style={globalStyles.modalheadercashman}>
+              <TouchableOpacity
+                style={invrecStyles.bannerpanahbackcashman}
+                onPress={() => setMdlCashMan(!mdlCashMan)}>
+                <Icon name={'arrow-left'} size={20} color="#FFFFFF" />
+              </TouchableOpacity>
+              <Text style={globalStyles.modalTextcashman}>Cash Management</Text>
+            </View>
+            <ScrollView style={globalStyles.InputClose}>
+              {/* //* BILLS*/}
+              <SafeAreaView style={[invrecStyles.inputantotalanbillskiri]}>
+                <View style={globalStyles.cartlist}>
+                  <View style={globalStyles.kiri}>
+                    <View style={globalStyles.itemqty}>
+                      <Text
+                        style={[
+                          invrecStyles.labelinputbills,
+                          {backgroundColor: colors.card, color: colors.text},
+                        ]}>
+                        Expected
+                      </Text>
+                    </View>
+                    <Text
+                      style={[
+                        invrecStyles.labelinputbills,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      Cash Amount
+                    </Text>
+                  </View>
+                  <View style={globalStyles.kanan}>
+                    <TextInput
+                      style={[
+                        globalStyles.textinputcashclose,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}
+                      maxLength={100}
+                      keyboardType="numeric"
+                      //value={password}
+                      //onChangeText={text => setPassword(text)}
+                    />
+                  </View>
+                </View>
+              </SafeAreaView>
+              <SafeAreaView style={[invrecStyles.inputantotalanbillskiri]}>
+                <View style={globalStyles.cartlist}>
+                  <View style={globalStyles.kiri}>
+                    <View style={globalStyles.itemqty}>
+                      <Text
+                        style={[
+                          invrecStyles.labelinputbills,
+                          {backgroundColor: colors.card, color: colors.text},
+                        ]}>
+                        Actual
+                      </Text>
+                    </View>
+                    <Text
+                      style={[
+                        invrecStyles.labelinputbills,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      Cash Amount
+                    </Text>
+                  </View>
+                  <View style={globalStyles.kanan}>
+                    <TextInput
+                      style={[
+                        globalStyles.textinputcashclose,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}
+                      maxLength={100}
+                      keyboardType="numeric"
+                      //value={password}
+                      //onChangeText={text => setPassword(text)}
+                    />
+                  </View>
+                </View>
+              </SafeAreaView>
+              <View style={globalStyles.ButtonCloseShift}>
+                <SafeAreaView style={[invrecStyles.buttontotalanclose]}>
+                  <TouchableOpacity
+                    style={[globalStyles.buttonclose]}
+                    onPress={() => setMdlCashMan(!mdlCashMan)}>
+                    <Text style={globalStyles.textCloseShift}>PAY IN</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[globalStyles.buttonpayout]}>
+                    <Text style={globalStyles.textpayout}>PAY OUT</Text>
+                  </TouchableOpacity>
+                </SafeAreaView>
+              </View>
+              {/* //* BILLS*/}
+            </ScrollView>
+            <ScrollView style={globalStyles.InputBills2}>
+              <Text style={globalStyles.Payinout}>Pay In/Pay Out</Text>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+      {/* //* MODAL CASH MANAGEMENT */}
 
       {/* //* BANNER */}
       <SafeAreaView style={invrecStyles.bannermenu}>
@@ -503,14 +736,18 @@ export default function Discount({navigation}) {
         <View style={[invrecStyles.form]}>
           <View style={globalStyles.kiri}>
             <View style={[invrecStyles.menuitemsubmit2]}>
-              <TouchableOpacity style={globalStyles.buttoncashmanag}>
+              <TouchableOpacity
+                style={globalStyles.buttoncashmanag}
+                onPress={viewModalCashMan}>
                 <Text style={globalStyles.textbut}>CASH MANAGEMENT</Text>
               </TouchableOpacity>
             </View>
           </View>
           <View style={globalStyles.kanan}>
             <View style={[invrecStyles.menuitemsubmit3]}>
-              <TouchableOpacity style={globalStyles.buttoncashmanag}>
+              <TouchableOpacity
+                style={globalStyles.buttoncashmanag}
+                onPress={viewModalCloseShift}>
                 <Text style={globalStyles.textbut}>CLOSE SHIFT</Text>
               </TouchableOpacity>
             </View>

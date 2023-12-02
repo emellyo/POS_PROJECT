@@ -14,6 +14,10 @@ const SidebarContent = props => {
   const navigateToScreen = screenName => {
     navigation.navigate(screenName);
   };
+  const openModal = () => {
+    // Navigate to the "Home" screen and open the modal
+    navigation.navigate('Home', {showModal: true});
+  };
 
   return (
     <View style={{padding: 16}}>
@@ -87,7 +91,10 @@ const SidebarContent = props => {
           </Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigateToScreen('Home')}>
+      <TouchableOpacity
+        onPress={() => {
+          openModal();
+        }}>
         <View
           style={{
             flexDirection: 'row',
