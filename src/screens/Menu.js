@@ -59,6 +59,7 @@ export default function Menu({navigation}) {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const [category, setCategory] = useState([]);
   const [item, setItem] = useState([]);
+  const [variant, setVariant] = useState([]);
   const [jmlcat, setJmlCat] = useState(0);
   const [open, setOpen] = useState(false);
   const [domain, setDomain] = useState('');
@@ -66,11 +67,6 @@ export default function Menu({navigation}) {
   //#endregion
 
   useEffect(() => {
-    //StartCheck();
-    // GetUserData();
-    //handleGetItem();
-    //RELOADPAGE();
-    //LOADTBLINVOUT();
     setMdlConfirmCust(true);
     //setMdlBills(true);
     setMdlPayment(false);
@@ -148,6 +144,23 @@ export default function Menu({navigation}) {
     }).then(async result => {
       var hasil = result.data;
       setItem(hasil);
+    });
+  };
+
+  const GetVariants = async variant => {
+    setVariant([]);
+    var itmno = variant.item_Number;
+    var cat = variant.category_ID;
+    console.log('category: ', variant);
+    getitem({
+      UserID: '',
+      Item_Number: itmno,
+      Category_ID: cat,
+      LowStock: 0,
+    }).then(async result => {
+      var hasil = result.data;
+      setCat(hasil);
+      console.log('HASIL GET VARIANT', hasil);
     });
   };
 
@@ -995,7 +1008,7 @@ export default function Menu({navigation}) {
                   <View key={index} style={globalStyles.menuitemlist}>
                     <TouchableOpacity
                       style={globalStyles.menubuttonitemnew}
-                      onPress={viewModalVariant}>
+                      onPress={() => GetVariants(item)}>
                       <Icon name={'tshirt'} size={50} color="#0096FF" />
                       <Text style={globalStyles.menubuttontextnew}>
                         {item.item_Name}
