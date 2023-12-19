@@ -249,12 +249,11 @@ export const globalStyles = StyleSheet.create({
   },
   buttonSubmitFlag: {
     width: '100%',
-    paddingVertical: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingVertical: 10,
+    justifyContent: 'space-around',
     backgroundColor: 'white',
-    borderRadius: 5,
-    elevation: 10,
+    borderWidth: 1,
+    borderColor: 'black',
     marginTop: 25,
   },
   buttonSubmitDisable: {
@@ -724,10 +723,20 @@ export const globalStyles = StyleSheet.create({
     fontSize: 20,
   },
   textFlag: {
-    color: 'green',
+    color: 'black',
     fontWeight: '800',
     fontSize: 20,
+    top: 10,
   },
+
+  textFlag2: {
+    color: 'black',
+    fontWeight: '800',
+    fontSize: 20,
+    left: 550,
+    //paddingBottom: 50,
+  },
+
   textFailed: {
     marginLeft: 20,
     alignSelf: 'auto',
@@ -1362,7 +1371,7 @@ export const globalStyles = StyleSheet.create({
   },
   inputtotalan: {
     width: '100%',
-    height: 42,
+    height: 80,
     verticalAlign: 'middle',
   },
   inputprinter: {

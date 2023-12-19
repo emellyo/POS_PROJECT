@@ -27,6 +27,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {getcategories} from '../api/getcategories';
 import {getitem} from '../api/getitem';
 import {Item} from 'react-navigation-header-buttons';
+import {getvariant} from '../api/getvariant';
 //import {SQLiteDatabase, enablePromise, openDatabase } from 'react-native-sqlite-storage';
 //import BarcodeScanner from 'react-native-scan-barcode';
 //import * as dbconn from '../db/dbinvout';
@@ -152,14 +153,15 @@ export default function Menu({navigation}) {
     var itmno = variant.item_Number;
     var cat = variant.category_ID;
     console.log('category: ', variant);
-    getitem({
+    getvariant({
       UserID: '',
       Item_Number: itmno,
       Category_ID: cat,
       LowStock: 0,
     }).then(async result => {
       var hasil = result.data;
-      setCat(hasil);
+      setVariant(hasil);
+      viewModalVariant();
       console.log('HASIL GET VARIANT', hasil);
     });
   };
@@ -465,65 +467,27 @@ export default function Menu({navigation}) {
                 <Text style={globalStyles.modalText}>Variant</Text>
               </View>
               <Text style={globalStyles.TextHeaderVariant}>Variant</Text>
-              <ScrollView style={globalStyles.InputVariant}>
+              <ScrollView
+                style={globalStyles.InputVariant}
+                nestedScrollEnabled={true}>
                 {/* //* VARIANT*/}
-                <SafeAreaView style={[invrecStyles.inputantotalan]}>
-                  <View style={globalStyles.inputtotalan}>
-                    <TouchableOpacity>
-                      <TextInput
-                        editable={false}
-                        style={[
-                          globalStyles.textinputpayment,
-                          {backgroundColor: colors.card, color: colors.text},
-                        ]}
-                        maxLength={100}
-                        //placeholder={'Masukkan Kata Sandi'}
-                        //placeholderTextColor={colors.text}
-                        //secureTextEntry={seePassword}
-                        //value={password}
-                        //onChangeText={text => setPassword(text)}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                </SafeAreaView>
-                <SafeAreaView style={[invrecStyles.inputantotalan]}>
-                  <View style={globalStyles.inputtotalan}>
-                    <TouchableOpacity>
-                      <TextInput
-                        editable={false}
-                        style={[
-                          globalStyles.textinputpayment,
-                          {backgroundColor: colors.card, color: colors.text},
-                        ]}
-                        maxLength={100}
-                        //placeholder={'Masukkan Kata Sandi'}
-                        //placeholderTextColor={colors.text}
-                        //secureTextEntry={seePassword}
-                        //value={password}
-                        //onChangeText={text => setPassword(text)}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                </SafeAreaView>
-                <SafeAreaView style={[invrecStyles.inputantotalan]}>
-                  <View style={globalStyles.inputtotalan}>
-                    <TouchableOpacity>
-                      <TextInput
-                        editable={false}
-                        style={[
-                          globalStyles.textinputpayment,
-                          {backgroundColor: colors.card, color: colors.text},
-                        ]}
-                        maxLength={100}
-                        //placeholder={'Masukkan Kata Sandi'}
-                        //placeholderTextColor={colors.text}
-                        //secureTextEntry={seePassword}
-                        //value={password}
-                        //onChangeText={text => setPassword(text)}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                </SafeAreaView>
+                <View style={[invrecStyles.inputantotalan]}>
+                  {variant.map((variant, index) => {
+                    return (
+                      <View key={index} style={globalStyles.inputtotalan}>
+                        <TouchableOpacity
+                          style={[globalStyles.buttonSubmitFlag]}>
+                          <Text style={globalStyles.textFlag}>
+                            {variant.variant_Name}
+                          </Text>
+                          <Text style={globalStyles.textFlag2}>
+                            {variant.item_Cost}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    );
+                  })}
+                </View>
                 {/* //* VARIANT*/}
               </ScrollView>
               <View style={[globalStyles.InputTotalanVariant]}>
@@ -537,9 +501,6 @@ export default function Menu({navigation}) {
                       maxLength={100}
                       placeholder={'Comment'}
                       placeholderTextColor={colors.text}
-                      //secureTextEntry={seePassword}
-                      //value={password}
-                      //onChangeText={text => setPassword(text)}
                     />
                   </View>
                 </SafeAreaView>
