@@ -545,8 +545,8 @@ export const globalStyles = StyleSheet.create({
     padding: 5,
     fontSize: 13,
     width: '10%',
-    height: '55%',
-    paddingLeft: 5,
+    height: '30%',
+    paddingLeft: 25,
     marginLeft: '5%',
   },
   textlb: {
@@ -1371,7 +1371,7 @@ export const globalStyles = StyleSheet.create({
   },
   inputtotalan: {
     width: '100%',
-    height: 70,
+    height: 80,
     verticalAlign: 'middle',
   },
   inputprinter: {
@@ -1585,8 +1585,9 @@ export const invrecStyles = StyleSheet.create({
   inputantotalan: {
     display: 'flex',
     flexDirection: 'row',
+    flexWrap: 'wrap',
     width: '100%',
-    marginTop: 5,
+    marginTop: 0,
     // borderBottomWidth: 1,
     // borderBottomColor: '#212121',
   },

@@ -65,6 +65,7 @@ export default function Menu({navigation}) {
   const [open, setOpen] = useState(false);
   const [domain, setDomain] = useState('');
   const [cat, setCat] = useState('');
+  const [count, setCount] = useState(1);
   //#endregion
 
   useEffect(() => {
@@ -164,6 +165,16 @@ export default function Menu({navigation}) {
       viewModalVariant();
       console.log('HASIL GET VARIANT', hasil);
     });
+  };
+
+  const handleIncrement = () => {
+    // Increase count by 1
+    setCount(count + 1);
+  };
+
+  const handleDecrement = () => {
+    // Decrease count by 1, but don't let it go below 0
+    setCount(Math.max(1, count - 1));
   };
 
   function selectedCat(nilai) {
@@ -506,18 +517,25 @@ export default function Menu({navigation}) {
                 </SafeAreaView>
                 <SafeAreaView style={[invrecStyles.inputanqty]}>
                   <TouchableOpacity style={[globalStyles.buttonQTYMinus]}>
-                    <Text style={globalStyles.textNo}> - </Text>
+                    <Text style={globalStyles.textNo} onPress={handleDecrement}>
+                      {' '}
+                      -{' '}
+                    </Text>
                   </TouchableOpacity>
                   <TextInput
                     style={[
                       globalStyles.textinputqty,
                       {backgroundColor: colors.card, color: colors.text},
                     ]}
+                    value={count.toString()}
                     maxLength={100}
                     keyboardType="numeric"
                   />
                   <TouchableOpacity style={[globalStyles.buttonQTYPlus]}>
-                    <Text style={globalStyles.textNo}> + </Text>
+                    <Text style={globalStyles.textNo} onPress={handleIncrement}>
+                      {' '}
+                      +{' '}
+                    </Text>
                   </TouchableOpacity>
                 </SafeAreaView>
               </View>
