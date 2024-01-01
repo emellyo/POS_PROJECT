@@ -21,16 +21,14 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import {useRoute, useTheme} from '@react-navigation/native';
 import CheckBox from '@react-native-community/checkbox';
 import * as Utils from '../Helpers/Utils';
-//import {loadingartha, wmsclear} from '../images/images';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {getcategories} from '../api/getcategories';
 import {getitem} from '../api/getitem';
 import {Item} from 'react-navigation-header-buttons';
 import {getvariant} from '../api/getvariant';
-//import {SQLiteDatabase, enablePromise, openDatabase } from 'react-native-sqlite-storage';
-//import BarcodeScanner from 'react-native-scan-barcode';
-//import * as dbconn from '../db/dbinvout';
+import {getrunno} from '../api/getrunningnumber';
+import * as dbconn from '../db/AddItem';
 
 export default function Menu({navigation}) {
   LogBox.ignoreLogs([
@@ -74,6 +72,8 @@ export default function Menu({navigation}) {
     setMdlPayment(false);
     Categories();
     GetItems();
+    GetRunno();
+    LOADTBLADDITEM();
     BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     return () => {
       clearInterval(increment.current);
@@ -83,6 +83,22 @@ export default function Menu({navigation}) {
       );
     };
   }, []);
+
+  const LOADTBLADDITEM = async () => {
+    try {
+      const db = await dbconn.getDBConnection();
+      await dbconn.AddItem_CreateTbl(db, 'AddItem');
+      await dbconn.deletedataAllTbl(db, 'AddItem');
+      const storedTbl = await dbconn.AddItem_getdata(db, 'AddItem');
+      if (storedTbl.length) {
+        console.log('datastored:', storedTbl);
+      } else {
+        console.log('no data');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   //#region //* FUNCTION
 
@@ -113,6 +129,23 @@ export default function Menu({navigation}) {
           if (results.length > 0) {
             setDomain(catfirst);
           }
+        }
+      })
+      .catch(async err => {
+        console.log('respon: ' + err.message);
+        let msg = 'Servers is not available.';
+        msg = err.message;
+      });
+  };
+
+  const GetRunno = async () => {
+    getrunno({
+      DOCID: 'INV',
+    })
+      .then(async result => {
+        if (result.status == 200) {
+          var hasil = result.data;
+          console.log('hasil getrunno: ', hasil);
         }
       })
       .catch(async err => {
