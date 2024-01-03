@@ -64,6 +64,7 @@ export default function Menu({navigation}) {
   const [domain, setDomain] = useState('');
   const [cat, setCat] = useState('');
   const [count, setCount] = useState(1);
+  const [runno, setRunno] = useState('');
   //#endregion
 
   useEffect(() => {
@@ -146,6 +147,8 @@ export default function Menu({navigation}) {
         if (result.status == 200) {
           var hasil = result.data;
           console.log('hasil getrunno: ', hasil);
+          var number = hasil[0].gennumber;
+          setRunno(number);
         }
       })
       .catch(async err => {
