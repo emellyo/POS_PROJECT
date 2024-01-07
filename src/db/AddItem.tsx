@@ -47,7 +47,7 @@ export const AddItem_getdata = async (db: SQLiteDatabase, tableName: string): Pr
     return Lists;
   } catch (error) {
     console.error(error);
-    throw Error('Failed to getInvRcv !!!');
+    throw Error('Failed to get Add Item !!!');
   }
 };
 
@@ -88,10 +88,4 @@ export const querydynamic = async (db: SQLiteDatabase, query: string) => {
 export const deletedataAllTbl = async (db: SQLiteDatabase, tableName: string, id: number) => {
   const deleteQuery = `DELETE from ${tableName}`;
   await db.executeSql(deleteQuery);
-};
-
-export const dropTbl = async (db: SQLiteDatabase, tableName: string) => {
-  const query = `drop table ${tableName}`;
-
-  await db.executeSql(query);
 };
