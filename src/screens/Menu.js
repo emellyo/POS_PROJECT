@@ -64,6 +64,7 @@ export default function Menu({navigation}) {
   const [domain, setDomain] = useState('');
   const [cat, setCat] = useState('');
   const [count, setCount] = useState(1);
+  const [addtemp, setAddTemp] = useState([]);
   //#endregion
 
   useEffect(() => {
@@ -87,6 +88,7 @@ export default function Menu({navigation}) {
   const LOADTBLADDITEM = async () => {
     try {
       const db = await dbconn.getDBConnection();
+      //await dbconn.dropTbl(db, 'AddItem');
       await dbconn.AddItem_CreateTbl(db, 'AddItem');
       await dbconn.deletedataAllTbl(db, 'AddItem');
       const storedTbl = await dbconn.AddItem_getdata(db, 'AddItem');
@@ -193,10 +195,16 @@ export default function Menu({navigation}) {
       Category_ID: cat,
       LowStock: 0,
     }).then(async result => {
+      let dtAddItem = [];
       var hasil = result.data;
+      const db = await dbconn.getDBConnection();
+      await dbconn.AddItem_savedata(db, 'AddItem', hasil);
+      dtAddItem = await dbconn.AddItem_getdata(db, 'AddItem');
+      setAddTemp(dtAddItem);
+      console.log('isi dtAddItem: ', dtAddItem);
       setVariant(hasil);
       viewModalVariant();
-      console.log('HASIL GET VARIANT', hasil);
+      //console.log('HASIL GET VARIANT', hasil);
     });
   };
 

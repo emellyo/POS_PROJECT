@@ -1,6 +1,7 @@
 export type AddItem ={
     DOCID: string;
     item_Number: string;
+    item_Description: string;
     lineItem_Option: number;
     cB_Available: number;
     option_ID: string;
@@ -14,4 +15,6 @@ export type AddItem ={
     optimalStock: number;
     item_SKU: string;
     item_Barcode: string;
+    QTY_ORDER: number;
+    flag: number;
 }
