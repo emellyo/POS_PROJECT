@@ -70,6 +70,7 @@ const Home = () => {
     // LOADTBLINVOUT();
     // LOADTBLINVRCV();
     // LOADTBLSTOCK();
+    GetRunno();
     GetUserData();
     //setMdlPrinter(true);
     if (route.params?.showModal) {
@@ -155,6 +156,25 @@ const Home = () => {
   const handleLogout = async () => {
     // StopAll();
     navigation.replace('Login');
+  };
+
+  const GetRunno = async () => {
+    getrunno({
+      DOCID: 'BATCH',
+    })
+      .then(async result => {
+        if (result.status == 200) {
+          var hasil = result.data;
+          console.log('hasil getrunno: ', hasil);
+          var number = hasil[0].gennumber;
+          setRunno(number);
+        }
+      })
+      .catch(async err => {
+        console.log('respon: ' + err.message);
+        let msg = 'Servers is not available.';
+        msg = err.message;
+      });
   };
 
   const GetUserData = () => {

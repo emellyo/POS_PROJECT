@@ -28,7 +28,7 @@ import {getitem} from '../api/getitem';
 import {Item} from 'react-navigation-header-buttons';
 import {getvariant} from '../api/getvariant';
 import {getrunno} from '../api/getrunningnumber';
-import * as dbconn from '../db/AddItem';
+import * as dbconn from '../db/Variant';
 
 export default function Menu({navigation}) {
   LogBox.ignoreLogs([
@@ -201,8 +201,8 @@ export default function Menu({navigation}) {
       let dtAddItem = [];
       var hasil = result.data;
       const db = await dbconn.getDBConnection();
-      await dbconn.AddItem_savedata(db, 'AddItem', hasil);
-      dtAddItem = await dbconn.AddItem_getdata(db, 'AddItem');
+      await dbconn.Variant_savedata(db, 'AddItem', hasil);
+      dtAddItem = await dbconn.Variant_getdata(db, 'AddItem');
       setAddTemp(dtAddItem);
       console.log('isi dtAddItem: ', dtAddItem);
       setVariant(hasil);

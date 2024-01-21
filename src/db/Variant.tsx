@@ -1,5 +1,5 @@
 import {SQLiteDatabase, enablePromise, openDatabase} from 'react-native-sqlite-storage';
-import { AddItem } from '../models';
+import { Variant } from '../models';
 
 export const getDBConnection = async () => {
    return openDatabase(
@@ -9,7 +9,7 @@ export const getDBConnection = async () => {
 
 enablePromise(true);
 
-export const AddItem_CreateTbl = async (db: SQLiteDatabase, tableName: string) => {
+export const Variant_CreateTbl = async (db: SQLiteDatabase, tableName: string) => {
   // create table if not exists
   const query = `CREATE TABLE IF NOT EXISTS ${tableName}(
         DOCID TEXT NOT NULL,
@@ -35,9 +35,9 @@ export const AddItem_CreateTbl = async (db: SQLiteDatabase, tableName: string) =
   await db.executeSql(query);
 };
 
-export const AddItem_getdata = async (db: SQLiteDatabase, tableName: string): Promise<AddItem[]> => {
+export const Variant_getdata = async (db: SQLiteDatabase, tableName: string): Promise<Variant[]> => {
   try {
-    const Lists: AddItem[] = [];
+    const Lists: Variant[] = [];
     const results = await db.executeSql(`SELECT * FROM ${tableName}`);
     results.forEach(result => {
       for (let index = 0; index < result.rows.length; index++) {
@@ -52,7 +52,7 @@ export const AddItem_getdata = async (db: SQLiteDatabase, tableName: string): Pr
 };
 
 
-export const AddItem_savedata = async (db: SQLiteDatabase, tableName: string, lists: AddItem[]) => {
+export const Variant_savedata = async (db: SQLiteDatabase, tableName: string, lists: Variant[]) => {
   const insertQuery =
     `INSERT OR REPLACE INTO ${tableName}`+
     `(DOCID, item_Number, item_Description,lineItem_Option, cB_Available, option_ID, option_Name, lineItem_Variant,`+
@@ -65,9 +65,9 @@ export const AddItem_savedata = async (db: SQLiteDatabase, tableName: string, li
   return db.executeSql(insertQuery);
 };
 
-export const queryselecAddItem = async (db: SQLiteDatabase, query: string) => {
+export const queryselecVariant = async (db: SQLiteDatabase, query: string) => {
   console.log('querydyn:', query);
-  const Lists: AddItem[] = [];
+  const Lists: Variant[] = [];
     const results = await db.executeSql(query);
     
     results.forEach(results => {
