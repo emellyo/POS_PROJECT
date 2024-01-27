@@ -256,6 +256,15 @@ export const globalStyles = StyleSheet.create({
     borderColor: 'black',
     marginTop: 25,
   },
+  buttonSubmitFlagChoose: {
+    width: '100%',
+    paddingVertical: 10,
+    justifyContent: 'space-around',
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: '#0096FF',
+    marginTop: 25,
+  },
   buttonSubmitDisable: {
     width: '100%',
     paddingVertical: 12,

@@ -228,6 +228,12 @@ export default function Menu({navigation}) {
     } catch (error) {}
   }
 
+  const UpdateDataList = async (variant, flag, lineItem_Variant) => {
+    const db = await dbconn.getDBConnection();
+    let flagvar = !flag;
+    let query = ``;
+  };
+
   //#endregion
 
   //#region //* EVENT
@@ -530,15 +536,36 @@ export default function Menu({navigation}) {
                   {variant.map((variant, index) => {
                     return (
                       <View key={index} style={globalStyles.inputtotalan}>
-                        <TouchableOpacity
-                          style={[globalStyles.buttonSubmitFlag]}>
-                          <Text style={globalStyles.textFlag}>
-                            {variant.variant_Name}
-                          </Text>
-                          <Text style={globalStyles.textFlag2}>
-                            {variant.item_Cost}
-                          </Text>
-                        </TouchableOpacity>
+                        {variant.flag == 1 ? (
+                          <TouchableOpacity
+                            style={[globalStyles.buttonSubmitFlagChoose]}
+                            onPress={() =>
+                              UpdateDataList(
+                                item.NO,
+                                item.FLAG,
+                                item.ITEMNMBR,
+                                item.LOCNCODE,
+                                item.LNITMSEQ,
+                              )
+                            }>
+                            <Text style={globalStyles.textFlag}>
+                              {variant.variant_Name}
+                            </Text>
+                            <Text style={globalStyles.textFlag2}>
+                              {variant.item_Cost}
+                            </Text>
+                          </TouchableOpacity>
+                        ) : (
+                          <TouchableOpacity
+                            style={[globalStyles.buttonSubmitFlag]}>
+                            <Text style={globalStyles.textFlag}>
+                              {variant.variant_Name}
+                            </Text>
+                            <Text style={globalStyles.textFlag2}>
+                              {variant.item_Cost}
+                            </Text>
+                          </TouchableOpacity>
+                        )}
                       </View>
                     );
                   })}
