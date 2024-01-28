@@ -90,9 +90,9 @@ export default function Menu({navigation}) {
     try {
       const db = await dbconn.getDBConnection();
       //await dbconn.dropTbl(db, 'AddItem');
-      await dbconn.AddItem_CreateTbl(db, 'AddItem');
-      await dbconn.deletedataAllTbl(db, 'AddItem');
-      const storedTbl = await dbconn.AddItem_getdata(db, 'AddItem');
+      await dbconn.Variant_CreateTbl(db, 'Variant');
+      await dbconn.deletedataAllTbl(db, 'Variant');
+      const storedTbl = await dbconn.Variant_getdata(db, 'Variant');
       if (storedTbl.length) {
         console.log('datastored:', storedTbl);
       } else {
@@ -201,10 +201,10 @@ export default function Menu({navigation}) {
       let dtAddItem = [];
       var hasil = result.data;
       const db = await dbconn.getDBConnection();
-      await dbconn.Variant_savedata(db, 'AddItem', hasil);
-      dtAddItem = await dbconn.Variant_getdata(db, 'AddItem');
-      setAddTemp(dtAddItem);
-      console.log('isi dtAddItem: ', dtAddItem);
+      await dbconn.Variant_savedata(db, 'Variant', hasil);
+      dtVariant = await dbconn.Variant_getdata(db, 'Variant');
+      setAddTemp(dtVariant);
+      console.log('isi dtVariant: ', dtVariant);
       setVariant(hasil);
       viewModalVariant();
       //console.log('HASIL GET VARIANT', hasil);
@@ -228,10 +228,11 @@ export default function Menu({navigation}) {
     } catch (error) {}
   }
 
-  const UpdateDataList = async (variant, flag, lineItem_Variant) => {
+  const UpdateDataList = async (itemnumber, flag, lineItem_Variant) => {
     const db = await dbconn.getDBConnection();
     let flagvar = !flag;
-    let query = ``;
+    let query = `UPDATE Variant SET flag = ${flagvar} WHERE lineItem_Variant = ${lineItem_Variant} and item_Number = '${itemnumber}' `;
+    await dbconn.querydynamic(db, query);
   };
 
   //#endregion
@@ -541,11 +542,9 @@ export default function Menu({navigation}) {
                             style={[globalStyles.buttonSubmitFlagChoose]}
                             onPress={() =>
                               UpdateDataList(
-                                item.NO,
-                                item.FLAG,
-                                item.ITEMNMBR,
-                                item.LOCNCODE,
-                                item.LNITMSEQ,
+                                variant.item_Number,
+                                variant.lineItem_Variant,
+                                variant.flag,
                               )
                             }>
                             <Text style={globalStyles.textFlag}>
@@ -557,12 +556,19 @@ export default function Menu({navigation}) {
                           </TouchableOpacity>
                         ) : (
                           <TouchableOpacity
-                            style={[globalStyles.buttonSubmitFlag]}>
+                            style={[globalStyles.buttonSubmitFlag]}
+                            onPress={() =>
+                              UpdateDataList(
+                                variant.item_Number,
+                                variant.lineItem_Variant,
+                                variant.flag,
+                              )
+                            }>
                             <Text style={globalStyles.textFlag}>
                               {variant.variant_Name}
                             </Text>
                             <Text style={globalStyles.textFlag2}>
-                              {variant.item_Cost}
+                              {variant.variant_Name}
                             </Text>
                           </TouchableOpacity>
                         )}

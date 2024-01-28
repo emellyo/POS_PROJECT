@@ -26,6 +26,7 @@ import * as Utils from '../Helpers/Utils';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {HeaderButtons, Item} from 'react-navigation-header-buttons';
 import HeaderButton from '../screens/HeaderButton';
+import {getrunno} from '../api/getrunningnumber';
 // import {
 //   loadingartha,
 //   invenreceiving,
@@ -63,6 +64,7 @@ const Home = () => {
   const [interid, setINTERID] = useState();
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [runno, setRunno] = useState('');
   //#endregion
 
   useEffect(() => {
