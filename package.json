@@ -35,7 +35,8 @@
     "react-native-sqlite-storage": "^6.0.1",
     "react-native-vector-icons": "^10.0.0",
     "react-navigation": "^5.0.0",
-    "react-navigation-header-buttons": "^11.1.1"
+    "react-navigation-header-buttons": "^11.1.1",
+    "rn-fetch-blob": "github:joltup/rn-fetch-blob"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

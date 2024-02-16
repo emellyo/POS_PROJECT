@@ -2,9 +2,10 @@ import axios, { AxiosResponse, AxiosError } from 'axios';
 import * as Utils from '../Helpers/Utils';
 
 const ApiManager = axios.create({
-    baseURL: 'https://bluverseapi23.azurewebsites.net/api',    
+    //baseURL: 'https://bluverseapi23.azurewebsites.net/api',    
+    baseURL: 'https://localhost:44312/api',
     //responseType:'json'
-    withCredentials: true,
+    withCredentials: false,
     timeout: 2000, // only wait for 2s
     // signal: newAbortSignal(10000), //Aborts request after 5 seconds
 });
