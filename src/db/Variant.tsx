@@ -14,7 +14,6 @@ export const Variant_CreateTbl = async (db: SQLiteDatabase, tableName: string) =
   const query = `CREATE TABLE IF NOT EXISTS ${tableName}(
         DOCID TEXT NOT NULL,
         item_Number TEXT NOT NULL,
-        item_Description TEXT NULL,
         lineItem_Option INTEGER PRIMARY KEY NOT NULL,
         cB_Available INTEGER NOT NULL,
         option_ID TEXT NULL,
@@ -55,11 +54,11 @@ export const Variant_getdata = async (db: SQLiteDatabase, tableName: string): Pr
 export const Variant_savedata = async (db: SQLiteDatabase, tableName: string, lists: Variant[]) => {
   const insertQuery =
     `INSERT OR REPLACE INTO ${tableName}`+
-    `(DOCID, item_Number, item_Description,lineItem_Option, cB_Available, option_ID, option_Name, lineItem_Variant,`+
+    `(DOCID, item_Number, lineItem_Option, cB_Available, option_ID, option_Name, lineItem_Variant,`+
     `variant_Name, item_Price, item_Cost, inStock, lowStock, optimalStock, item_SKU, item_Barcode, QTY_ORDER, flag)`+
     ` values ` +
     lists.map(
-        i => `('${''}', '${i.item_Number}', '${i.item_Description}',${i.lineItem_Option}, ${i.cB_Available}, '${i.option_ID}', '${i.option_Name}', ${i.lineItem_Variant}, '${i.variant_Name}',`+
+        i => `('${''}', '${i.item_Number}', ${i.lineItem_Option}, ${i.cB_Available}, '${i.option_ID}', '${i.option_Name}', ${i.lineItem_Variant}, '${i.variant_Name}',`+
         `${i.item_Price}, ${i.item_Cost}, ${i.inStock}, ${i.lowStock}, ${i.optimalStock},  '${i.item_SKU}', '${i.item_Barcode}', ${0}, ${i.flag})`
     ).join(',');
   return db.executeSql(insertQuery);

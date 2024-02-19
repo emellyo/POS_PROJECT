@@ -235,6 +235,7 @@ const Login = () => {
     })
       .then(async result => {
         var datauserall = [];
+        console.log('result:' + JSON.stringify(result));
         if (result.status == 200) {
           console.log('data:', result.data);
           var hasil = result.data;

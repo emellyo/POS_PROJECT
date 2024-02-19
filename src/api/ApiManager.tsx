@@ -3,9 +3,10 @@ import * as Utils from '../Helpers/Utils';
 
 const ApiManager = axios.create({
     //baseURL: 'https://bluverseapi23.azurewebsites.net/api',    
-    baseURL: 'https://localhost:44312/api',
+    baseURL: 'http://localhost:8080/BluversePOS/BluverseAPI/api',
+    //baseURL: 'http://10.0.2.2:44312',
     //responseType:'json'
-    withCredentials: false,
+    withCredentials: true,
     timeout: 2000, // only wait for 2s
     // signal: newAbortSignal(10000), //Aborts request after 5 seconds
 });

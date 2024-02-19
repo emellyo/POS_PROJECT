@@ -200,6 +200,7 @@ export default function Menu({navigation}) {
     }).then(async result => {
       let dtAddItem = [];
       var hasil = result.data;
+      console.log('hasil get variant: ', hasil);
       const db = await dbconn.getDBConnection();
       await dbconn.Variant_savedata(db, 'Variant', hasil);
       dtVariant = await dbconn.Variant_getdata(db, 'Variant');
