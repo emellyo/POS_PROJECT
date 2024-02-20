@@ -1,7 +1,7 @@
 export type Variant ={
     DOCID: string;
     item_Number: string;
-    // item_Name: string;
+    item_Name: string;
     lineItem_Option: number;
     cB_Available: number;
     option_ID: string;

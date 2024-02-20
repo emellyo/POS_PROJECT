@@ -24,9 +24,11 @@ import CheckBox from '@react-native-community/checkbox';
 import Sidebar from '../screens/SideBar';
 import * as Utils from '../Helpers/Utils';
 import {createDrawerNavigator} from '@react-navigation/drawer';
+import {MaskedTextInput} from 'react-native-masked-text';
 import {HeaderButtons, Item} from 'react-navigation-header-buttons';
 import HeaderButton from '../screens/HeaderButton';
-import {getrunno} from '../api/getrunningnumber';
+import {getrunno} from '../api/getrunnobatch';
+import {openshift} from '../api/openshift';
 // import {
 //   loadingartha,
 //   invenreceiving,
@@ -56,6 +58,7 @@ const Home = () => {
   const [information, setInformation] = useState('');
   const [isLoad, setLoad] = useState(false);
   const [isInet, setInet] = useState(true);
+  const [mdlOpenShift, setOpenShift] = useState(false);
 
   const [fullname, setFULLNAME] = useState();
   const [userid, setUSERID] = useState();
@@ -65,14 +68,29 @@ const Home = () => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [runno, setRunno] = useState('');
+  const [openamount, setOpenAmount] = useState('');
+
   //#endregion
 
   useEffect(() => {
-    //setModalVisible(false);
-    // LOADTBLINVOUT();
-    // LOADTBLINVRCV();
-    // LOADTBLSTOCK();
-    GetRunno();
+    const isDateSameAsToday = () => {
+      const today = new Date();
+      const modalDate = new Date(); // Replace 'Your Modal Date Here' with your actual modal date
+      return (
+        today.getFullYear() === modalDate.getFullYear() &&
+        today.getMonth() === modalDate.getMonth() &&
+        today.getDate() === modalDate.getDate()
+      );
+    };
+
+    if (isDateSameAsToday()) {
+      // If the date is the same as today, don't show the modal
+      setOpenShift(false);
+    } else {
+      // Otherwise, show the modal
+      GetRunno();
+      setOpenShift(true);
+    }
     GetUserData();
     //setMdlPrinter(true);
     if (route.params?.showModal) {
@@ -90,47 +108,27 @@ const Home = () => {
 
   //#region //* FUNCTION
 
-  //   const GetUserData = () => {
-  //     try {
-  //       setLoad(true);
-  //       var dataall = route.params.dataparams;
-  //       // console.info('datauser: ',JSON.stringify(dataall));
-  //       var param_userid = dataall.userid;
-  //       setUSERID(param_userid);
-  //       var param_interid = dataall.interid;
-  //       setINTERID(param_interid);
-  //       var param_guid = dataall.guid;
-  //       setGUID(param_guid);
-  //       var param_username = dataall.username;
-  //       setUsername(param_username);
-  //       var param_fullname = dataall.fullname;
-  //       setFULLNAME(param_fullname);
-
-  //       // if(emptyStr(param_userid) || emptyStr(param_interid)){
-  //       //   console.log('no data');
-  //       // }
-  //       // else{
-  //       //   var mdl = {
-  //       //     interid: param_interid,
-  //       //     userid: param_userid
-  //       //   };
-  //       //   // console.log('mdl:',JSON.stringify(mdl));
-  //       //   GetOutStanding(mdl);
-  //       // }
-  //     } catch (err) {
-  //       console.log(err);
-  //       setLoad(false);
-  //     }
-
-  //     delaynew(500);
-  //     setLoad(false);
-  //   };
-
   const CallModalInfo = async info => {
     // console.info('hasil message : ',info);
     setLoad(false);
     setInformation(info);
     setModalVisible(true);
+  };
+
+  const PostOpenShift = async openamount => {
+    console.log('nilai Amount_Opening', openamount);
+    openshift({
+      Batch_ID: runno,
+      Lineitmseq: 0,
+      Payment_ID: '',
+      Payment_Type: '',
+      Amount_Opening: openamount,
+      UserID: '',
+    }).then(async result => {
+      var hasil = result.data;
+      console.log('hasil get variant: ', hasil);
+      setOpenShift(false);
+    });
   };
 
   function emptyStr(str) {
@@ -162,7 +160,7 @@ const Home = () => {
 
   const GetRunno = async () => {
     getrunno({
-      DOCID: 'BATCH',
+      DOCID: 'BATC',
     })
       .then(async result => {
         if (result.status == 200) {
@@ -300,6 +298,57 @@ const Home = () => {
         </View>
       </Modal>
       {/* //* CONFIRM LOGOUT */}
+
+      {/* //* OPEN SHIFT */}
+      <Modal animationType="fade" transparent={true} visible={mdlOpenShift}>
+        <View style={globalStyles.centeredViewCust}>
+          <View style={globalStyles.modalViewCust}>
+            <View style={globalStyles.modalheader}>
+              <Text style={globalStyles.modalText}>Open Shift</Text>
+            </View>
+            <View style={{margin: 0, marginBottom: 0}}>
+              <TextInput
+                style={[
+                  globalStyles.textinputcustomer,
+                  {backgroundColor: colors.card, color: colors.text},
+                ]}
+                maxLength={100}
+                keyboardType="numeric"
+                value={openamount.toLocaleString()}
+                onChangeText={text => {
+                  const cleanedValue = text.replace(/[^0-9]/g, '');
+                  const numericValue = parseFloat(cleanedValue);
+                  if (!isNaN(numericValue)) {
+                    // Update the state with the formatted value
+                    setOpenAmount(numericValue.toLocaleString());
+                  } else {
+                    // Handle invalid input, for example, setting an empty string
+                    setOpenAmount('');
+                  }
+                }}
+              />
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                marginHorizontal: 0,
+                marginTop: '10%',
+              }}>
+              <TouchableOpacity
+                style={[globalStyles.buttonNo]}
+                onPress={() => setOpenShift(!setOpenShift)}>
+                <Text style={globalStyles.textNo}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[globalStyles.buttonYes]}
+                onPress={() => PostOpenShift(openamount)}>
+                <Text style={globalStyles.textStyle}>Save</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      {/* //* OPEN SHIFT */}
 
       {/* //* MODAL SYNC DATA */}
       <Modal animationType="fade" transparent={true} visible={mdlConfirmSync}>
