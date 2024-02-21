@@ -66,6 +66,7 @@ export default function Menu({navigation}) {
   const [count, setCount] = useState(1);
   const [runno, setRunno] = useState('');
   const [addtemp, setAddTemp] = useState([]);
+  const [notes, setNotes] = useState('');
   //#endregion
 
   useEffect(() => {
@@ -89,7 +90,8 @@ export default function Menu({navigation}) {
   const LOADTBLADDITEM = async () => {
     try {
       const db = await dbconn.getDBConnection();
-      //await dbconn.dropTbl(db, 'AddItem');
+      // await dbconn.dropTbl(db, 'AddItem');
+      // await dbconn.dropTbl(db, 'Variant');
       await dbconn.Variant_CreateTbl(db, 'Variant');
       await dbconn.deletedataAllTbl(db, 'Variant');
       const storedTbl = await dbconn.Variant_getdata(db, 'Variant');
@@ -255,9 +257,30 @@ export default function Menu({navigation}) {
     const month = today.getMonth() + 1; // Months are zero-indexed
     const day = today.getDate();
     const formattedDate = `${month}/${day}/${year}`;
+
     const db = await dbconn.getDBConnection();
     let dtVariant = await dbconn.Variant_getdataChoose(db, 'Variant');
-    await dbconn.AddTrxDtl_savedata(db, 'Variant', runno, formattedDate);
+    let noitem = 0;
+
+    if (dtVariant.length == 0) {
+      noitem = noitem + 1;
+    } else {
+      let datamax = await dbconn.queryselectTrx(
+        db,
+        `select * from AddTrxDtl order by Lineitmseq desc limit 1;`,
+      );
+      noitem = datamax[0].Lineitmseq + 1;
+    }
+    await dbconn.AddTrxDtl_savedata(
+      db,
+      'Variant',
+      dtVariant,
+      runno,
+      formattedDate,
+      noitem,
+      count,
+      notes,
+    );
   };
 
   GetlistAfterUpdateVar = async () => {
@@ -623,6 +646,7 @@ export default function Menu({navigation}) {
                       maxLength={100}
                       placeholder={'Comment'}
                       placeholderTextColor={colors.text}
+                      value={notes}
                     />
                   </View>
                 </SafeAreaView>

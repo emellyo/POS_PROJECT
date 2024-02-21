@@ -105,3 +105,9 @@ export const deletedataAllTbl = async (db: SQLiteDatabase, tableName: string, id
   const deleteQuery = `DELETE from ${tableName}`;
   await db.executeSql(deleteQuery);
 };
+
+export const dropTbl = async (db: SQLiteDatabase, tableName: string) => {
+  const query = `drop table IF EXISTS ${tableName}`;
+
+  await db.executeSql(query);
+};

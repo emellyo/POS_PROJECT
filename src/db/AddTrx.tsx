@@ -81,15 +81,20 @@ export const AddTrxHdr_getdata = async (db: SQLiteDatabase, tableName: string): 
   }
 };
 
+export const queryselectTrx = async (db: SQLiteDatabase, query: string) => {
+  console.log('querydyn:', query);
+  const Lists: AddTrxDtl[] = [];
+    const results = await db.executeSql(query);
+    results.forEach(result => {
+      for (let index = 0; index < result.rows.length; index++) {
+        Lists.push(result.rows.item(index))
+      }
+    });
+    return Lists;
+};
 
-export const AddTrxDtl_savedata = async (db: SQLiteDatabase, tableName: string, lists: AddTrxDtl[], docnumbr: string, date: string) => {
-  // const insertQuery =
-  //   `INSERT OR REPLACE INTO ${tableName}`+
-  //   `(NO, LNITMSEQ_ITEM, ITEMNMBR, LNITMSEQ, BIN, QUANTITYAVAILABLE, QUANTITY)`+
-  //   ` values ` +
-  //   lists.map(
-  //       i => `(${i.NO}, ${i.LNITMSEQ_ITEM}, '${i.ITEMNMBR}', ${i.LNITMSEQ}, '${i.BIN}', ${i.QUANTITYAVAILABLE}, ${i.QUANTITY})`
-  //   ).join(',');
+
+export const AddTrxDtl_savedata = async (db: SQLiteDatabase, tableName: string, lists: AddTrxDtl[], docnumbr: string, date: string, lnitmseq: number, qty: number, notes: string) => {
     const insertData =
     `INSERT INTO ${tableName}`+
     `(DOCNUMBER, DOCTYPE, DOCDATE, Lineitmseq, Item_Number, Item_Description, Quantity, UofM,`+
@@ -97,8 +102,9 @@ export const AddTrxDtl_savedata = async (db: SQLiteDatabase, tableName: string, 
     var insertQuery = "";
     lists.map((i, index) => {
         insertQuery = insertData + "\n" +
-        `select '${docnumbr}', ${1}, '${date}'` + "\n" +
-        `WHERE NOT EXISTS(SELECT ITEMNMBR FROM ${tableName} WHERE ITEMNMBR='${i.ITEMNMBR}' and LNITMSEQ=${i.LNITMSEQ} and LNITMSEQ_ITEM = ${i.LNITMSEQ_ITEM})`;
+        `select '${docnumbr}', ${1}, '${date}', ${lnitmseq}, '${i.Item_Number}, '${i.Item_Description}', '${qty}', '${'PC'}', ${i.Item_Price}, ${i.Item_Cost}, '${''}', '${''}', '${''}',` + "\n" +
+        `'${''}', ${0}, '${notes}, '${''}, '${''}'` + "\n" +
+        `WHERE NOT EXISTS(SELECT Item_Number FROM ${tableName} WHERE Item_Number='${i.Item_Number}' and LNITMSEQ=${lnitmseq})`;
         db.executeSql(insertQuery);
 });
     console.log('query INSERT: ', insertQuery)
@@ -156,4 +162,10 @@ export const querydynamic = async (db: SQLiteDatabase, query: string) => {
 export const deletedataAllTbl = async (db: SQLiteDatabase, tableName: string, id: number) => {
   const deleteQuery = `DELETE from ${tableName}`;
   await db.executeSql(deleteQuery);
+};
+
+export const dropTbl = async (db: SQLiteDatabase, tableName: string) => {
+  const query = `drop table IF EXISTS ${tableName}`;
+
+  await db.executeSql(query);
 };
