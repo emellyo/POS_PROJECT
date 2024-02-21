@@ -143,7 +143,10 @@ export default function Menu({navigation}) {
 
   const GetRunno = async () => {
     getrunno({
+      TABLE: 'POS_TrxHeader_POST',
+      FIELD: 'DOCNUMBER',
       DOCID: 'INV',
+      NEWNUMBER: '',
     })
       .then(async result => {
         if (result.status == 200) {
@@ -198,7 +201,7 @@ export default function Menu({navigation}) {
       Category_ID: cat,
       LowStock: 0,
     }).then(async result => {
-      let dtAddItem = [];
+      let dtVariant = [];
       var hasil = result.data;
       console.log('hasil get variant: ', hasil);
       const db = await dbconn.getDBConnection();
@@ -229,11 +232,38 @@ export default function Menu({navigation}) {
     } catch (error) {}
   }
 
-  const UpdateDataList = async (itemnumber, flag, lineItem_Variant) => {
+  const UpdateDataList = async (
+    itemnumber,
+    flag,
+    lineItem_Variant,
+    lineItem_Option,
+  ) => {
+    console.log('flag: ', flag);
+    console.log('line item variant: ', lineItem_Variant);
+    console.log('line item option: ', lineItem_Option);
     const db = await dbconn.getDBConnection();
     let flagvar = !flag;
-    let query = `UPDATE Variant SET flag = ${flagvar} WHERE lineItem_Variant = ${lineItem_Variant} and item_Number = '${itemnumber}' `;
+    let query = `UPDATE Variant SET flag = ${flagvar} WHERE lineItem_Option = ${lineItem_Option} and item_Number = '${itemnumber}' `;
     await dbconn.querydynamic(db, query);
+    GetlistAfterUpdateVar();
+  };
+
+  const AddItemTemp = async () => {
+    const today = new Date();
+    // Get various parts of the date
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1; // Months are zero-indexed
+    const day = today.getDate();
+    const formattedDate = `${month}/${day}/${year}`;
+    const db = await dbconn.getDBConnection();
+    let dtVariant = await dbconn.Variant_getdataChoose(db, 'Variant');
+    await dbconn.AddTrxDtl_savedata(db, 'Variant', runno, formattedDate);
+  };
+
+  GetlistAfterUpdateVar = async () => {
+    const db = await dbconn.getDBConnection();
+    let dtVariant = await dbconn.Variant_getdata(db, 'Variant');
+    setVariant(dtVariant);
   };
 
   //#endregion
@@ -541,11 +571,13 @@ export default function Menu({navigation}) {
                         {variant.flag == 1 ? (
                           <TouchableOpacity
                             style={[globalStyles.buttonSubmitFlagChoose]}
+                            //disabled={true}
                             onPress={() =>
                               UpdateDataList(
                                 variant.item_Number,
-                                variant.lineItem_Variant,
                                 variant.flag,
+                                variant.lineItem_Variant,
+                                variant.lineItem_Option,
                               )
                             }>
                             <Text style={globalStyles.textFlag}>
@@ -561,8 +593,9 @@ export default function Menu({navigation}) {
                             onPress={() =>
                               UpdateDataList(
                                 variant.item_Number,
-                                variant.lineItem_Variant,
                                 variant.flag,
+                                variant.lineItem_Variant,
+                                variant.lineItem_Option,
                               )
                             }>
                             <Text style={globalStyles.textFlag}>
@@ -606,6 +639,7 @@ export default function Menu({navigation}) {
                       {backgroundColor: colors.card, color: colors.text},
                     ]}
                     value={count.toString()}
+                    editable={false}
                     maxLength={100}
                     keyboardType="numeric"
                   />

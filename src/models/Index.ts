@@ -42,7 +42,6 @@ export type AddTrxHdr ={
     SyncStatus: number;
     Payment_ID: string;
     Payment_Type: string;
-    Lnitmseq: number;
 }
 
 export type AddTrxDtl ={

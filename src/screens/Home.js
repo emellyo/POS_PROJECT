@@ -29,6 +29,8 @@ import {HeaderButtons, Item} from 'react-navigation-header-buttons';
 import HeaderButton from '../screens/HeaderButton';
 import {getrunno} from '../api/getrunnobatch';
 import {openshift} from '../api/openshift';
+import {getBrand} from 'react-native-device-info';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 // import {
 //   loadingartha,
 //   invenreceiving,
@@ -69,27 +71,29 @@ const Home = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [runno, setRunno] = useState('');
   const [openamount, setOpenAmount] = useState('');
+  const [lastSeenDate, setLastSeenDate] = useState(null);
 
   //#endregion
 
   useEffect(() => {
-    const isDateSameAsToday = () => {
-      const today = new Date();
-      const modalDate = new Date(); // Replace 'Your Modal Date Here' with your actual modal date
-      return (
-        today.getFullYear() === modalDate.getFullYear() &&
-        today.getMonth() === modalDate.getMonth() &&
-        today.getDate() === modalDate.getDate()
-      );
-    };
+    const storedDate = AsyncStorage.getItem('lastSeenDate'); // Load from AsyncStorage
+    storedDate
+      .then(date => {
+        setLastSeenDate(new Date(date)); // Convert to Date object
+      })
+      .catch(error => {
+        console.error('Error retrieving last seen date:', error);
+      });
+  }, []);
 
-    if (isDateSameAsToday()) {
-      // If the date is the same as today, don't show the modal
-      setOpenShift(false);
-    } else {
-      // Otherwise, show the modal
-      GetRunno();
+  useEffect(() => {
+    const today = new Date();
+    if (lastSeenDate === null || lastSeenDate.getDate() !== today.getDate()) {
+      // Modal shows up if it's a new day
       setOpenShift(true);
+      GetRunno();
+      AsyncStorage.setItem('lastSeenDate', today.toString()); // Save current date
+      setLastSeenDate(today);
     }
     GetUserData();
     //setMdlPrinter(true);

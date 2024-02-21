@@ -51,6 +51,22 @@ export const Variant_getdata = async (db: SQLiteDatabase, tableName: string): Pr
   }
 };
 
+export const Variant_getdataChoose = async (db: SQLiteDatabase, tableName: string): Promise<Variant[]> => {
+  try {
+    const Lists: Variant[] = [];
+    const results = await db.executeSql(`SELECT * FROM ${tableName} WHERE FLAG = 1`);
+    results.forEach(result => {
+      for (let index = 0; index < result.rows.length; index++) {
+        Lists.push(result.rows.item(index))
+      }
+    });
+    return Lists;
+  } catch (error) {
+    console.error(error);
+    throw Error('Failed to get Add Item !!!');
+  }
+};
+
 
 export const Variant_savedata = async (db: SQLiteDatabase, tableName: string, lists: Variant[]) => {
   const insertQuery =

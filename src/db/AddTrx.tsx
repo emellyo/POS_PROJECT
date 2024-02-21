@@ -33,8 +33,7 @@ export const AddTrxHdr_CreateTbl = async (db: SQLiteDatabase, tableName: string)
         POS_Version TEXT NULL,
         SyncStatus INT NOT NULL,
         Payment_ID TEXT NOT NULL,
-        Payment_Type TEXT NOT NULL,
-        Lnitmseq INT NOT NULL
+        Payment_Type TEXT NOT NULL
     );`;
 
   await db.executeSql(query);
@@ -82,31 +81,38 @@ export const AddTrxHdr_getdata = async (db: SQLiteDatabase, tableName: string): 
   }
 };
 
-export const AddTrxDtl_getdata = async (db: SQLiteDatabase, tableName: string): Promise<AddTrxDtl[]> => {
-  try {
-    const Lists: AddTrxDtl[] = [];
-    const results = await db.executeSql(`SELECT * FROM ${tableName}`);
-    results.forEach(result => {
-      for (let index = 0; index < result.rows.length; index++) {
-        Lists.push(result.rows.item(index))
-      }
-    });
-    return Lists;
-  } catch (error) {
-    console.error(error);
-    throw Error('Failed to get Add Item !!!');
-  }
+
+export const AddTrxDtl_savedata = async (db: SQLiteDatabase, tableName: string, lists: AddTrxDtl[], docnumbr: string, date: string) => {
+  // const insertQuery =
+  //   `INSERT OR REPLACE INTO ${tableName}`+
+  //   `(NO, LNITMSEQ_ITEM, ITEMNMBR, LNITMSEQ, BIN, QUANTITYAVAILABLE, QUANTITY)`+
+  //   ` values ` +
+  //   lists.map(
+  //       i => `(${i.NO}, ${i.LNITMSEQ_ITEM}, '${i.ITEMNMBR}', ${i.LNITMSEQ}, '${i.BIN}', ${i.QUANTITYAVAILABLE}, ${i.QUANTITY})`
+  //   ).join(',');
+    const insertData =
+    `INSERT INTO ${tableName}`+
+    `(DOCNUMBER, DOCTYPE, DOCDATE, Lineitmseq, Item_Number, Item_Description, Quantity, UofM,`+
+    `Item_Price, Item_Cost, Store_ID, Site_ID, SalesType_ID, Discount_ID, Discount_Amount, Notes, POS_Device_ID, POS_Version)`;
+    var insertQuery = "";
+    lists.map((i, index) => {
+        insertQuery = insertData + "\n" +
+        `select '${docnumbr}', ${1}, '${date}'` + "\n" +
+        `WHERE NOT EXISTS(SELECT ITEMNMBR FROM ${tableName} WHERE ITEMNMBR='${i.ITEMNMBR}' and LNITMSEQ=${i.LNITMSEQ} and LNITMSEQ_ITEM = ${i.LNITMSEQ_ITEM})`;
+        db.executeSql(insertQuery);
+});
+    console.log('query INSERT: ', insertQuery)
+  return db.executeSql(insertQuery);
 };
 
-
-// export const Variant_savedata = async (db: SQLiteDatabase, tableName: string, lists: Variant[]) => {
+// export const AddTrxDtl_savedata = async (db: SQLiteDatabase, tableName: string, lists: AddTrxDtl[]) => {
 //   const insertQuery =
 //     `INSERT OR REPLACE INTO ${tableName}`+
-//     `(DOCID, item_Number, item_Description,lineItem_Option, cB_Available, option_ID, option_Name, lineItem_Variant,`+
-//     `variant_Name, item_Price, item_Cost, inStock, lowStock, optimalStock, item_SKU, item_Barcode, QTY_ORDER, flag)`+
+//     `(DOCNUMBER, DOCTYPE, DOCDATE, Lineitmseq, Item_Number, Item_Description, Quantity, UofM,`+
+//     `Item_Price, Item_Cost, Store_ID, Site_ID, SalesType_ID, Discount_ID, Discount_Amount, Notes, POS_Device_ID, POS_Version)`+
 //     ` values ` +
 //     lists.map(
-//         i => `('${''}', '${i.item_Number}', '${i.item_Description}',${i.lineItem_Option}, ${i.cB_Available}, '${i.option_ID}', '${i.option_Name}', ${i.lineItem_Variant}, '${i.variant_Name}',`+
+//         i => `('${''}', '${i.item_Number}', '${i.item_Name}', ${i.lineItem_Option}, ${i.cB_Available}, '${i.option_ID}', '${i.option_Name}', ${i.lineItem_Variant}, '${i.variant_Name}',`+
 //         `${i.item_Price}, ${i.item_Cost}, ${i.inStock}, ${i.lowStock}, ${i.optimalStock},  '${i.item_SKU}', '${i.item_Barcode}', ${0}, ${i.flag})`
 //     ).join(',');
 //   return db.executeSql(insertQuery);
