@@ -63,4 +63,5 @@ export type AddTrxDtl ={
     Notes: string;
     POS_Device_ID: string;
     POS_Version: string;
+    variant_Name: string;
 }

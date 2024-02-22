@@ -1,5 +1,5 @@
 import {SQLiteDatabase, enablePromise, openDatabase} from 'react-native-sqlite-storage';
-import { AddTrxHdr, AddTrxDtl } from '../models';
+import { AddTrxHdr, AddTrxDtl, Variant } from '../models';
 
 export const getDBConnection = async () => {
    return openDatabase(
@@ -59,7 +59,8 @@ export const AddTrxDtl_CreateTbl = async (db: SQLiteDatabase, tableName: string)
         Discount_Amount REAL NOT NULL,
         Notes TEXT NULL,
         POS_Device_ID TEXT NULL,
-        POS_Version TEXT NULL
+        POS_Version TEXT NULL,
+        variant_Name TEXT NULL
     );`;
 
   await db.executeSql(query);
@@ -94,35 +95,53 @@ export const queryselectTrx = async (db: SQLiteDatabase, query: string) => {
 };
 
 
-export const AddTrxDtl_savedata = async (db: SQLiteDatabase, tableName: string, lists: AddTrxDtl[], docnumbr: string, date: string, lnitmseq: number, qty: number, notes: string) => {
-    const insertData =
-    `INSERT INTO ${tableName}`+
-    `(DOCNUMBER, DOCTYPE, DOCDATE, Lineitmseq, Item_Number, Item_Description, Quantity, UofM,`+
-    `Item_Price, Item_Cost, Store_ID, Site_ID, SalesType_ID, Discount_ID, Discount_Amount, Notes, POS_Device_ID, POS_Version)`;
-    var insertQuery = "";
-    lists.map((i, index) => {
-        insertQuery = insertData + "\n" +
-        `select '${docnumbr}', ${1}, '${date}', ${lnitmseq}, '${i.Item_Number}, '${i.Item_Description}', '${qty}', '${'PC'}', ${i.Item_Price}, ${i.Item_Cost}, '${''}', '${''}', '${''}',` + "\n" +
-        `'${''}', ${0}, '${notes}, '${''}, '${''}'` + "\n" +
-        `WHERE NOT EXISTS(SELECT Item_Number FROM ${tableName} WHERE Item_Number='${i.Item_Number}' and LNITMSEQ=${lnitmseq})`;
-        db.executeSql(insertQuery);
-});
-    console.log('query INSERT: ', insertQuery)
-  return db.executeSql(insertQuery);
-};
-
-// export const AddTrxDtl_savedata = async (db: SQLiteDatabase, tableName: string, lists: AddTrxDtl[]) => {
-//   const insertQuery =
-//     `INSERT OR REPLACE INTO ${tableName}`+
+// export const AddTrxDtl_savedata = async (db: SQLiteDatabase, tableName: string ,lists: AddTrxDtl[], docnumbr: string, date: string, lnitmseq: number, qty: number, notes: string) => {
+//     const insertData =
+//     `INSERT INTO ${tableName}`+
 //     `(DOCNUMBER, DOCTYPE, DOCDATE, Lineitmseq, Item_Number, Item_Description, Quantity, UofM,`+
-//     `Item_Price, Item_Cost, Store_ID, Site_ID, SalesType_ID, Discount_ID, Discount_Amount, Notes, POS_Device_ID, POS_Version)`+
-//     ` values ` +
-//     lists.map(
-//         i => `('${''}', '${i.item_Number}', '${i.item_Name}', ${i.lineItem_Option}, ${i.cB_Available}, '${i.option_ID}', '${i.option_Name}', ${i.lineItem_Variant}, '${i.variant_Name}',`+
-//         `${i.item_Price}, ${i.item_Cost}, ${i.inStock}, ${i.lowStock}, ${i.optimalStock},  '${i.item_SKU}', '${i.item_Barcode}', ${0}, ${i.flag})`
-//     ).join(',');
+//     `Item_Price, Item_Cost, Store_ID, Site_ID, SalesType_ID, Discount_ID, Discount_Amount, Notes, POS_Device_ID, POS_Version, variant_Name)`;
+//     var insertQuery = "";
+//     lists.map((i, index) => {
+//         insertQuery = insertData + "\n" +
+//         `select '${docnumbr}', ${1}, '${date}', ${lnitmseq}, '${i.Item_Number}, '${i.Item_Description}', '${qty}', '${'PC'}', ${i.Item_Price}, ${i.Item_Cost}, '${''}', '${''}', '${''}',` + "\n" +
+//         `'${''}', ${0}, '${notes}, '${''}, '${''}', '${i.variant_Name}'` + "\n" +
+//         `WHERE NOT EXISTS(SELECT It FROM ${tableName} WHERE Item_Number='${i.Item_Number}')`;
+//         db.executeSql(insertQuery);
+// });
+//     console.log('query INSERT: ', insertQuery)
 //   return db.executeSql(insertQuery);
 // };
+
+export const AddTrxDtl_getdata = async (db: SQLiteDatabase, tableName: string): Promise<AddTrxDtl[]> => {
+  try {
+    const Lists: AddTrxDtl[] = [];
+    const results = await db.executeSql(`SELECT * FROM ${tableName}`);
+    results.forEach(result => {
+      for (let index = 0; index < result.rows.length; index++) {
+        Lists.push(result.rows.item(index))
+      }
+    });
+    return Lists;
+  } catch (error) {
+    console.error(error);
+    throw Error('Failed to get Add Item !!!');
+  }
+};
+
+export const AddTrxDtl_savedata = async (db: SQLiteDatabase, tableName: string ,
+   docnumbr: string, date: string, lnitmseq: number, qty: number, notes: string, itemnmbr: string, itemname: string, itemprice: number,
+   itemcost: number, variantname: string) => {
+  const insertQuery =
+    `INSERT INTO ${tableName}`+
+    `(DOCNUMBER, DOCTYPE, DOCDATE, Lineitmseq, Item_Number, Item_Description, Quantity, UofM,`+
+    `Item_Price, Item_Cost, Store_ID, Site_ID, SalesType_ID, Discount_ID, Discount_Amount, Notes, POS_Device_ID, POS_Version, variant_Name)`+
+    ` values ` +
+ `('${docnumbr}', ${1}, '${date}', ${lnitmseq}, '${itemnmbr}','${itemname}', ${qty}, '${'PCS'}', ${itemprice}, ${itemcost}, '${''}', '${''}', '${''}',` + "\n" +
+  `'${''}', ${0}, '${notes}', '${''}', '${''}', '${variantname}')`;
+  // join(',')
+
+  return db.executeSql(insertQuery);
+};
 
 export const queryselecAddTrxHdr = async (db: SQLiteDatabase, query: string) => {
   console.log('querydyn:', query);

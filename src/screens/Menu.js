@@ -29,6 +29,8 @@ import {Item} from 'react-navigation-header-buttons';
 import {getvariant} from '../api/getvariant';
 import {getrunno} from '../api/getrunningnumber';
 import * as dbconn from '../db/Variant';
+import * as dbconnTrx from '../db/AddTrx';
+import {run} from 'jest';
 
 export default function Menu({navigation}) {
   LogBox.ignoreLogs([
@@ -73,6 +75,8 @@ export default function Menu({navigation}) {
     setMdlConfirmCust(true);
     //setMdlBills(true);
     setMdlPayment(false);
+    setMdlVariant(false);
+    setCount(1);
     Categories();
     GetItems();
     GetRunno();
@@ -90,10 +94,13 @@ export default function Menu({navigation}) {
   const LOADTBLADDITEM = async () => {
     try {
       const db = await dbconn.getDBConnection();
-      // await dbconn.dropTbl(db, 'AddItem');
-      // await dbconn.dropTbl(db, 'Variant');
+      const dbtrx = await dbconnTrx.getDBConnection();
+      //await dbconnTrx.dropTbl(db, 'AddItem');
+      //await dbconn.dropTbl(db, 'Variant');
       await dbconn.Variant_CreateTbl(db, 'Variant');
+      await dbconnTrx.AddTrxDtl_CreateTbl(dbtrx, 'AddTrxDtl');
       await dbconn.deletedataAllTbl(db, 'Variant');
+      await dbconnTrx.deletedataAllTbl(dbtrx, 'AddTrxDtl');
       const storedTbl = await dbconn.Variant_getdata(db, 'Variant');
       if (storedTbl.length) {
         console.log('datastored:', storedTbl);
@@ -154,8 +161,9 @@ export default function Menu({navigation}) {
         if (result.status == 200) {
           var hasil = result.data;
           console.log('hasil getrunno: ', hasil);
-          var number = hasil[0].gennumber;
+          var number = hasil[0].output;
           setRunno(number);
+          console.log('INI ISI RUNNO: ', runno);
         }
       })
       .catch(async err => {
@@ -217,6 +225,61 @@ export default function Menu({navigation}) {
     });
   };
 
+  const AddItemTemp = async () => {
+    const today = new Date();
+    // Get various parts of the date
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1; // Months are zero-indexed
+    const day = today.getDate();
+    const formattedDate = `${month}/${day}/${year}`;
+    console.log('TODAY DATE: ', formattedDate);
+
+    const db = await dbconnTrx.getDBConnection();
+    let dtVariant = await dbconn.Variant_getdataChoose(db, 'Variant');
+    let noitem = 0;
+
+    console.log('HASIL VARIANT YANG DIPILIH: ', dtVariant);
+
+    if (dtVariant.length == 0) {
+      console.log('masuk if length');
+      noitem = noitem + 1;
+    } else {
+      console.log('masuk else if length');
+      let datamax = await dbconnTrx.queryselectTrx(
+        db,
+        `select * from AddTrxDtl order by Lineitmseq desc limit 1;`,
+      );
+      console.log('isi data max dari table detail: ', datamax);
+      let len = datamax.length < 1 ? 0 : datamax.length;
+      noitem = len + 1;
+      console.log('total noitem: ', noitem);
+    }
+    console.log('kelar ngitung sequence');
+    console.log('ISI DETAIL VARIANT: ', dtVariant[0].item_Price);
+    console.log('RUNNING NUMBER: ', runno);
+    console.log('DATE: ', formattedDate);
+    console.log('SEQUENCE: ', noitem);
+    console.log('QTY ORDER: ', count);
+    console.log('ISI NOTES: ', notes);
+    await dbconnTrx.AddTrxDtl_savedata(
+      db,
+      'AddTrxDtl',
+      runno,
+      formattedDate,
+      noitem,
+      count,
+      notes,
+      dtVariant[0].item_Number,
+      dtVariant[0].item_Name,
+      dtVariant[0].item_Price,
+      dtVariant[0].item_Cost,
+      dtVariant[0].variant_Name,
+    );
+    let dataDetail = await dbconnTrx.AddTrxDtl_getdata(db, 'AddTrxDtl');
+    console.log('data detail: ', dataDetail);
+    setMdlVariant(false);
+  };
+
   const handleIncrement = () => {
     // Increase count by 1
     setCount(count + 1);
@@ -248,39 +311,6 @@ export default function Menu({navigation}) {
     let query = `UPDATE Variant SET flag = ${flagvar} WHERE lineItem_Option = ${lineItem_Option} and item_Number = '${itemnumber}' `;
     await dbconn.querydynamic(db, query);
     GetlistAfterUpdateVar();
-  };
-
-  const AddItemTemp = async () => {
-    const today = new Date();
-    // Get various parts of the date
-    const year = today.getFullYear();
-    const month = today.getMonth() + 1; // Months are zero-indexed
-    const day = today.getDate();
-    const formattedDate = `${month}/${day}/${year}`;
-
-    const db = await dbconn.getDBConnection();
-    let dtVariant = await dbconn.Variant_getdataChoose(db, 'Variant');
-    let noitem = 0;
-
-    if (dtVariant.length == 0) {
-      noitem = noitem + 1;
-    } else {
-      let datamax = await dbconn.queryselectTrx(
-        db,
-        `select * from AddTrxDtl order by Lineitmseq desc limit 1;`,
-      );
-      noitem = datamax[0].Lineitmseq + 1;
-    }
-    await dbconn.AddTrxDtl_savedata(
-      db,
-      'Variant',
-      dtVariant,
-      runno,
-      formattedDate,
-      noitem,
-      count,
-      notes,
-    );
   };
 
   GetlistAfterUpdateVar = async () => {
@@ -684,8 +714,9 @@ export default function Menu({navigation}) {
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[globalStyles.buttonYesPayment]}
-                    //onPress={PostDataInvOut}
-                  >
+                    onPress={() => {
+                      AddItemTemp();
+                    }}>
                     <Text style={globalStyles.textStyle}>Add Item</Text>
                   </TouchableOpacity>
                 </SafeAreaView>
