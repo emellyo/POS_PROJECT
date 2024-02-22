@@ -1203,7 +1203,7 @@ export const globalStyles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     height: '10%',
-    //padding: 10,
+    padding: 10,
     // borderBottomWidth: 1,
     // borderBottomColor: '#212121',
   },
@@ -1324,6 +1324,7 @@ export const globalStyles = StyleSheet.create({
   cartlist: {
     display: 'flex',
     width: '100%',
+    height: 80,
     flexDirection: 'row',
   },
   kiri: {
@@ -1630,6 +1631,7 @@ export const invrecStyles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     width: '100%',
+    flexWrap: 'wrap',
     //padding: 10,
     //height: '50%',
     // borderBottomWidth: 1,

@@ -42,10 +42,10 @@ export const AddTrxHdr_CreateTbl = async (db: SQLiteDatabase, tableName: string)
 export const AddTrxDtl_CreateTbl = async (db: SQLiteDatabase, tableName: string) => {
   // create table if not exists
   const query = `CREATE TABLE IF NOT EXISTS ${tableName}(
-        DOCNUMBER TEXT PRIMARY KEY NOT NULL,
+        DOCNUMBER TEXT  NOT NULL,
         DOCTYPE INT NOT NULL,
         DOCDATE TEXT NOT NULL,
-        Lineitmseq INT NOT NULL,
+        Lineitmseq INT PRIMARY KEY NOT NULL,
         Item_Number TEXT NOT NULL,
         Item_Description TEXT NULL,
         Quantity INT NOT NULL,
@@ -113,6 +113,22 @@ export const queryselectTrx = async (db: SQLiteDatabase, query: string) => {
 // };
 
 export const AddTrxDtl_getdata = async (db: SQLiteDatabase, tableName: string): Promise<AddTrxDtl[]> => {
+  try {
+    const Lists: AddTrxDtl[] = [];
+    const results = await db.executeSql(`SELECT * FROM ${tableName}`);
+    results.forEach(result => {
+      for (let index = 0; index < result.rows.length; index++) {
+        Lists.push(result.rows.item(index))
+      }
+    });
+    return Lists;
+  } catch (error) {
+    console.error(error);
+    throw Error('Failed to get Add Item !!!');
+  }
+};
+
+export const AddTrxDtl_getdataBills = async (db: SQLiteDatabase, tableName: string, docnumbr: string): Promise<AddTrxDtl[]> => {
   try {
     const Lists: AddTrxDtl[] = [];
     const results = await db.executeSql(`SELECT * FROM ${tableName}`);

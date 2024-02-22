@@ -69,11 +69,12 @@ export default function Menu({navigation}) {
   const [runno, setRunno] = useState('');
   const [addtemp, setAddTemp] = useState([]);
   const [notes, setNotes] = useState('');
+  const [bills, setBills] = useState([]);
   //#endregion
 
   useEffect(() => {
     setMdlConfirmCust(true);
-    //setMdlBills(true);
+    setMdlBills(false);
     setMdlPayment(false);
     setMdlVariant(false);
     setCount(1);
@@ -95,7 +96,7 @@ export default function Menu({navigation}) {
     try {
       const db = await dbconn.getDBConnection();
       const dbtrx = await dbconnTrx.getDBConnection();
-      //await dbconnTrx.dropTbl(db, 'AddItem');
+      //await dbconnTrx.dropTbl(db, 'AddTrxDtl');
       //await dbconn.dropTbl(db, 'Variant');
       await dbconn.Variant_CreateTbl(db, 'Variant');
       await dbconnTrx.AddTrxDtl_CreateTbl(dbtrx, 'AddTrxDtl');
@@ -226,58 +227,78 @@ export default function Menu({navigation}) {
   };
 
   const AddItemTemp = async () => {
-    const today = new Date();
-    // Get various parts of the date
-    const year = today.getFullYear();
-    const month = today.getMonth() + 1; // Months are zero-indexed
-    const day = today.getDate();
-    const formattedDate = `${month}/${day}/${year}`;
-    console.log('TODAY DATE: ', formattedDate);
+    try {
+      const today = new Date();
+      // Get various parts of the date
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1; // Months are zero-indexed
+      const day = today.getDate();
+      const formattedDate = `${month}/${day}/${year}`;
+      console.log('TODAY DATE: ', formattedDate);
 
-    const db = await dbconnTrx.getDBConnection();
-    let dtVariant = await dbconn.Variant_getdataChoose(db, 'Variant');
-    let noitem = 0;
+      const db = await dbconnTrx.getDBConnection();
+      let dtVariant = await dbconn.Variant_getdataChoose(db, 'Variant');
+      let noitem = 0;
 
-    console.log('HASIL VARIANT YANG DIPILIH: ', dtVariant);
+      console.log('HASIL VARIANT YANG DIPILIH: ', dtVariant);
 
-    if (dtVariant.length == 0) {
-      console.log('masuk if length');
-      noitem = noitem + 1;
-    } else {
-      console.log('masuk else if length');
-      let datamax = await dbconnTrx.queryselectTrx(
+      if (dtVariant.length == 0) {
+        console.log('masuk if length');
+        noitem = noitem + 1;
+      } else {
+        console.log('masuk else if length');
+        let datamax = await dbconnTrx.queryselectTrx(
+          db,
+          `select * from AddTrxDtl order by Lineitmseq desc;`,
+        );
+        console.log('isi data max dari table detail: ', datamax);
+        let len = datamax.length < 1 ? 0 : datamax.length;
+        noitem = len + 1;
+        console.log('total noitem: ', noitem);
+      }
+      console.log('kelar ngitung sequence');
+      console.log('ISI DETAIL VARIANT: ', dtVariant[0].item_Price);
+      console.log('RUNNING NUMBER: ', runno);
+      console.log('DATE: ', formattedDate);
+      console.log('SEQUENCE: ', noitem);
+      console.log('QTY ORDER: ', count);
+      console.log('ISI NOTES: ', notes);
+      await dbconnTrx.AddTrxDtl_savedata(
         db,
-        `select * from AddTrxDtl order by Lineitmseq desc limit 1;`,
+        'AddTrxDtl',
+        runno,
+        formattedDate,
+        noitem,
+        count,
+        notes,
+        dtVariant[0].item_Number,
+        dtVariant[0].item_Name,
+        dtVariant[0].item_Price,
+        dtVariant[0].item_Cost,
+        dtVariant[0].variant_Name,
       );
-      console.log('isi data max dari table detail: ', datamax);
-      let len = datamax.length < 1 ? 0 : datamax.length;
-      noitem = len + 1;
-      console.log('total noitem: ', noitem);
+      let dataDetail = await dbconnTrx.AddTrxDtl_getdata(db, 'AddTrxDtl');
+      console.log('data detail: ', dataDetail);
+      setMdlVariant(false);
+    } catch (error) {
+      console.log(err.message);
     }
-    console.log('kelar ngitung sequence');
-    console.log('ISI DETAIL VARIANT: ', dtVariant[0].item_Price);
-    console.log('RUNNING NUMBER: ', runno);
-    console.log('DATE: ', formattedDate);
-    console.log('SEQUENCE: ', noitem);
-    console.log('QTY ORDER: ', count);
-    console.log('ISI NOTES: ', notes);
-    await dbconnTrx.AddTrxDtl_savedata(
-      db,
-      'AddTrxDtl',
-      runno,
-      formattedDate,
-      noitem,
-      count,
-      notes,
-      dtVariant[0].item_Number,
-      dtVariant[0].item_Name,
-      dtVariant[0].item_Price,
-      dtVariant[0].item_Cost,
-      dtVariant[0].variant_Name,
-    );
-    let dataDetail = await dbconnTrx.AddTrxDtl_getdata(db, 'AddTrxDtl');
-    console.log('data detail: ', dataDetail);
-    setMdlVariant(false);
+  };
+
+  const GetBills = async () => {
+    try {
+      viewModalBills();
+      const db = await dbconnTrx.getDBConnection();
+      let getbills = await dbconnTrx.AddTrxDtl_getdataBills(
+        db,
+        'AddTrxDtl',
+        runno,
+      );
+      setBills(getbills);
+      console.log('DATA BILLS: ', getbills);
+    } catch (error) {
+      console.log(err.message);
+    }
   };
 
   const handleIncrement = () => {
@@ -655,7 +676,7 @@ export default function Menu({navigation}) {
                               {variant.variant_Name}
                             </Text>
                             <Text style={globalStyles.textFlag2}>
-                              {variant.variant_Name}
+                              {variant.item_Cost}
                             </Text>
                           </TouchableOpacity>
                         )}
@@ -736,160 +757,66 @@ export default function Menu({navigation}) {
                 <Text style={globalStyles.modalText}>Invoice</Text>
               </View>
               <Text style={globalStyles.TextHeaderBills}>Tipe Transaksi</Text>
-              <ScrollView style={globalStyles.InputBills}>
+              <ScrollView
+                style={globalStyles.InputBills}
+                nestedScrollEnabled={true}>
                 {/* //* BILLS*/}
-                <SafeAreaView style={[invrecStyles.inputantotalanbillskiri]}>
-                  <View style={globalStyles.cartlist}>
-                    <View style={globalStyles.kiri}>
-                      <View style={globalStyles.itemqty}>
-                        <Text
-                          style={[
-                            invrecStyles.labelinputbills,
-                            {backgroundColor: colors.card, color: colors.text},
-                          ]}>
-                          Kopi Susu
-                        </Text>
-                        <Text
-                          style={[
-                            invrecStyles.labelinputbills,
-                            {backgroundColor: colors.card, color: colors.text},
-                          ]}>
-                          x3
-                        </Text>
+                <View style={[invrecStyles.inputantotalanbillskiri]}>
+                  {bills.map((bills, index) => {
+                    return (
+                      <View key={index} style={globalStyles.cartlist}>
+                        <View style={globalStyles.kiri}>
+                          <View style={globalStyles.itemqty}>
+                            <TouchableOpacity>
+                              <Text
+                                style={[
+                                  invrecStyles.labelinputbills,
+                                  {
+                                    backgroundColor: colors.card,
+                                    color: colors.text,
+                                  },
+                                ]}>
+                                {bills.Item_Description}
+                              </Text>
+                            </TouchableOpacity>
+                            <Text
+                              style={[
+                                invrecStyles.labelinputbills,
+                                {
+                                  backgroundColor: colors.card,
+                                  color: colors.text,
+                                },
+                              ]}>
+                              {bills.Quantity}
+                            </Text>
+                          </View>
+                          <Text
+                            style={[
+                              invrecStyles.labelinputbills,
+                              {
+                                backgroundColor: colors.card,
+                                color: colors.text,
+                              },
+                            ]}>
+                            {bills.variant_Name}
+                          </Text>
+                        </View>
+                        <View style={globalStyles.kanan}>
+                          <Text
+                            style={[
+                              invrecStyles.labelinputbills,
+                              {
+                                backgroundColor: colors.card,
+                                color: colors.text,
+                              },
+                            ]}>
+                            {bills.Item_Price}
+                          </Text>
+                        </View>
                       </View>
-                      <Text
-                        style={[
-                          invrecStyles.labelinputbills,
-                          {backgroundColor: colors.card, color: colors.text},
-                        ]}>
-                        NM, LI, LS
-                      </Text>
-                    </View>
-                    <View style={globalStyles.kanan}>
-                      <Text
-                        style={[
-                          invrecStyles.labelinputbills,
-                          {backgroundColor: colors.card, color: colors.text},
-                        ]}>
-                        Rp 18.000
-                      </Text>
-                    </View>
-                  </View>
-                </SafeAreaView>
-                <SafeAreaView style={[invrecStyles.inputantotalanbillskiri]}>
-                  <View style={globalStyles.cartlist}>
-                    <View style={globalStyles.kiri}>
-                      <View style={globalStyles.itemqty}>
-                        <Text
-                          style={[
-                            invrecStyles.labelinputbills,
-                            {backgroundColor: colors.card, color: colors.text},
-                          ]}>
-                          Kopi Susu
-                        </Text>
-                        <Text
-                          style={[
-                            invrecStyles.labelinputbills,
-                            {backgroundColor: colors.card, color: colors.text},
-                          ]}>
-                          x3
-                        </Text>
-                      </View>
-                      <Text
-                        style={[
-                          invrecStyles.labelinputbills,
-                          {backgroundColor: colors.card, color: colors.text},
-                        ]}>
-                        NM, LI, LS
-                      </Text>
-                    </View>
-                    <View style={globalStyles.kanan}>
-                      <Text
-                        style={[
-                          invrecStyles.labelinputbills,
-                          {backgroundColor: colors.card, color: colors.text},
-                        ]}>
-                        Rp 18.000
-                      </Text>
-                    </View>
-                  </View>
-                </SafeAreaView>
-                <SafeAreaView style={[invrecStyles.inputantotalanbillskiri]}>
-                  <View style={globalStyles.cartlist}>
-                    <View style={globalStyles.kiri}>
-                      <View style={globalStyles.itemqty}>
-                        <Text
-                          style={[
-                            invrecStyles.labelinputbills,
-                            {backgroundColor: colors.card, color: colors.text},
-                          ]}>
-                          Kopi Susu
-                        </Text>
-                        <Text
-                          style={[
-                            invrecStyles.labelinputbills,
-                            {backgroundColor: colors.card, color: colors.text},
-                          ]}>
-                          x3
-                        </Text>
-                      </View>
-                      <Text
-                        style={[
-                          invrecStyles.labelinputbills,
-                          {backgroundColor: colors.card, color: colors.text},
-                        ]}>
-                        NM, LI, LS
-                      </Text>
-                    </View>
-                    <View style={globalStyles.kanan}>
-                      <Text
-                        style={[
-                          invrecStyles.labelinputbills,
-                          {backgroundColor: colors.card, color: colors.text},
-                        ]}>
-                        Rp 18.000
-                      </Text>
-                    </View>
-                  </View>
-                </SafeAreaView>
-                <SafeAreaView style={[invrecStyles.inputantotalanbillskiri]}>
-                  <View style={globalStyles.cartlist}>
-                    <View style={globalStyles.kiri}>
-                      <View style={globalStyles.itemqty}>
-                        <Text
-                          style={[
-                            invrecStyles.labelinputbills,
-                            {backgroundColor: colors.card, color: colors.text},
-                          ]}>
-                          Kopi Susu
-                        </Text>
-                        <Text
-                          style={[
-                            invrecStyles.labelinputbills,
-                            {backgroundColor: colors.card, color: colors.text},
-                          ]}>
-                          x3
-                        </Text>
-                      </View>
-                      <Text
-                        style={[
-                          invrecStyles.labelinputbills,
-                          {backgroundColor: colors.card, color: colors.text},
-                        ]}>
-                        NM, LI, LS
-                      </Text>
-                    </View>
-                    <View style={globalStyles.kanan}>
-                      <Text
-                        style={[
-                          invrecStyles.labelinputbills,
-                          {backgroundColor: colors.card, color: colors.text},
-                        ]}>
-                        Rp 18.000
-                      </Text>
-                    </View>
-                  </View>
-                </SafeAreaView>
+                    );
+                  })}
+                </View>
                 {/* //* BILLS*/}
               </ScrollView>
               <ScrollView style={globalStyles.InputBills2}>
@@ -1089,7 +1016,9 @@ export default function Menu({navigation}) {
             }}>
             <TouchableOpacity
               style={invrecStyles.bannerinvoice}
-              onPress={viewModalBills}>
+              onPress={() => {
+                GetBills();
+              }}>
               <Text style={invrecStyles.bannerpanahback2}> Bills </Text>
               <Icon name={'file-invoice'} size={20} color="#FFFFFF" />
             </TouchableOpacity>
