@@ -171,6 +171,7 @@ export default function Menu({navigation}) {
         console.log('respon: ' + err.message);
         let msg = 'Servers is not available.';
         msg = err.message;
+        CallModalInfo(msg);
       });
   };
 
@@ -281,7 +282,10 @@ export default function Menu({navigation}) {
       console.log('data detail: ', dataDetail);
       setMdlVariant(false);
     } catch (error) {
-      console.log(err.message);
+      console.log(error);
+      let msg = 'Terjadi kesalahan, silahkan input ulang kembali';
+      msg = error.message;
+      CallModalInfo(msg);
     }
   };
 
@@ -297,7 +301,24 @@ export default function Menu({navigation}) {
       setBills(getbills);
       console.log('DATA BILLS: ', getbills);
     } catch (error) {
-      console.log(err.message);
+      console.log(error.message);
+      let msg = error.message;
+      CallModalInfo(msg);
+    }
+  };
+
+  const DeleteItem = async Lineitmseq => {
+    try {
+      console.log('ISI LNITMSEQ: ', Lineitmseq);
+      const db = await dbconnTrx.getDBConnection();
+      let query = `DELETE FROM AddTrxDtl WHERE Lineitmseq = ${Lineitmseq} `;
+      await dbconnTrx.querydynamic(db, query);
+      let CurrentDtl = await dbconnTrx.AddTrxDtl_getdata(db, 'AddTrxDtl');
+      setBills(CurrentDtl);
+      setBills();
+    } catch (error) {
+      let msg = error.message;
+      CallModalInfo(msg);
     }
   };
 
@@ -356,6 +377,13 @@ export default function Menu({navigation}) {
     navigation.goBack();
     return true;
   }
+
+  const CallModalInfo = async info => {
+    //setLoad(false);
+    setInformation(info);
+    setModalVisible(true);
+    // Alert.alert("Information", info);
+  };
 
   //#endregion
 
@@ -787,7 +815,7 @@ export default function Menu({navigation}) {
                                   color: colors.text,
                                 },
                               ]}>
-                              {bills.Quantity}
+                              x{bills.Quantity}
                             </Text>
                           </View>
                           <Text
@@ -802,6 +830,13 @@ export default function Menu({navigation}) {
                           </Text>
                         </View>
                         <View style={globalStyles.kanan}>
+                          <TouchableOpacity
+                            style={{position: 'absolute', right: 0}}
+                            onPress={() => DeleteItem(bills.Lineitmseq)}>
+                            <Text style={invrecStyles.labelrightdatalist}>
+                              Hapus
+                            </Text>
+                          </TouchableOpacity>
                           <Text
                             style={[
                               invrecStyles.labelinputbills,
