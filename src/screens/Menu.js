@@ -55,6 +55,7 @@ export default function Menu({navigation}) {
   const [mdlConfirmCust, setMdlConfirmCust] = useState(false);
   const [mdlPayment, setMdlPayment] = useState(false);
   const [mdlVariant, setMdlVariant] = useState(false);
+  const [mdlEditVariant, setMdlEditVariant] = useState(false);
   const [mdlBills, setMdlBills] = useState(false);
   const [modalCustVisible, setModalCustVisible] = useState(false);
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
@@ -307,6 +308,22 @@ export default function Menu({navigation}) {
     }
   };
 
+  const UpdateItem = async Lineitmseq => {
+    try {
+      const db = dbconnTrx.getDBConnection();
+      let dtVariant = await dbconn.Variant_getdataChoose(db, 'Variant');
+      let variantedit = dtVariant.variant_Name;
+      let query = `UPDATE AddTrxDtl SET Quantity = ${count}, variant_Name = '${variantedit}' WHERE Lineitmseq = ${Lineitmseq}`;
+      await dbconnTrx.querydynamic(db, query);
+      let detailUpdate = await dbconnTrx.AddTrxDtl_getdata(db, 'AddTrxDtl');
+      setBills(detailUpdate);
+      setMdlEditVariant(false);
+    } catch (error) {
+      let msg = error.message;
+      CallModalInfo(msg);
+    }
+  };
+
   const DeleteItem = async Lineitmseq => {
     try {
       console.log('ISI LNITMSEQ: ', Lineitmseq);
@@ -315,7 +332,6 @@ export default function Menu({navigation}) {
       await dbconnTrx.querydynamic(db, query);
       let CurrentDtl = await dbconnTrx.AddTrxDtl_getdata(db, 'AddTrxDtl');
       setBills(CurrentDtl);
-      setBills();
     } catch (error) {
       let msg = error.message;
       CallModalInfo(msg);
@@ -369,6 +385,10 @@ export default function Menu({navigation}) {
     setMdlVariant(true);
   };
 
+  const viewModalEditVariant = async () => {
+    setMdlEditVariant(true);
+  };
+
   const viewModalBills = async () => {
     setMdlBills(true);
   };
@@ -394,37 +414,6 @@ export default function Menu({navigation}) {
       <SafeAreaView
         style={{flex: 1, flexDirection: 'column', backgroundColor: '#FFFFFF'}}>
         {/* //* INFORMATION */}
-        {/* <Modal animationType="fade" transparent={true} visible={modalVisible}>
-          <View style={globalStyles.centeredView}>
-            <View style={globalStyles.modalView}>
-              <View style={globalStyles.modalheader}>
-                <Text style={globalStyles.modalText}>Information</Text>
-              </View>
-              <View style={{margin: 20,marginBottom: 0,}}>
-                {information == '' ? 
-                (
-                  <Text style={{color: '#212121',fontSize: 16,}}>Not available new module</Text>
-                ) 
-                :
-                (
-                  <Text style={{color: 'red',fontSize: 16,}}>{information == '' ? "Not available new module" : information}</Text>
-                )
-                }                  
-                </View>
-                <TouchableOpacity style={[globalStyles.button, globalStyles.buttonClose]}
-                // onPress={() => setModalVisible(!modalVisible)} onRefresh
-               
-                onPress={() => {validInformationOk(!modalVisible); RELOADPAGE();}}
-                // refreshControl={
-                //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>
-                // }
-                //onPress={this.resetState}
-                >
-                <Text style={globalStyles.textStyle}>Ok</Text>
-              </TouchableOpacity>
-              </View>
-            </View>
-        </Modal> */}
         <Modal animationType="fade" transparent={true} visible={modalVisible}>
           <View style={globalStyles.centeredView}>
             <View style={globalStyles.modalView}>
@@ -775,6 +764,127 @@ export default function Menu({navigation}) {
         </Modal>
         {/* //* MODAL VARIANT */}
 
+        {/* //* MODAL EDIT VARIANT */}
+        <Modal animationType="fade" transparent={true} visible={mdlEditVariant}>
+          <View style={globalStyles.centeredViewPayment}>
+            <View style={globalStyles.modalViewPayment}>
+              <View style={globalStyles.modalheader}>
+                <Text style={globalStyles.modalText}>Variant</Text>
+              </View>
+              <Text style={globalStyles.TextHeaderVariant}>Variant</Text>
+              <ScrollView
+                style={globalStyles.InputVariant}
+                nestedScrollEnabled={true}>
+                {/* //* VARIANT*/}
+                <View style={[invrecStyles.inputantotalan]}>
+                  {variant.map((variant, index) => {
+                    return (
+                      <View key={index} style={globalStyles.inputtotalan}>
+                        {variant.flag == 1 ? (
+                          <TouchableOpacity
+                            style={[globalStyles.buttonSubmitFlagChoose]}
+                            //disabled={true}
+                            onPress={() =>
+                              UpdateDataList(
+                                variant.item_Number,
+                                variant.flag,
+                                variant.lineItem_Variant,
+                                variant.lineItem_Option,
+                              )
+                            }>
+                            <Text style={globalStyles.textFlag}>
+                              {variant.variant_Name}
+                            </Text>
+                            <Text style={globalStyles.textFlag2}>
+                              {variant.item_Cost}
+                            </Text>
+                          </TouchableOpacity>
+                        ) : (
+                          <TouchableOpacity
+                            style={[globalStyles.buttonSubmitFlag]}
+                            onPress={() =>
+                              UpdateDataList(
+                                variant.item_Number,
+                                variant.flag,
+                                variant.lineItem_Variant,
+                                variant.lineItem_Option,
+                              )
+                            }>
+                            <Text style={globalStyles.textFlag}>
+                              {variant.variant_Name}
+                            </Text>
+                            <Text style={globalStyles.textFlag2}>
+                              {variant.item_Cost}
+                            </Text>
+                          </TouchableOpacity>
+                        )}
+                      </View>
+                    );
+                  })}
+                </View>
+                {/* //* VARIANT*/}
+              </ScrollView>
+              <View style={[globalStyles.InputTotalanVariant]}>
+                <SafeAreaView style={[invrecStyles.inputanvariant]}>
+                  <View style={globalStyles.inputtotalan}>
+                    <TextInput
+                      style={[
+                        globalStyles.textinputcomment,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}
+                      maxLength={100}
+                      placeholder={'Comment'}
+                      placeholderTextColor={colors.text}
+                      value={notes}
+                    />
+                  </View>
+                </SafeAreaView>
+                <SafeAreaView style={[invrecStyles.inputanqty]}>
+                  <TouchableOpacity style={[globalStyles.buttonQTYMinus]}>
+                    <Text style={globalStyles.textNo} onPress={handleDecrement}>
+                      {' '}
+                      -{' '}
+                    </Text>
+                  </TouchableOpacity>
+                  <TextInput
+                    style={[
+                      globalStyles.textinputqty,
+                      {backgroundColor: colors.card, color: colors.text},
+                    ]}
+                    value={count.toString()}
+                    editable={false}
+                    maxLength={100}
+                    keyboardType="numeric"
+                  />
+                  <TouchableOpacity style={[globalStyles.buttonQTYPlus]}>
+                    <Text style={globalStyles.textNo} onPress={handleIncrement}>
+                      {' '}
+                      +{' '}
+                    </Text>
+                  </TouchableOpacity>
+                </SafeAreaView>
+              </View>
+              <View style={globalStyles.ButtonPayment}>
+                <SafeAreaView style={[invrecStyles.buttontotalan]}>
+                  <TouchableOpacity
+                    style={[globalStyles.buttonNoPayment]}
+                    onPress={() => setMdlVariant(!mdlVariant)}>
+                    <Text style={globalStyles.textNo}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[globalStyles.buttonYesPayment]}
+                    onPress={() => {
+                      UpdateItem(variant.Lineitmseq);
+                    }}>
+                    <Text style={globalStyles.textStyle}>Add Item</Text>
+                  </TouchableOpacity>
+                </SafeAreaView>
+              </View>
+            </View>
+          </View>
+        </Modal>
+        {/* //* MODAL EDIT VARIANT */}
+
         {/* //* MODAL BILLS */}
         <Modal animationType="fade" transparent={true} visible={mdlBills}>
           <View style={globalStyles.centeredViewPayment}>
@@ -795,7 +905,7 @@ export default function Menu({navigation}) {
                       <View key={index} style={globalStyles.cartlist}>
                         <View style={globalStyles.kiri}>
                           <View style={globalStyles.itemqty}>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={viewModalEditVariant()}>
                               <Text
                                 style={[
                                   invrecStyles.labelinputbills,
