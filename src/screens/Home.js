@@ -150,7 +150,7 @@ const Home = () => {
   };
 
   const viewConfirmSync = async () => {
-    setMdlConfirmSync(true);
+    navigation.replace('printBluetooth');
   };
 
   const ViewHidePrinter = async () => {
@@ -503,22 +503,6 @@ const Home = () => {
         </View>
       </Modal>
       {/* //* PRINTER SETTING */}
-
-      {/* //* LOADER */}
-      {/* <Modal animationType="fade" transparent={true} visible={isLoad}>
-        <View style={globalStyles.centeredView}>
-          <View style={globalStyles.modalLoad}>
-            <Image
-              source={loadingartha}
-              style={globalStyles.imageloader}
-              imageStyle={{opacity: 0.5}}></Image>
-            <Text style={[globalStyles.textloader, {color: colors.text}]}>
-              Loading...
-            </Text>
-          </View>
-        </View>
-      </Modal> */}
-      {/* //* LOADER */}
 
       <StatusBar
         backgroundColor={'#0096FF'}

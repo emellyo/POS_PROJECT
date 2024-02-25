@@ -426,8 +426,8 @@ export const globalStyles = StyleSheet.create({
   viewinput2: {
     flexDirection: 'row',
     width: '10%',
-    marginHorizontal: '40%',
-    //marginTop: 10,
+    marginHorizontal: '80%',
+    // marginBottom: '10%',
   },
   viewbutton: {
     flexDirection: 'column',
@@ -1227,7 +1227,7 @@ export const globalStyles = StyleSheet.create({
   },
   InputBills3: {
     width: '100%',
-    height: '10%',
+    height: '25%',
   },
   InputBills4: {
     width: '100%',
@@ -1307,6 +1307,7 @@ export const globalStyles = StyleSheet.create({
     width: '50%',
     //padding: 5,
     display: 'flex',
+    flexWrap: 'wrap',
     justifyContent: 'center',
     //height: 40,
     verticalAlign: 'middle',
@@ -1336,7 +1337,7 @@ export const globalStyles = StyleSheet.create({
     display: 'flex',
     alignItems: 'flex-end',
     width: '30%',
-    padding: 10,
+    padding: 20,
   },
   kanan2: {
     display: 'flex',
@@ -1353,7 +1354,7 @@ export const globalStyles = StyleSheet.create({
   kananlogin: {
     display: 'flex',
     alignItems: 'flex-end',
-    width: '30%',
+    width: '40%',
     padding: 10,
   },
   itemqty: {
@@ -1660,7 +1661,8 @@ export const invrecStyles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     width: '100%',
-    marginBottom: 16,
+    marginBottom: 5,
+    flexWrap: 'wrap',
     //padding: 10,
     //height: '50%',
     // borderBottomWidth: 1,

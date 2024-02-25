@@ -28,6 +28,7 @@ import {getitem} from '../api/getitem';
 import {Item} from 'react-navigation-header-buttons';
 import {getvariant} from '../api/getvariant';
 import {getrunno} from '../api/getrunningnumber';
+import {getdiscount} from '../api/getdiscount';
 import * as dbconn from '../db/Variant';
 import * as dbconnTrx from '../db/AddTrx';
 import {run} from 'jest';
@@ -71,18 +72,28 @@ export default function Menu({navigation}) {
   const [addtemp, setAddTemp] = useState([]);
   const [notes, setNotes] = useState('');
   const [bills, setBills] = useState([]);
+  const [discount, setDisCount] = useState([]);
+  const [tax, setTax] = useState([]);
+  const [total, setTotal] = useState([]);
+  const [grandtotal, setGrandTotal] = useState([]);
+  const [seqTemp, setSeqTemp] = useState(0);
   //#endregion
 
   useEffect(() => {
+    setDisCount([]);
+    setAddTemp([]);
+    setBills([]);
     setMdlConfirmCust(true);
     setMdlBills(false);
     setMdlPayment(false);
     setMdlVariant(false);
+    setModalVisible(false);
     setCount(1);
     Categories();
     GetItems();
     GetRunno();
     LOADTBLADDITEM();
+    GetDiscount();
     BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     return () => {
       clearInterval(increment.current);
@@ -117,6 +128,7 @@ export default function Menu({navigation}) {
   //#region //* FUNCTION
 
   const Categories = async () => {
+    setCategory([]);
     getcategories({})
       .then(async result => {
         if (result.status == 200) {
@@ -177,6 +189,7 @@ export default function Menu({navigation}) {
   };
 
   const GetItems = async () => {
+    setItem([]);
     getitem({
       UserID: '',
       Item_Number: '',
@@ -200,6 +213,15 @@ export default function Menu({navigation}) {
     }).then(async result => {
       var hasil = result.data;
       setItem(hasil);
+    });
+  };
+
+  const GetDiscount = async category => {
+    setDisCount([]);
+    console.log('category: ', category);
+    getdiscount({}).then(async result => {
+      var hasil = result.data;
+      setDisCount(hasil);
     });
   };
 
@@ -292,7 +314,8 @@ export default function Menu({navigation}) {
 
   const GetBills = async () => {
     try {
-      viewModalBills();
+      console.log('modal bills');
+      setMdlBills(true);
       const db = await dbconnTrx.getDBConnection();
       let getbills = await dbconnTrx.AddTrxDtl_getdataBills(
         db,
@@ -301,6 +324,7 @@ export default function Menu({navigation}) {
       );
       setBills(getbills);
       console.log('DATA BILLS: ', getbills);
+      CalculateTotal();
     } catch (error) {
       console.log(error.message);
       let msg = error.message;
@@ -308,16 +332,21 @@ export default function Menu({navigation}) {
     }
   };
 
-  const UpdateItem = async Lineitmseq => {
+  const UpdateItem = async () => {
     try {
-      const db = dbconnTrx.getDBConnection();
+      console.log('isi sequence: ', seqTemp);
+      const db = await dbconnTrx.getDBConnection();
       let dtVariant = await dbconn.Variant_getdataChoose(db, 'Variant');
-      let variantedit = dtVariant.variant_Name;
-      let query = `UPDATE AddTrxDtl SET Quantity = ${count}, variant_Name = '${variantedit}' WHERE Lineitmseq = ${Lineitmseq}`;
-      await dbconnTrx.querydynamic(db, query);
+      let variantedit = dtVariant[0].variant_Name;
+      console.log('isi variant choose: ', variantedit);
+      let updatedetail = await dbconnTrx.queryselectTrx(
+        db,
+        `UPDATE AddTrxDtl SET Quantity = ${count}, variant_Name = '${variantedit}' WHERE Lineitmseq = ${seqTemp}`,
+      );
       let detailUpdate = await dbconnTrx.AddTrxDtl_getdata(db, 'AddTrxDtl');
       setBills(detailUpdate);
       setMdlEditVariant(false);
+      CalculateTotal();
     } catch (error) {
       let msg = error.message;
       CallModalInfo(msg);
@@ -332,12 +361,61 @@ export default function Menu({navigation}) {
       await dbconnTrx.querydynamic(db, query);
       let CurrentDtl = await dbconnTrx.AddTrxDtl_getdata(db, 'AddTrxDtl');
       setBills(CurrentDtl);
+      console.log('ISI DETAIL SETELAH DELETE: ', CurrentDtl);
+      CalculateTotal();
     } catch (error) {
       let msg = error.message;
       CallModalInfo(msg);
     }
   };
 
+  const CalculateTotal = async () => {
+    try {
+      const db = await dbconnTrx.getDBConnection();
+      let qty = await dbconnTrx.queryselectTrx(
+        db,
+        `SELECT SUM(IFNULL(Item_Price * Quantity, 0))as TOTAL FROM AddTrxDtl`,
+      );
+      // let querysum = `SELECT (Item_Price * Quantity) AS TOTALPRICE FROM AddTrxDtl`;
+      // let sumtotal = await dbconnTrx.querydynamic(db, querysum);
+      let querytax = await dbconnTrx.queryselectTrx(
+        db,
+        `SELECT (${qty[0].TOTAL} * 0.11) as totalppn`,
+      );
+      let querytotal = await dbconnTrx.queryselectTrx(
+        db,
+        `SELECT (${qty[0].TOTAL} + ${querytax[0].totalppn}) AS GRANDTOTAL`,
+      );
+      // let total = await dbconnTrx.querydynamic(db, querytotal);
+      console.log('HASIL QTY * PRICE: ', qty[0].TOTAL);
+      // console.log('HASIL SUM TOTAL', sumtotal);
+
+      console.log('HASIL TAX: ', querytax[0].totalppn);
+      // console.log('HASIL TOTAL: ', total);
+      if (querytotal.length == 0) {
+        setGrandTotal([0]);
+      } else {
+        setGrandTotal([querytotal[0].GRANDTOTAL]);
+      }
+      if (querytax.length == 0) {
+        setTax([0]);
+      } else {
+        setTax([querytax[0].totalppn]);
+      }
+
+      if (qty.length == 0) {
+        console.log('haha: ', qty.length);
+        setTotal([0]);
+      } else {
+        setTotal([qty[0].TOTAL]);
+      }
+      console.log('nilai total: ', total);
+    } catch (error) {
+      console.log('ERROR CALCULATE: ', error.message);
+      let msg = error.message;
+      CallModalInfo(msg);
+    }
+  };
   const handleIncrement = () => {
     // Increase count by 1
     setCount(count + 1);
@@ -385,7 +463,9 @@ export default function Menu({navigation}) {
     setMdlVariant(true);
   };
 
-  const viewModalEditVariant = async () => {
+  const viewModalEditVariant = async Lineitmseq => {
+    setSeqTemp(Lineitmseq);
+    console.log('SEQUENCE: ', seqTemp);
     setMdlEditVariant(true);
   };
 
@@ -464,7 +544,6 @@ export default function Menu({navigation}) {
           </View>
         </Modal>
         {/* //* CONFIRM POSTING */}
-
         {/* //* CUSTOMER TRX */}
         <Modal animationType="fade" transparent={true} visible={mdlConfirmCust}>
           <View style={globalStyles.centeredViewCust}>
@@ -509,7 +588,6 @@ export default function Menu({navigation}) {
           </View>
         </Modal>
         {/* //* CUSTOMER TRX */}
-
         {/* //* MODAL PAYMENT */}
         <Modal animationType="fade" transparent={true} visible={mdlPayment}>
           <View style={globalStyles.centeredViewPayment}>
@@ -642,7 +720,6 @@ export default function Menu({navigation}) {
           </View>
         </Modal>
         {/* //* MODAL PAYMENT */}
-
         {/* //* MODAL VARIANT */}
         <Modal animationType="fade" transparent={true} visible={mdlVariant}>
           <View style={globalStyles.centeredViewPayment}>
@@ -675,7 +752,7 @@ export default function Menu({navigation}) {
                               {variant.variant_Name}
                             </Text>
                             <Text style={globalStyles.textFlag2}>
-                              {variant.item_Cost}
+                              {variant.item_Price}
                             </Text>
                           </TouchableOpacity>
                         ) : (
@@ -693,7 +770,7 @@ export default function Menu({navigation}) {
                               {variant.variant_Name}
                             </Text>
                             <Text style={globalStyles.textFlag2}>
-                              {variant.item_Cost}
+                              {variant.item_Price}
                             </Text>
                           </TouchableOpacity>
                         )}
@@ -763,7 +840,6 @@ export default function Menu({navigation}) {
           </View>
         </Modal>
         {/* //* MODAL VARIANT */}
-
         {/* //* MODAL EDIT VARIANT */}
         <Modal animationType="fade" transparent={true} visible={mdlEditVariant}>
           <View style={globalStyles.centeredViewPayment}>
@@ -868,7 +944,7 @@ export default function Menu({navigation}) {
                 <SafeAreaView style={[invrecStyles.buttontotalan]}>
                   <TouchableOpacity
                     style={[globalStyles.buttonNoPayment]}
-                    onPress={() => setMdlVariant(!mdlVariant)}>
+                    onPress={() => setMdlEditVariant(!mdlEditVariant)}>
                     <Text style={globalStyles.textNo}>Cancel</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
@@ -876,7 +952,7 @@ export default function Menu({navigation}) {
                     onPress={() => {
                       UpdateItem(variant.Lineitmseq);
                     }}>
-                    <Text style={globalStyles.textStyle}>Add Item</Text>
+                    <Text style={globalStyles.textStyle}>Edit Item</Text>
                   </TouchableOpacity>
                 </SafeAreaView>
               </View>
@@ -884,7 +960,6 @@ export default function Menu({navigation}) {
           </View>
         </Modal>
         {/* //* MODAL EDIT VARIANT */}
-
         {/* //* MODAL BILLS */}
         <Modal animationType="fade" transparent={true} visible={mdlBills}>
           <View style={globalStyles.centeredViewPayment}>
@@ -905,7 +980,10 @@ export default function Menu({navigation}) {
                       <View key={index} style={globalStyles.cartlist}>
                         <View style={globalStyles.kiri}>
                           <View style={globalStyles.itemqty}>
-                            <TouchableOpacity onPress={viewModalEditVariant()}>
+                            <TouchableOpacity
+                              onPress={() => {
+                                viewModalEditVariant(bills.Lineitmseq);
+                              }}>
                               <Text
                                 style={[
                                   invrecStyles.labelinputbills,
@@ -966,78 +1044,35 @@ export default function Menu({navigation}) {
               </ScrollView>
               <ScrollView style={globalStyles.InputBills2}>
                 <Text style={globalStyles.TextHeaderBills2}>Discounts</Text>
-                <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
-                  <View style={globalStyles.labelinputtotalanbillsdisc}>
-                    <Text
-                      style={[
-                        invrecStyles.labelinputbills,
-                        {backgroundColor: colors.card, color: colors.text},
-                      ]}>
-                      Discounts A 20%
-                    </Text>
-                  </View>
-                  <View style={globalStyles.viewinput2}>
-                    <CheckBox
-                      tintColors={{true: '#0096FF', false: 'black'}}
-                      //value={toggleCheckBox}
-                      onValueChange={newValue => setToggleCheckBox(newValue)}
-                    />
-                  </View>
-                </SafeAreaView>
-                <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
-                  <View style={globalStyles.labelinputtotalanbillsdisc}>
-                    <Text
-                      style={[
-                        invrecStyles.labelinputbills,
-                        {backgroundColor: colors.card, color: colors.text},
-                      ]}>
-                      Discounts A 20%
-                    </Text>
-                  </View>
-                  <View style={globalStyles.viewinput2}>
-                    <CheckBox
-                      tintColors={{true: '#0096FF', false: 'black'}}
-                      //value={toggleCheckBox}
-                      onValueChange={newValue => setToggleCheckBox(newValue)}
-                    />
-                  </View>
-                </SafeAreaView>
-                <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
-                  <View style={globalStyles.labelinputtotalanbillsdisc}>
-                    <Text
-                      style={[
-                        invrecStyles.labelinputbills,
-                        {backgroundColor: colors.card, color: colors.text},
-                      ]}>
-                      Discounts B 20%
-                    </Text>
-                  </View>
-                  <View style={globalStyles.viewinput2}>
-                    <CheckBox
-                      tintColors={{true: '#0096FF', false: 'black'}}
-                      //value={toggleCheckBox}
-                      onValueChange={newValue => setToggleCheckBox(newValue)}
-                    />
-                  </View>
-                </SafeAreaView>
-                <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
-                  <View style={globalStyles.labelinputtotalanbillsdisc}>
-                    <Text
-                      style={[
-                        invrecStyles.labelinputbills,
-                        {backgroundColor: colors.card, color: colors.text},
-                      ]}>
-                      Discounts A 20%
-                    </Text>
-                  </View>
-                  <View style={globalStyles.viewinput2}>
-                    <CheckBox
-                      tintColors={{true: '#0096FF', false: 'black'}}
-                      //value={toggleCheckBox}
-                      onValueChange={newValue => setToggleCheckBox(newValue)}
-                    />
-                  </View>
-                </SafeAreaView>
+                {discount.map((discount, index) => {
+                  return (
+                    <View
+                      key={index}
+                      style={[invrecStyles.inputantotalanbills2]}>
+                      <View style={globalStyles.labelinputtotalanbillsdisc}>
+                        <Text
+                          style={[
+                            invrecStyles.labelinputbills,
+                            {
+                              backgroundColor: colors.card,
+                              color: colors.text,
+                            },
+                          ]}>
+                          {discount.discount_Name}
+                        </Text>
+                      </View>
+                      <View style={globalStyles.viewinput2}>
+                        <CheckBox
+                          tintColors={{true: '#0096FF', false: 'black'}}
+                          //value={toggleCheckBox}
+                          onValueChange={newValue =>
+                            setToggleCheckBox(newValue)
+                          }
+                        />
+                      </View>
+                    </View>
+                  );
+                })}
               </ScrollView>
               <ScrollView style={globalStyles.InputBills3}>
                 <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
@@ -1056,7 +1091,7 @@ export default function Menu({navigation}) {
                         invrecStyles.labelinputbills,
                         {backgroundColor: colors.card, color: colors.text},
                       ]}>
-                      Rp 75.000
+                      Rp {total.toLocaleString('id-ID')}
                     </Text>
                   </View>
                 </SafeAreaView>
@@ -1096,7 +1131,7 @@ export default function Menu({navigation}) {
                         invrecStyles.labelinputbills,
                         {backgroundColor: colors.card, color: colors.text},
                       ]}>
-                      Rp 8.250
+                      Rp {tax.toLocaleString('id-ID')}
                     </Text>
                   </View>
                 </SafeAreaView>
@@ -1116,7 +1151,7 @@ export default function Menu({navigation}) {
                         invrecStyles.labelinputbills,
                         {backgroundColor: colors.card, color: colors.text},
                       ]}>
-                      Rp 75.000
+                      Rp {grandtotal.toLocaleString('id-ID')}
                     </Text>
                   </View>
                 </SafeAreaView>
@@ -1143,7 +1178,6 @@ export default function Menu({navigation}) {
         <StatusBar
           backgroundColor={'#0096FF'}
           barStyle="light-content"></StatusBar>
-
         {/* //* BANNER */}
         <SafeAreaView style={invrecStyles.bannermenu}>
           <TouchableOpacity
@@ -1172,7 +1206,6 @@ export default function Menu({navigation}) {
           </View>
         </SafeAreaView>
         {/* //* BANNER */}
-
         {/* //* CONTENT */}
         <ScrollView style={{flex: 3, padding: 15, height: '100%'}}>
           <View

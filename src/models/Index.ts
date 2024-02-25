@@ -19,6 +19,18 @@ export type Variant ={
     flag: number;
 }
 
+export type Discount ={
+    discount_ID: string,
+    discount_Name: string,
+    discount_Type: number,
+    discount_Value: number,
+    restricted_Access: number,
+    created_User: string,
+    created_Date: string,
+    modified_User: string,
+    modified_Date: string
+}
+
 export type AddTrxHdr ={
     UserID: string;
     DOCNUMBER: string;

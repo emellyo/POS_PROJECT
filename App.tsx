@@ -23,6 +23,7 @@ import DiscountScreen from './src/screens/Discount';
 import ShiftsScreen from './src/screens/Shifts';
 import Sidebar from './src/screens/SideBar';
 import SidebarContent from './src/screens/SideBarContent';
+import PrintBluetooth from './src/screens/printBluetooth';
 // import InvRecScreen from './src/screens/InvReceiving';
 // import InvOutScreen from './src/screens/InvOut';
 // import BarcodeScan from './src/screens/BarcodeScanner';
@@ -39,27 +40,6 @@ const Drawer = createDrawerNavigator();
 // );
 
 const App = () => {
-  // return (
-  //    <NavigationContainer>
-  //     <Stack.Navigator
-  //       initialRouteName="Splash"
-  //       screenOptions={{headerShown: false}}>
-  //     {/* <Stack.Screen name="Splash" component={SplashScreen} /> */}
-  //     <Stack.Screen 
-  //       name="Login" 
-  //       component={LoginScreen}
-  //       options={{ title: 'Login Page'}} />
-  //     <Stack.Screen 
-  //       name="Home" 
-  //       component={HomeScreen}
-  //       options={{ title: 'Home Page'}} />
-  //       <Stack.Screen 
-  //       name="Menu" 
-  //       component={MenuScreen}
-  //       options={{ title: 'Menu Page'}} />
-  //   </Stack.Navigator>  
-  //   </NavigationContainer>
-  // );
 return (
     <NavigationContainer>
     <Stack.Navigator initialRouteName="Login"
@@ -93,14 +73,11 @@ return (
             </Drawer.Navigator> 
           )}
           </Stack.Screen> 
-        {/* //options={{ headerLeft: () => <Sidebar />, }}  */}
-        
-        {/* <Stack.Screen name="Sidebar" component={Sidebar} /> */}
+        {/* <Stack.Screen 
+        name="Print" 
+        component={PrintBluetooth}
+        options={{ title: 'Print Bluetooth Page'}} /> */}
       </Stack.Navigator>
-      {/* <Drawer.Navigator>
-        <Drawer.Screen name="Home" component={HomeScreen} />
-        <Drawer.Screen name="Sidebar" component={Sidebar} />
-      </Drawer.Navigator> */}
     </NavigationContainer>
   // <NavigationContainer>
   //     <AppNavigator />

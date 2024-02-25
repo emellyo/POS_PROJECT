@@ -322,22 +322,6 @@ const Login = () => {
                 </Modal>
                 {/* //* INFORMATION */}
 
-                {/* //* LOADER */}
-                {/* <Modal animationType="fade" transparent={true} visible={isLoad}>
-            <View style={globalStyles.centeredView}>
-              <View style={globalStyles.modalLoad}>
-                <Image
-                  //source={loadingartha}
-                  style={globalStyles.imageloader}
-                  imageStyle={{opacity: 0.5}}></Image>
-                <Text style={[globalStyles.textloader, {color: colors.text}]}>
-                  Loading...
-                </Text>
-              </View>
-            </View>
-           </Modal> */}
-                {/* //* LOADER */}
-
                 <StatusBar
                   backgroundColor={'#0096FF'}
                   barStyle="dark-content"></StatusBar>
@@ -494,7 +478,7 @@ const Login = () => {
         <View style={globalStyles.kananlogin}>
           <Image
             source={imglogo}
-            style={{width: '150%', height: '100%'}}></Image>
+            style={{width: '150%', height: '1000%'}}></Image>
         </View>
       </View>
     </SafeAreaView>
