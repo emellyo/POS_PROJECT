@@ -30,6 +30,7 @@ import HeaderButton from '../screens/HeaderButton';
 import {getrunno} from '../api/getrunnobatch';
 import {openshift} from '../api/openshift';
 import {getBrand} from 'react-native-device-info';
+import {getsalestype} from '../api/getsalestype';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // import {
 //   loadingartha,
@@ -72,6 +73,7 @@ const Home = () => {
   const [runno, setRunno] = useState('');
   const [openamount, setOpenAmount] = useState('');
   const [lastSeenDate, setLastSeenDate] = useState(null);
+  const [salesType, setSalesType] = useState([]);
 
   //#endregion
 
@@ -95,6 +97,7 @@ const Home = () => {
       AsyncStorage.setItem('lastSeenDate', today.toString()); // Save current date
       setLastSeenDate(today);
     }
+    GetSalesType();
     GetUserData();
     //setMdlPrinter(true);
     if (route.params?.showModal) {
@@ -117,6 +120,22 @@ const Home = () => {
     setLoad(false);
     setInformation(info);
     setModalVisible(true);
+  };
+
+  const GetSalesType = async () => {
+    try {
+      setSalesType([]);
+      getsalestype({
+        interid: '',
+        ID: '',
+      }).then(async result => {
+        var hasil = result.data;
+        setSalesType([hasil]);
+      });
+    } catch (error) {
+      let msg = error.message;
+      CallModalInfo(msg);
+    }
   };
 
   const PostOpenShift = async openamount => {
@@ -233,9 +252,20 @@ const Home = () => {
       console.log(err);
     }
   };
-  const handleWalkInandOnline = async () => {
+  const handleWalkInandOnline = async (tipesales, salesid) => {
     try {
-      navigation.navigate('Menu');
+      console.log('tipesales: ', tipesales);
+      var datasalestipe = [];
+      var dataparams = {
+        tipesales: tipesales,
+        salesid: salesid,
+      };
+      datasalestipe.push(dataparams);
+
+      AsyncStorage.setItem('@datasalestype', JSON.stringify(datasalestipe));
+      navigation.navigate('Menu', {
+        datasalestipe,
+      });
     } catch (err) {
       console.log(err);
     }
@@ -540,22 +570,38 @@ const Home = () => {
       </SafeAreaView>
       {/* //* CONTENT */}
       <SafeAreaView style={globalStyles.menuviewhome2}>
-        <View style={{flex: 2, flexDirection: 'row', marginHorizontal: 20}}>
-          <TouchableOpacity
-            style={globalStyles.menubuttonitembottom}
-            onPress={handleWalkInandOnline}>
-            <Icon name={'store'} size={40} color="#0096FF" />
-            {/* <Image style={globalStyles.iconmenuwalkin} /> */}
-            <Text style={globalStyles.menubuttontextselected}>Walk In</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={globalStyles.menubuttonitembottom2}
-            onPress={handleWalkInandOnline}>
-            <Icon name={'globe'} size={40} color="#0096FF" />
-            {/* <Image style={globalStyles.iconmenuonline} /> */}
-            <Text style={globalStyles.menubuttontextonline}>Online</Text>
-          </TouchableOpacity>
-        </View>
+        {salesType.map((salesType, index) => {
+          return (
+            <View style={{flex: 2, flexDirection: 'row', marginHorizontal: 20}}>
+              <TouchableOpacity
+                style={globalStyles.menubuttonitembottom}
+                onPress={() =>
+                  handleWalkInandOnline(
+                    salesType.salesType_Name,
+                    salesType.salesType_ID,
+                  )
+                }>
+                <Icon name={'store'} size={40} color="#0096FF" />
+                {/* <Image style={globalStyles.iconmenuwalkin} /> */}
+                <Text style={globalStyles.menubuttontextselected}>
+                  {salesType.salesType_Name}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={globalStyles.menubuttonitembottom2}
+                onPress={() =>
+                  handleWalkInandOnline(
+                    salesType.salesType_Name,
+                    salesType.salesType_ID,
+                  )
+                }>
+                <Icon name={'globe'} size={40} color="#0096FF" />
+                {/* <Image style={globalStyles.iconmenuonline} /> */}
+                <Text style={globalStyles.menubuttontextonline}>Online</Text>
+              </TouchableOpacity>
+            </View>
+          );
+        })}
       </SafeAreaView>
 
       {/* //* FOOTER */}

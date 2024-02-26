@@ -77,6 +77,9 @@ export default function Menu({navigation}) {
   const [total, setTotal] = useState([]);
   const [grandtotal, setGrandTotal] = useState([]);
   const [seqTemp, setSeqTemp] = useState(0);
+  const [paymentType, setPaymentType] = useState([]);
+  const [salesid, setSalesID] = useState([]);
+
   //#endregion
 
   useEffect(() => {
@@ -94,6 +97,7 @@ export default function Menu({navigation}) {
     GetRunno();
     LOADTBLADDITEM();
     GetDiscount();
+    GetSalesType();
     BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     return () => {
       clearInterval(increment.current);
@@ -102,7 +106,7 @@ export default function Menu({navigation}) {
         handleBackButtonClick,
       );
     };
-  }, []);
+  }, [route.params]);
 
   const LOADTBLADDITEM = async () => {
     try {
@@ -248,6 +252,18 @@ export default function Menu({navigation}) {
       viewModalVariant();
       //console.log('HASIL GET VARIANT', hasil);
     });
+  };
+
+  const GetSalesType = () => {
+    try {
+      var dataall = route.params.data.datasalestipe;
+      console.log('datasalestipe: ', JSON.stringify(dataall));
+      var param_salesid = dataall.salesType_ID;
+      setSalesID(param_salesid);
+    } catch (error) {
+      let msg = error.message;
+      CallModalInfo(msg);
+    }
   };
 
   const AddItemTemp = async () => {
@@ -415,6 +431,12 @@ export default function Menu({navigation}) {
       let msg = error.message;
       CallModalInfo(msg);
     }
+  };
+
+  const Payment = async () => {
+    try {
+      const db = await dbconnTrx.getDBConnection();
+    } catch (error) {}
   };
   const handleIncrement = () => {
     // Increase count by 1
