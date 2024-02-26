@@ -29,6 +29,7 @@ import {Item} from 'react-navigation-header-buttons';
 import {getvariant} from '../api/getvariant';
 import {getrunno} from '../api/getrunningnumber';
 import {getdiscount} from '../api/getdiscount';
+import {getpayment} from '../api/getpaymentype';
 import * as dbconn from '../db/Variant';
 import * as dbconnTrx from '../db/AddTrx';
 import {run} from 'jest';
@@ -78,7 +79,7 @@ export default function Menu({navigation}) {
   const [grandtotal, setGrandTotal] = useState([]);
   const [seqTemp, setSeqTemp] = useState(0);
   const [paymentType, setPaymentType] = useState([]);
-  const [salesid, setSalesID] = useState([]);
+  const [salesid, setSalesID] = useState('');
 
   //#endregion
 
@@ -256,14 +257,9 @@ export default function Menu({navigation}) {
 
   const GetSalesType = async () => {
     try {
-      var dataall = route.params.data.datasalestipe;
-      // console.log('datasalestipe: ', JSON.stringify(dataall));
-      // var param_salesid = dataall.salesType_ID;
-      // setSalesID(param_salesid);
-      // console.log('TIPE SALES: ', salesid);
       let datatipesales = await AsyncStorage.getItem('@datasalestype');
       datatipesales = JSON.parse(datatipesales);
-      var param_tipesales = datatipesales[0].salesType_ID;
+      var param_tipesales = datatipesales[0].salesid;
       setSalesID(param_tipesales);
       console.log('TIPE SALES: ', param_tipesales);
     } catch (error) {
@@ -443,6 +439,18 @@ export default function Menu({navigation}) {
   const Payment = async () => {
     try {
       const db = await dbconnTrx.getDBConnection();
+      let datatipesales = await AsyncStorage.getItem('@datasalestype');
+      datatipesales = JSON.parse(datatipesales);
+      var param_tipesales = datatipesales[0].salesid;
+      getpayment({
+        interid: '',
+        ID: param_tipesales,
+      }).then(async result => {
+        if (result == 200) {
+          var hasil = result.data;
+          setPaymentType(hasil);
+        }
+      });
     } catch (error) {}
   };
   const handleIncrement = () => {
@@ -1252,11 +1260,7 @@ export default function Menu({navigation}) {
               }}
               closeOnBackPressed={true}
               closeAfterSelecting={true}
-              //itemSeparator={true}
               searchable={true}
-              //mode="BADGE"
-              //badgeColors={['blue', 'green', 'orange']}
-              //placeholder="Select your category"
               open={open}
               items={category}
               setOpen={setOpen}

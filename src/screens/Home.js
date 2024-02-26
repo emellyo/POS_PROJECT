@@ -565,7 +565,7 @@ const Home = () => {
               style={{
                 flex: 2,
                 flexDirection: 'column',
-                flexBasis: '30%',
+                flexBasis: '20%',
               }}>
               <TouchableOpacity
                 style={globalStyles.menubuttonitembottom}

@@ -18,11 +18,13 @@ import {
 } from 'react-native';
 import {useTheme, useRoute, useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import DropDownPicker from 'react-native-dropdown-picker';
 import CheckBox from '@react-native-community/checkbox';
 import {imglogo} from '../images/images';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {user_login} from '../api/loginapi';
+import {getstore} from '../api/getstore';
 // import {getcompanyapi} from '../api/getcompanyapi';
 import {globalStyles, invrecStyles} from '../css/global';
 
@@ -51,7 +53,7 @@ const Login = () => {
 
     //companydata();
     getrememberme();
-
+    GetStore();
     BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
 
     return () => {
@@ -74,6 +76,10 @@ const Login = () => {
   const [interid, setINTERID] = useState('');
   const [seePassword, setSeePassword] = useState(true);
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [store, setStore] = useState([]);
+  const [jmlstore, setJmlStore] = useState([]);
+  const [domain, setDomain] = useState('');
 
   const [modalVisible, setModalVisible] = useState(false);
   const [information, setInformation] = useState('');
@@ -285,6 +291,45 @@ const Login = () => {
     // */
   };
 
+  const GetStore = async () => {
+    setStore([]);
+    getstore({
+      interid: '',
+      ID: '',
+    })
+      .then(async result => {
+        const results = [];
+        var store;
+        var hasil = result.data;
+        console.log('HASIL GET STORE: ', hasil);
+        if (hasil.length > 0) {
+          for (let i = 0; i < hasil.length; i++) {
+            let data = hasil[i];
+            let value = data.store_ID;
+            if (i == 0) {
+              store = value;
+            }
+            var joined = {
+              label: data.store_Name,
+              value: value,
+            };
+            results.push(joined);
+          }
+        }
+        setStore(results);
+        setJmlStore(results.length);
+        if (results.length > 0) {
+          setDomain(store);
+        }
+        console.log('HASIL SET STORE: ', store);
+      })
+      .catch(async err => {
+        console.log('respon: ' + err.message);
+        let msg = 'Servers is not available.';
+        msg = err.message;
+      });
+  };
+
   const delaynew = ms => new Promise(res => setTimeout(res, ms));
 
   //#endregion
@@ -321,7 +366,6 @@ const Login = () => {
                   </View>
                 </Modal>
                 {/* //* INFORMATION */}
-
                 <StatusBar
                   backgroundColor={'#0096FF'}
                   barStyle="dark-content"></StatusBar>
@@ -399,6 +443,36 @@ const Login = () => {
                   </TouchableOpacity>
                 </View>
                 {/* //! PASSWORD */}
+
+                <DropDownPicker
+                  style={{
+                    elevation: 5,
+                    zIndex: 1,
+                    marginRight: 0,
+                    marginTop: 10,
+                    width: '125%',
+                  }}
+                  textStyle={{fontWeight: '600', fontSize: 15}}
+                  showTickIcon={true}
+                  listMode="SCROLLVIEW"
+                  scrollViewProps={{
+                    nestedScrollEnabled: true,
+                    decelerationRate: 'fast',
+                  }}
+                  closeOnBackPressed={true}
+                  closeAfterSelecting={true}
+                  searchable={true}
+                  items={store}
+                  setOpen={setOpen}
+                  value={domain}
+                  setValue={setDomain}
+                  setItems={setStore}
+                  onSelectItem={item => {
+                    selectedCat(item.value);
+                    console.log('nilai cat:' + item.value);
+                  }}
+                  dropDownStyle={{maxHeight: 500, backgroundColor: 'white'}}
+                />
 
                 {/* //? REMEMBER ME */}
                 <View style={globalStyles.viewinput}>

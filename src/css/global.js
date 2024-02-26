@@ -162,7 +162,7 @@ export const globalStyles = StyleSheet.create({
     position: 'absolute',
     bottom: '30%',
     justifyContent: 'center',
-    left: '35%',
+    left: '30%',
     display: 'flex',
     flexWrap: 'wrap',
     gap: 5,
