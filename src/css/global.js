@@ -79,6 +79,7 @@ export const globalStyles = StyleSheet.create({
   menubuttonitembottom: {
     flex: 0.5,
     flexDirection: 'row',
+    //flexWrap: 'wrap',
     marginHorizontal: 0,
     height: 120,
     backgroundColor: '#FFFFFF',
@@ -156,12 +157,15 @@ export const globalStyles = StyleSheet.create({
   },
   menuviewhome2: {
     flex: 1,
-    flexDirection: 'column',
+    flexDirection: 'row',
     width: '50%',
     position: 'absolute',
     bottom: '30%',
     justifyContent: 'center',
-    left: '25%',
+    left: '35%',
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: 5,
     // backgroundColor: 'darkblue',
   },
   menutitletexthome: {

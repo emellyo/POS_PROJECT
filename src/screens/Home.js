@@ -130,7 +130,8 @@ const Home = () => {
         ID: '',
       }).then(async result => {
         var hasil = result.data;
-        setSalesType([hasil]);
+        console.log('return sales type: ', hasil);
+        setSalesType(hasil);
       });
     } catch (error) {
       let msg = error.message;
@@ -211,20 +212,6 @@ const Home = () => {
       setINTERID(param_interid);
       var param_username = dataall.username;
       setUsername(param_username);
-      // var param_fullname = dataall.fullname;
-      // setFULLNAME(param_fullname);
-
-      // if(emptyStr(param_userid) || emptyStr(param_interid)){
-      //   console.log('no data');
-      // }
-      // else{
-      //   var mdl = {
-      //     interid: param_interid,
-      //     userid: param_userid
-      //   };
-      //   // console.log('mdl:',JSON.stringify(mdl));
-      //   GetOutStanding(mdl);
-      // }
     } catch (err) {
       console.log(err);
       setLoad(false);
@@ -261,6 +248,7 @@ const Home = () => {
         salesid: salesid,
       };
       datasalestipe.push(dataparams);
+      console.log('isi dataparams: ', dataparams);
 
       AsyncStorage.setItem('@datasalestype', JSON.stringify(datasalestipe));
       navigation.navigate('Menu', {
@@ -572,7 +560,13 @@ const Home = () => {
       <SafeAreaView style={globalStyles.menuviewhome2}>
         {salesType.map((salesType, index) => {
           return (
-            <View style={{flex: 2, flexDirection: 'row', marginHorizontal: 20}}>
+            <View
+              key={index}
+              style={{
+                flex: 2,
+                flexDirection: 'column',
+                flexBasis: '30%',
+              }}>
               <TouchableOpacity
                 style={globalStyles.menubuttonitembottom}
                 onPress={() =>
@@ -582,36 +576,14 @@ const Home = () => {
                   )
                 }>
                 <Icon name={'store'} size={40} color="#0096FF" />
-                {/* <Image style={globalStyles.iconmenuwalkin} /> */}
                 <Text style={globalStyles.menubuttontextselected}>
                   {salesType.salesType_Name}
                 </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={globalStyles.menubuttonitembottom2}
-                onPress={() =>
-                  handleWalkInandOnline(
-                    salesType.salesType_Name,
-                    salesType.salesType_ID,
-                  )
-                }>
-                <Icon name={'globe'} size={40} color="#0096FF" />
-                {/* <Image style={globalStyles.iconmenuonline} /> */}
-                <Text style={globalStyles.menubuttontextonline}>Online</Text>
               </TouchableOpacity>
             </View>
           );
         })}
       </SafeAreaView>
-
-      {/* //* FOOTER */}
-      {/* <SafeAreaView style={[globalStyles.box5]}>
-        <View style={[globalStyles.footer]}>
-          <Icon name={'copyright'} size={14} color="#212121" />
-          <Text style={{color: colors.text, paddingLeft: 2}}>ArthaIT 2023</Text>
-        </View>
-      </SafeAreaView> */}
-      {/* //* FOOTER */}
     </SafeAreaView>
   );
 };

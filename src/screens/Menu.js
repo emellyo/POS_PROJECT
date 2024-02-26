@@ -106,7 +106,7 @@ export default function Menu({navigation}) {
         handleBackButtonClick,
       );
     };
-  }, [route.params]);
+  }, []);
 
   const LOADTBLADDITEM = async () => {
     try {
@@ -254,14 +254,21 @@ export default function Menu({navigation}) {
     });
   };
 
-  const GetSalesType = () => {
+  const GetSalesType = async () => {
     try {
       var dataall = route.params.data.datasalestipe;
-      console.log('datasalestipe: ', JSON.stringify(dataall));
-      var param_salesid = dataall.salesType_ID;
-      setSalesID(param_salesid);
+      // console.log('datasalestipe: ', JSON.stringify(dataall));
+      // var param_salesid = dataall.salesType_ID;
+      // setSalesID(param_salesid);
+      // console.log('TIPE SALES: ', salesid);
+      let datatipesales = await AsyncStorage.getItem('@datasalestype');
+      datatipesales = JSON.parse(datatipesales);
+      var param_tipesales = datatipesales[0].salesType_ID;
+      setSalesID(param_tipesales);
+      console.log('TIPE SALES: ', param_tipesales);
     } catch (error) {
       let msg = error.message;
+      console.log(msg);
       CallModalInfo(msg);
     }
   };
