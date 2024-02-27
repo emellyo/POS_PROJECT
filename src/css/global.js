@@ -502,6 +502,7 @@ export const globalStyles = StyleSheet.create({
   textinputpayment: {
     fontWeight: '600',
     flex: 0,
+    textAlign: 'right',
     borderTopLeftRadius: 3,
     borderBottomLeftRadius: 3,
     //elevation: 5,

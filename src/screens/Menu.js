@@ -80,7 +80,10 @@ export default function Menu({navigation}) {
   const [seqTemp, setSeqTemp] = useState(0);
   const [paymentType, setPaymentType] = useState([]);
   const [salesid, setSalesID] = useState('');
-
+  const [amttendered, setAmtTender] = useState({});
+  const [tottender, setTotTender] = useState('');
+  const [changes, setChanges] = useState('');
+  const [paymentID, setPaymentID] = useState('');
   //#endregion
 
   useEffect(() => {
@@ -436,22 +439,41 @@ export default function Menu({navigation}) {
     }
   };
 
-  const Payment = async () => {
+  const GetPayment = async () => {
     try {
+      setMdlBills(false);
+      setMdlPayment(true);
       const db = await dbconnTrx.getDBConnection();
       let datatipesales = await AsyncStorage.getItem('@datasalestype');
       datatipesales = JSON.parse(datatipesales);
       var param_tipesales = datatipesales[0].salesid;
       getpayment({
         interid: '',
-        ID: param_tipesales,
+        ID: '',
       }).then(async result => {
-        if (result == 200) {
-          var hasil = result.data;
-          setPaymentType(hasil);
-        }
+        var hasil = result.data;
+        console.log('DATA PAYMENT: ', hasil);
+        setPaymentType(hasil);
       });
-    } catch (error) {}
+    } catch (error) {
+      let msg = error.message;
+      console.log(error);
+      CallModalInfo(msg);
+    }
+  };
+
+  const Changes = async (paymentid, amounttender) => {
+    try {
+      setAmtTender('');
+      console.log('payment ID, ', paymentid.payment_ID);
+      let changes = amounttender - total;
+      console.log('hasil changes: ', changes);
+      setChanges(changes);
+    } catch (error) {
+      let msg = error.message;
+      console.log(error);
+      CallModalInfo(msg);
+    }
   };
   const handleIncrement = () => {
     // Increase count by 1
@@ -634,110 +656,121 @@ export default function Menu({navigation}) {
               </View>
               <ScrollView style={globalStyles.InputTender}>
                 {/* //* TENDER INPUT*/}
-                <SafeAreaView style={[invrecStyles.inputantotalan]}>
-                  <View style={globalStyles.labelinputtotalan}>
-                    <Text
-                      style={[
-                        invrecStyles.labelinput,
-                        {backgroundColor: colors.card, color: colors.text},
-                      ]}>
-                      Total Amount
-                    </Text>
-                  </View>
-                  <View style={globalStyles.inputtotalan}>
-                    <TextInput
-                      style={[
-                        globalStyles.textinputpayment,
-                        {backgroundColor: colors.card, color: colors.text},
-                      ]}
-                      maxLength={100}
-                      //placeholder={'Masukkan Kata Sandi'}
-                      //placeholderTextColor={colors.text}
-                      //secureTextEntry={seePassword}
-                      //value={password}
-                      //onChangeText={text => setPassword(text)}
-                    />
-                  </View>
-                </SafeAreaView>
+                {paymentType.map((paymentType, index) => {
+                  return (
+                    <View
+                      key={index}
+                      style={[invrecStyles.inputantotalanbills2]}>
+                      <View style={globalStyles.labelinputtotalanbillsdisc}>
+                        <Text
+                          style={[
+                            invrecStyles.labelinput,
+                            {backgroundColor: colors.card, color: colors.text},
+                          ]}>
+                          {paymentType.payment_Name}
+                        </Text>
+                      </View>
+                      <View style={globalStyles.kanan2}>
+                        <TextInput
+                          style={[
+                            globalStyles.textinputpayment,
+                            {backgroundColor: colors.card, color: colors.text},
+                          ]}
+                          maxLength={100}
+                          keyboardType="numeric"
+                          value={
+                            amttendered &&
+                            amttendered[`${paymentType.payment_ID}`] !==
+                              undefined
+                              ? amttendered[`${paymentType.payment_ID}`]
+                              : amttendered.toLocaleString()
+                          }
+                          onChangeText={text => {
+                            const cleanedValue = text.replace(/[^0-9]/g, '');
+                            const numericValue = parseFloat(cleanedValue);
+                            if (!isNaN(numericValue)) {
+                              setAmtTender(numericValue);
+                              Changes(
+                                paymentType,
+                                amttendered[`${paymentType.payment_ID}`],
+                              );
+                            } else {
+                              setAmtTender('');
+                            }
+                          }}
+                        />
+                      </View>
+                    </View>
+                  );
+                })}
+
                 {/* //* TENDER INPUT*/}
               </ScrollView>
-              <View style={[globalStyles.InputTotalan]}>
-                <SafeAreaView style={[invrecStyles.inputantotalan]}>
-                  <View style={globalStyles.labelinputtotalan}>
-                    <Text
-                      style={[
-                        invrecStyles.labelinput,
-                        {backgroundColor: colors.card, color: colors.text},
-                      ]}>
-                      Total Amount
-                    </Text>
-                  </View>
-                  <View style={globalStyles.inputtotalan}>
-                    <TextInput
-                      style={[
-                        globalStyles.textinputpayment,
-                        {backgroundColor: colors.card, color: colors.text},
-                      ]}
-                      maxLength={100}
-                      //placeholder={'Masukkan Kata Sandi'}
-                      //placeholderTextColor={colors.text}
-                      //secureTextEntry={seePassword}
-                      //value={password}
-                      //onChangeText={text => setPassword(text)}
-                    />
-                  </View>
-                </SafeAreaView>
-                <SafeAreaView style={[invrecStyles.inputantotalan]}>
-                  <View style={globalStyles.labelinputtotalan}>
-                    <Text
-                      style={[
-                        invrecStyles.labelinput,
-                        {backgroundColor: colors.card, color: colors.text},
-                      ]}>
-                      Total Tendered
-                    </Text>
-                  </View>
-                  <View style={globalStyles.inputtotalan}>
-                    <TextInput
-                      style={[
-                        globalStyles.textinputpayment,
-                        {backgroundColor: colors.card, color: colors.text},
-                      ]}
-                      maxLength={100}
-                      //placeholder={'Masukkan Kata Sandi'}
-                      //placeholderTextColor={colors.text}
-                      //secureTextEntry={seePassword}
-                      //value={password}
-                      //onChangeText={text => setPassword(text)}
-                    />
-                  </View>
-                </SafeAreaView>
-                <SafeAreaView style={[invrecStyles.inputantotalan]}>
-                  <View style={globalStyles.labelinputtotalan}>
-                    <Text
-                      style={[
-                        invrecStyles.labelinput,
-                        {backgroundColor: colors.card, color: colors.text},
-                      ]}>
-                      Changes
-                    </Text>
-                  </View>
-                  <View style={globalStyles.inputtotalan}>
-                    <TextInput
-                      style={[
-                        globalStyles.textinputpayment,
-                        {backgroundColor: colors.card, color: colors.text},
-                      ]}
-                      maxLength={100}
-                      //placeholder={'Masukkan Kata Sandi'}
-                      //placeholderTextColor={colors.text}
-                      //secureTextEntry={seePassword}
-                      //value={password}
-                      //onChangeText={text => setPassword(text)}
-                    />
-                  </View>
-                </SafeAreaView>
-              </View>
+              <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
+                <View style={globalStyles.labelinputtotalanbillsdisc}>
+                  <Text
+                    style={[
+                      invrecStyles.labelinput,
+                      {backgroundColor: colors.card, color: colors.text},
+                    ]}>
+                    Total Amount
+                  </Text>
+                </View>
+                <View style={globalStyles.kanan2}>
+                  <TextInput
+                    style={[
+                      globalStyles.textinputpayment,
+                      {backgroundColor: '#f5f5f5', color: colors.text},
+                    ]}
+                    editable={false}
+                    maxLength={100}
+                    value={total.toLocaleString('id-ID')}
+                    //onChangeText={text => setPassword(text)}
+                  />
+                </View>
+                <View style={globalStyles.labelinputtotalanbillsdisc}>
+                  <Text
+                    style={[
+                      invrecStyles.labelinput,
+                      {backgroundColor: colors.card, color: colors.text},
+                    ]}>
+                    Total Tendered
+                  </Text>
+                </View>
+                <View style={globalStyles.kanan2}>
+                  <TextInput
+                    style={[
+                      globalStyles.textinputpayment,
+                      {backgroundColor: '#f5f5f5', color: colors.text},
+                    ]}
+                    editable={false}
+                    maxLength={100}
+                    //value={password}
+                    //onChangeText={text => setPassword(text)}
+                  />
+                </View>
+                <View style={globalStyles.labelinputtotalanbillsdisc}>
+                  <Text
+                    style={[
+                      invrecStyles.labelinput,
+                      {backgroundColor: colors.card, color: colors.text},
+                    ]}>
+                    Changes
+                  </Text>
+                </View>
+                <View style={globalStyles.kanan2}>
+                  <TextInput
+                    style={[
+                      globalStyles.textinputpayment,
+                      {backgroundColor: '#f5f5f5', color: colors.text},
+                    ]}
+                    editable={false}
+                    maxLength={100}
+                    //value={password}
+                    //onChangeText={text => setPassword(text)}
+                  />
+                </View>
+              </SafeAreaView>
               <View style={globalStyles.ButtonPayment}>
                 <SafeAreaView style={[invrecStyles.buttontotalan]}>
                   <TouchableOpacity
@@ -1202,8 +1235,7 @@ export default function Menu({navigation}) {
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[globalStyles.buttonYesPayment]}
-                    //onPress={PostDataInvOut}
-                  >
+                    onPress={() => GetPayment()}>
                     <Text style={globalStyles.textStyle}>Payment</Text>
                   </TouchableOpacity>
                 </SafeAreaView>
