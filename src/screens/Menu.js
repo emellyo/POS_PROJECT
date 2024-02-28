@@ -462,6 +462,18 @@ export default function Menu({navigation}) {
     }
   };
 
+  const handleTextInputChange = (paymentkey, newValue) => {
+    const hasMoreThanOneDot =
+      newValue.includes('.') && newValue.split('.').length > 2;
+    if (!hasMoreThanOneDot) {
+      setHasDot(newValue.includes('.'));
+      setQTY(prevState => ({
+        ...prevState,
+        [itemKey]: newValue,
+      }));
+    }
+  };
+
   const Changes = async (paymentid, amounttender) => {
     try {
       setAmtTender('');
@@ -678,25 +690,19 @@ export default function Menu({navigation}) {
                           ]}
                           maxLength={100}
                           keyboardType="numeric"
-                          value={
-                            amttendered &&
-                            amttendered[`${paymentType.payment_ID}`] !==
-                              undefined
-                              ? amttendered[`${paymentType.payment_ID}`]
-                              : amttendered.toLocaleString()
-                          }
-                          onChangeText={text => {
-                            const cleanedValue = text.replace(/[^0-9]/g, '');
-                            const numericValue = parseFloat(cleanedValue);
-                            if (!isNaN(numericValue)) {
-                              setAmtTender(numericValue);
-                              Changes(
-                                paymentType,
-                                amttendered[`${paymentType.payment_ID}`],
-                              );
-                            } else {
-                              setAmtTender('');
-                            }
+                          value={amttendered[`${paymentType.payment_ID}`]}
+                          onChangeText={value => {
+                            const newValue = value ? value : '';
+                            handleTextInputChange(
+                              `${paymentType.payment_ID}`,
+                              newValue,
+                            );
+                          }}
+                          onBlur={() => {
+                            Changes(
+                              paymentType,
+                              amttendered[`${paymentType.payment_ID}`],
+                            );
                           }}
                         />
                       </View>

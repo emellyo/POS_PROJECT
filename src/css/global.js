@@ -436,7 +436,7 @@ export const globalStyles = StyleSheet.create({
   viewbutton: {
     flexDirection: 'column',
     marginHorizontal: 0,
-    marginTop: 0,
+    //marginTop: 0,
     width: 400,
   },
   iconinput: {
@@ -1359,7 +1359,7 @@ export const globalStyles = StyleSheet.create({
   kananlogin: {
     display: 'flex',
     alignItems: 'flex-end',
-    width: '40%',
+    width: '30%',
     padding: 10,
   },
   itemqty: {

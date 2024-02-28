@@ -340,7 +340,7 @@ const Login = () => {
         <View style={globalStyles.kirilogin}>
           <View style={globalStyles.logincontent}>
             <ScrollView
-              style={{flex: 1, width: '100%', height: '100%', padding: 15}}>
+              style={{flex: 1, width: '100%', height: '100%', padding: 0}}>
               <SafeAreaView style={{flex: 1, width: '50%', height: '100%'}}>
                 {/* //* INFORMATION */}
                 <Modal
@@ -443,13 +443,12 @@ const Login = () => {
                   </TouchableOpacity>
                 </View>
                 {/* //! PASSWORD */}
-
                 <DropDownPicker
                   style={{
                     elevation: 5,
                     zIndex: 1,
                     marginRight: 0,
-                    marginTop: 10,
+                    marginTop: 5,
                     width: '125%',
                   }}
                   textStyle={{fontWeight: '600', fontSize: 15}}
@@ -552,7 +551,7 @@ const Login = () => {
         <View style={globalStyles.kananlogin}>
           <Image
             source={imglogo}
-            style={{width: '150%', height: '1000%'}}></Image>
+            style={{width: '130%', height: '1000%'}}></Image>
         </View>
       </View>
     </SafeAreaView>
