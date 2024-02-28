@@ -449,7 +449,7 @@ const Login = () => {
                     zIndex: 1,
                     marginRight: 0,
                     marginTop: 5,
-                    width: '125%',
+                    width: '105%',
                   }}
                   textStyle={{fontWeight: '600', fontSize: 15}}
                   showTickIcon={true}
@@ -551,7 +551,7 @@ const Login = () => {
         <View style={globalStyles.kananlogin}>
           <Image
             source={imglogo}
-            style={{width: '130%', height: '1000%'}}></Image>
+            style={{width: '150%', height: '1000%'}}></Image>
         </View>
       </View>
     </SafeAreaView>

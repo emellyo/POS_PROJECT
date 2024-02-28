@@ -990,6 +990,11 @@ export const globalStyles = StyleSheet.create({
     height: 40,
     backgroundColor: '#0096FF',
   },
+  buttonAll: {
+    width: '30%',
+    height: 40,
+    backgroundColor: '#0096FF',
+  },
   buttonQTYMinus: {
     width: '10%',
     height: 30,

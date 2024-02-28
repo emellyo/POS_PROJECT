@@ -493,8 +493,9 @@ export default function Menu({navigation}) {
       console.log('payment ID, ', paymentid.payment_ID);
       console.log('amount tender: ', amounttender.toLocaleString('id-ID'));
       let changes = amounttender - grandtotal;
+      let tendertot = amounttender;
       console.log('hasil changes: ', changes);
-      setTotTender(amounttender);
+      setTotTender(tendertot);
       setChanges(changes);
     } catch (error) {
       let msg = error.message;
@@ -740,6 +741,11 @@ export default function Menu({navigation}) {
                             );
                           }}
                         />
+                        <TouchableOpacity style={[globalStyles.buttonAll]}>
+                          <Text style={globalStyles.textStyle}>
+                            {paymentType.payment_Name}
+                          </Text>
+                        </TouchableOpacity>
                       </View>
                     </View>
                   );
@@ -766,7 +772,6 @@ export default function Menu({navigation}) {
                     editable={false}
                     maxLength={100}
                     value={grandtotal.toLocaleString('id-ID')}
-                    //onChangeText={text => setPassword(text)}
                   />
                 </View>
                 <View style={globalStyles.labelinputtotalanbillsdisc}>
@@ -787,7 +792,6 @@ export default function Menu({navigation}) {
                     editable={false}
                     maxLength={100}
                     value={tottender.toLocaleString('id-ID')}
-                    //onChangeText={text => setPassword(text)}
                   />
                 </View>
                 <View style={globalStyles.labelinputtotalanbillsdisc}>
