@@ -84,6 +84,7 @@ export default function Menu({navigation}) {
   const [tottender, setTotTender] = useState('');
   const [changes, setChanges] = useState('');
   const [paymentID, setPaymentID] = useState('');
+  const [hasDot, setHasDot] = useState(false);
   //#endregion
 
   useEffect(() => {
@@ -467,9 +468,9 @@ export default function Menu({navigation}) {
       newValue.includes('.') && newValue.split('.').length > 2;
     if (!hasMoreThanOneDot) {
       setHasDot(newValue.includes('.'));
-      setQTY(prevState => ({
+      setAmtTender(prevState => ({
         ...prevState,
-        [itemKey]: newValue,
+        [paymentkey]: newValue,
       }));
     }
   };
@@ -772,7 +773,7 @@ export default function Menu({navigation}) {
                     ]}
                     editable={false}
                     maxLength={100}
-                    //value={password}
+                    value={changes.toLocaleString('id-ID')}
                     //onChangeText={text => setPassword(text)}
                   />
                 </View>
