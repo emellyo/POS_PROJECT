@@ -85,18 +85,12 @@ export default function Menu({navigation}) {
   const [changes, setChanges] = useState('');
   const [paymentID, setPaymentID] = useState('');
   const [hasDot, setHasDot] = useState(false);
+  const [totchanges, setTotChanges] = useState('');
   //#endregion
 
   useEffect(() => {
-    setDisCount([]);
-    setAddTemp([]);
-    setBills([]);
-    setMdlConfirmCust(true);
-    setMdlBills(false);
     setMdlPayment(false);
-    setMdlVariant(false);
-    setModalVisible(false);
-    setCount(1);
+    LOADMENU();
     Categories();
     GetItems();
     GetRunno();
@@ -112,6 +106,24 @@ export default function Menu({navigation}) {
       );
     };
   }, []);
+
+  const LOADMENU = async () => {
+    try {
+      setDisCount([]);
+      setAddTemp([]);
+      setBills([]);
+      setMdlConfirmCust(true);
+      setMdlBills(false);
+      setMdlPayment(false);
+      setMdlVariant(false);
+      setModalVisible(false);
+      setCount(1);
+      setTotChanges('');
+      setTotTender('');
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const LOADTBLADDITEM = async () => {
     try {
@@ -479,9 +491,25 @@ export default function Menu({navigation}) {
     try {
       setAmtTender('');
       console.log('payment ID, ', paymentid.payment_ID);
-      let changes = amounttender - total;
+      console.log('amount tender: ', amounttender.toLocaleString('id-ID'));
+      let changes = amounttender - grandtotal;
       console.log('hasil changes: ', changes);
+      setTotTender(amounttender);
       setChanges(changes);
+    } catch (error) {
+      let msg = error.message;
+      console.log(error);
+      CallModalInfo(msg);
+    }
+  };
+
+  const SyncPayment = async () => {
+    try {
+      setTotTender('');
+      setTotChanges('');
+      setGrandTotal('');
+      setChanges('');
+      setMdlPayment(false);
     } catch (error) {
       let msg = error.message;
       console.log(error);
@@ -691,7 +719,13 @@ export default function Menu({navigation}) {
                           ]}
                           maxLength={100}
                           keyboardType="numeric"
-                          value={amttendered[`${paymentType.payment_ID}`]}
+                          value={
+                            amttendered &&
+                            amttendered[`${paymentType.payment_ID}`] !==
+                              undefined
+                              ? amttendered[`${paymentType.payment_ID}`]
+                              : ''
+                          }
                           onChangeText={value => {
                             const newValue = value ? value : '';
                             handleTextInputChange(
@@ -731,7 +765,7 @@ export default function Menu({navigation}) {
                     ]}
                     editable={false}
                     maxLength={100}
-                    value={total.toLocaleString('id-ID')}
+                    value={grandtotal.toLocaleString('id-ID')}
                     //onChangeText={text => setPassword(text)}
                   />
                 </View>
@@ -752,7 +786,7 @@ export default function Menu({navigation}) {
                     ]}
                     editable={false}
                     maxLength={100}
-                    //value={password}
+                    value={tottender.toLocaleString('id-ID')}
                     //onChangeText={text => setPassword(text)}
                   />
                 </View>
@@ -787,8 +821,7 @@ export default function Menu({navigation}) {
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[globalStyles.buttonYesPayment]}
-                    //onPress={PostDataInvOut}
-                  >
+                    onPress={() => SyncPayment()}>
                     <Text style={globalStyles.textStyle}>Payment</Text>
                   </TouchableOpacity>
                 </SafeAreaView>
