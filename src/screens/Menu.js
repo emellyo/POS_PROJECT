@@ -456,6 +456,7 @@ export default function Menu({navigation}) {
     try {
       setMdlBills(false);
       setMdlPayment(true);
+      setTotChanges('');
       const db = await dbconnTrx.getDBConnection();
       let datatipesales = await AsyncStorage.getItem('@datasalestype');
       datatipesales = JSON.parse(datatipesales);
@@ -491,12 +492,26 @@ export default function Menu({navigation}) {
     try {
       setAmtTender('');
       console.log('payment ID, ', paymentid.payment_ID);
-      console.log('amount tender: ', amounttender.toLocaleString('id-ID'));
+      console.log('amount tender: ', amounttender);
       let changes = amounttender - grandtotal;
       let tendertot = amounttender;
       console.log('hasil changes: ', changes);
       setTotTender(tendertot);
       setChanges(changes);
+    } catch (error) {
+      let msg = error.message;
+      console.log(error);
+      CallModalInfo(msg);
+    }
+  };
+
+  const ChangesAll = async () => {
+    try {
+      let tenderall = grandtotal;
+      let changesall = grandtotal - grandtotal;
+      setTotTender(tenderall);
+      setTotChanges(changesall);
+      console.log('TOTAL TENDER ALL: ', tenderall);
     } catch (error) {
       let msg = error.message;
       console.log(error);
@@ -741,10 +756,10 @@ export default function Menu({navigation}) {
                             );
                           }}
                         />
-                        <TouchableOpacity style={[globalStyles.buttonAll]}>
-                          <Text style={globalStyles.textStyle}>
-                            {paymentType.payment_Name}
-                          </Text>
+                        <TouchableOpacity
+                          style={[globalStyles.buttonAll]}
+                          onPress={() => ChangesAll()}>
+                          <Text style={globalStyles.textStyle}>All</Text>
                         </TouchableOpacity>
                       </View>
                     </View>
