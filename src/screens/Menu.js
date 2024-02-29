@@ -546,6 +546,11 @@ export default function Menu({navigation}) {
 
   const SyncPayment = async () => {
     try {
+      setTotTender('');
+      setTotChanges('');
+      setGrandTotal('');
+      setChanges('');
+      setMdlPayment(false);
       const today = new Date();
       // Get various parts of the date
       const year = today.getFullYear();
@@ -555,11 +560,6 @@ export default function Menu({navigation}) {
       let datauser = await AsyncStorage.getItem('@dtUser');
       datauser = JSON.parse(datauser);
       var userid = datauser[0].userid;
-      setTotTender('');
-      setTotChanges('');
-      setGrandTotal('');
-      setChanges('');
-      setMdlPayment(false);
       const db = dbconnTrx.getDBConnection();
       let countline = await dbconnTrx.queryselectTrx(
         db,
