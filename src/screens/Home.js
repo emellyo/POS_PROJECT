@@ -27,7 +27,7 @@ import {createDrawerNavigator} from '@react-navigation/drawer';
 import {MaskedTextInput} from 'react-native-masked-text';
 import {HeaderButtons, Item} from 'react-navigation-header-buttons';
 import HeaderButton from '../screens/HeaderButton';
-import {getrunno} from '../api/getrunnobatch';
+import {getrunnobatch} from '../api/getrunnobatch';
 import {openshift} from '../api/openshift';
 import {getBrand} from 'react-native-device-info';
 import {getsalestype} from '../api/getsalestype';
@@ -183,7 +183,7 @@ const Home = () => {
   };
 
   const GetRunno = async () => {
-    getrunno({
+    getrunnobatch({
       DOCID: 'BATC',
     })
       .then(async result => {

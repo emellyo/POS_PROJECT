@@ -1,9 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import ApiManager from './ApiManager';
 
-export const getrunnobatch = async data => {
+export const syncup = async data => {
   try {
-    const urlapi = 'Service/GenerateNumberPerDay';
+    const urlapi = 'Service/SaveTransaction';
     console.log('data: ', data);
     console.info(ApiManager.defaults.baseURL.concat('/', urlapi));
 

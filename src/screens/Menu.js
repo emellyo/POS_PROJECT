@@ -28,8 +28,10 @@ import {getitem} from '../api/getitem';
 import {Item} from 'react-navigation-header-buttons';
 import {getvariant} from '../api/getvariant';
 import {getrunno} from '../api/getrunningnumber';
+import {getrunnobatch} from '../api/getrunnobatch';
 import {getdiscount} from '../api/getdiscount';
 import {getpayment} from '../api/getpaymentype';
+import {syncup} from '../api/syncuptrx';
 import * as dbconn from '../db/Variant';
 import * as dbconnTrx from '../db/AddTrx';
 import {run} from 'jest';
@@ -70,6 +72,7 @@ export default function Menu({navigation}) {
   const [cat, setCat] = useState('');
   const [count, setCount] = useState(1);
   const [runno, setRunno] = useState('');
+  const [runnobatch, setRunnoBatch] = useState('');
   const [addtemp, setAddTemp] = useState([]);
   const [notes, setNotes] = useState('');
   const [bills, setBills] = useState([]);
@@ -84,6 +87,7 @@ export default function Menu({navigation}) {
   const [tottender, setTotTender] = useState('');
   const [changes, setChanges] = useState('');
   const [paymentID, setPaymentID] = useState('');
+  const [totaldtl, setTotDetail] = useState([]);
   const [hasDot, setHasDot] = useState(false);
   const [totchanges, setTotChanges] = useState('');
   //#endregion
@@ -206,6 +210,25 @@ export default function Menu({navigation}) {
         let msg = 'Servers is not available.';
         msg = err.message;
         CallModalInfo(msg);
+      });
+  };
+
+  const GetRunnoBatch = async () => {
+    getrunnobatch({
+      DOCID: 'BATC',
+    })
+      .then(async result => {
+        if (result.status == 200) {
+          var hasil = result.data;
+          console.log('hasil getrunno: ', hasil);
+          var number = hasil[0].gennumber;
+          setRunnoBatch(number);
+        }
+      })
+      .catch(async err => {
+        console.log('respon: ' + err.message);
+        let msg = 'Servers is not available.';
+        msg = err.message;
       });
   };
 
@@ -496,6 +519,7 @@ export default function Menu({navigation}) {
       let changes = amounttender - grandtotal;
       let tendertot = amounttender;
       console.log('hasil changes: ', changes);
+      setPaymentID(paymentid.payment_ID);
       setTotTender(tendertot);
       setChanges(changes);
     } catch (error) {
@@ -505,12 +529,13 @@ export default function Menu({navigation}) {
     }
   };
 
-  const ChangesAll = async () => {
+  const ChangesAll = async paymentid => {
     try {
       let tenderall = grandtotal;
       let changesall = grandtotal - grandtotal;
       setTotTender(tenderall);
       setTotChanges(changesall);
+      setPaymentID(paymentid.payment_ID);
       console.log('TOTAL TENDER ALL: ', tenderall);
     } catch (error) {
       let msg = error.message;
@@ -521,11 +546,57 @@ export default function Menu({navigation}) {
 
   const SyncPayment = async () => {
     try {
+      const today = new Date();
+      // Get various parts of the date
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1; // Months are zero-indexed
+      const day = today.getDate();
+      const formattedDate = `${month}/${day}/${year}`;
+      let datauser = await AsyncStorage.getItem('@dtUser');
+      datauser = JSON.parse(datauser);
+      var userid = datauser[0].userid;
       setTotTender('');
       setTotChanges('');
       setGrandTotal('');
       setChanges('');
       setMdlPayment(false);
+      const db = dbconnTrx.getDBConnection();
+      let countline = await dbconnTrx.queryselectTrx(
+        db,
+        `SELECT COUNT(*) as totaldetail FROM AddTrxDtl where DOCNUMBER = '${runno}' AddTrxDtl `,
+      );
+      console.log('total detail: ', countline);
+      setTotDetail(countline);
+      let detail = await dbconnTrx.queryselectTrx(
+        db,
+        `SELECT * FROM AddTrxDtl WHERE DOCNUMBER = '${runno}' `,
+      );
+      syncup({
+        UserID: userid,
+        DOCNUMBER: runno,
+        DOCTYPE: 1,
+        DOCDATE: formattedDate,
+        Store_ID: '',
+        Site_ID: '',
+        SalesType_ID: salesid,
+        CustName: '',
+        Total_Line_Item: totaldtl,
+        ORIGTOTAL: grandtotal,
+        SUBTOTAL: total,
+        Tax_Amount: tax,
+        Discount_ID: '',
+        Discount_Amount: 0,
+        Amount_Tendered: amttendered,
+        Change_Amount: changes,
+        Batch_ID: runnobatch,
+        POS_Device_ID: '',
+        POS_Version: '',
+        SyncStatus: 0,
+        Payment_ID: paymentID,
+        Payment_Type: paymentID,
+        Lnitmseq: 0,
+        TrxDetailTYPE: detail,
+      });
     } catch (error) {
       let msg = error.message;
       console.log(error);
@@ -758,7 +829,7 @@ export default function Menu({navigation}) {
                         />
                         <TouchableOpacity
                           style={[globalStyles.buttonAll]}
-                          onPress={() => ChangesAll()}>
+                          onPress={() => ChangesAll(paymentType)}>
                           <Text style={globalStyles.textStyle}>All</Text>
                         </TouchableOpacity>
                       </View>
