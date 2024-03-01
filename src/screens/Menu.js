@@ -73,6 +73,7 @@ export default function Menu({navigation}) {
   const [count, setCount] = useState(1);
   const [runno, setRunno] = useState('');
   const [runnobatch, setRunnoBatch] = useState('');
+  const [custname, setCustName] = useState('');
   const [addtemp, setAddTemp] = useState([]);
   const [notes, setNotes] = useState('');
   const [bills, setBills] = useState([]);
@@ -560,6 +561,7 @@ export default function Menu({navigation}) {
       let datauser = await AsyncStorage.getItem('@dtUser');
       datauser = JSON.parse(datauser);
       var userid = datauser[0].userid;
+      var storeid = datauser[0].store_ID;
       const db = dbconnTrx.getDBConnection();
       let countline = await dbconnTrx.queryselectTrx(
         db,
@@ -576,7 +578,7 @@ export default function Menu({navigation}) {
         DOCNUMBER: runno,
         DOCTYPE: 1,
         DOCDATE: formattedDate,
-        Store_ID: '',
+        Store_ID: storeid,
         Site_ID: '',
         SalesType_ID: salesid,
         CustName: '',
@@ -586,7 +588,7 @@ export default function Menu({navigation}) {
         Tax_Amount: tax,
         Discount_ID: '',
         Discount_Amount: 0,
-        Amount_Tendered: amttendered,
+        Amount_Tendered: tottender,
         Change_Amount: changes,
         Batch_ID: runnobatch,
         POS_Device_ID: '',
