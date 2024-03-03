@@ -373,6 +373,8 @@ export default function Menu({navigation}) {
 
   const GetBills = async () => {
     try {
+      setTotTender('');
+      setTotChanges('');
       console.log('modal bills');
       setMdlBills(true);
       const db = await dbconnTrx.getDBConnection();
@@ -547,58 +549,73 @@ export default function Menu({navigation}) {
 
   const SyncPayment = async () => {
     try {
-      setTotTender('');
-      setTotChanges('');
-      setGrandTotal('');
-      setChanges('');
-      setMdlPayment(false);
-      const today = new Date();
-      // Get various parts of the date
-      const year = today.getFullYear();
-      const month = today.getMonth() + 1; // Months are zero-indexed
-      const day = today.getDate();
-      const formattedDate = `${month}/${day}/${year}`;
-      let datauser = await AsyncStorage.getItem('@dtUser');
-      datauser = JSON.parse(datauser);
-      var userid = datauser[0].userid;
-      var storeid = datauser[0].store_ID;
-      const db = dbconnTrx.getDBConnection();
-      let countline = await dbconnTrx.queryselectTrx(
-        db,
-        `SELECT COUNT(*) as totaldetail FROM AddTrxDtl where DOCNUMBER = '${runno}' AddTrxDtl `,
-      );
-      console.log('total detail: ', countline);
-      setTotDetail(countline);
-      let detail = await dbconnTrx.queryselectTrx(
-        db,
-        `SELECT * FROM AddTrxDtl WHERE DOCNUMBER = '${runno}' `,
-      );
-      syncup({
-        UserID: userid,
-        DOCNUMBER: runno,
-        DOCTYPE: 1,
-        DOCDATE: formattedDate,
-        Store_ID: storeid,
-        Site_ID: '',
-        SalesType_ID: salesid,
-        CustName: '',
-        Total_Line_Item: totaldtl,
-        ORIGTOTAL: grandtotal,
-        SUBTOTAL: total,
-        Tax_Amount: tax,
-        Discount_ID: '',
-        Discount_Amount: 0,
-        Amount_Tendered: tottender,
-        Change_Amount: changes,
-        Batch_ID: runnobatch,
-        POS_Device_ID: '',
-        POS_Version: '',
-        SyncStatus: 0,
-        Payment_ID: paymentID,
-        Payment_Type: paymentID,
-        Lnitmseq: 0,
-        TrxDetailTYPE: detail,
-      });
+      console.log('isi tot tender: ', tottender);
+      if (tottender == 0) {
+        console.log('MASUK KONDISI VALIDASI');
+        let msg = 'Nominal Pembayaran tidak sesuai, mohon diperiksa kembali';
+        CallModalInfo(msg);
+      } else if (tottender < 0) {
+        let msg = 'Nominal Pembayaran tidak sesuai, mohon diperiksa kembali';
+        CallModalInfo(msg);
+      } else {
+        const db = dbconnTrx.getDBConnection();
+        let countdtl = [];
+        console.log('masuk kondisi else');
+        setTotTender('');
+        setTotChanges('');
+        setGrandTotal('');
+        setChanges('');
+        setMdlPayment(false);
+        const today = new Date();
+        // Get various parts of the date
+        const year = today.getFullYear();
+        const month = today.getMonth() + 1; // Months are zero-indexed
+        const day = today.getDate();
+        const formattedDate = `${month}/${day}/${year}`;
+        let datauser = await AsyncStorage.getItem('@dtUser');
+        datauser = JSON.parse(datauser);
+        var userid = datauser[0].userid;
+        var storeid = datauser[0].store_ID;
+        //let querycount = `SELECT COUNT(*) as totaldetail FROM AddTrxDtl where DOCNUMBER = '${runno}' `;
+        countdtl = await dbconnTrx.AddTrxDtl_getdataBillsCount(db, 'AddTrxDtl');
+        //let countline = await dbconnTrx.querydynamic(db, querycount);
+        console.log('total detail count: ', countdtl);
+        setTotDetail(countdtl);
+        let detail = await dbconnTrx.AddTrxDtl_getdataBillsDetails(
+          db,
+          `AddTrxDtl`,
+          runno,
+        );
+
+        console.log('total detail : ', detail);
+
+        syncup({
+          UserID: userid,
+          DOCNUMBER: runno,
+          DOCTYPE: 1,
+          DOCDATE: formattedDate,
+          Store_ID: storeid,
+          Site_ID: '',
+          SalesType_ID: salesid,
+          CustName: '',
+          Total_Line_Item: totaldtl,
+          ORIGTOTAL: grandtotal,
+          SUBTOTAL: total,
+          Tax_Amount: tax,
+          Discount_ID: '',
+          Discount_Amount: 0,
+          Amount_Tendered: tottender,
+          Change_Amount: changes,
+          Batch_ID: runnobatch,
+          POS_Device_ID: '',
+          POS_Version: '',
+          SyncStatus: 0,
+          Payment_ID: paymentID,
+          Payment_Type: paymentID,
+          Lnitmseq: 0,
+          TrxDetailTYPE: detail,
+        });
+      }
     } catch (error) {
       let msg = error.message;
       console.log(error);

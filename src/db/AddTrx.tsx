@@ -144,6 +144,38 @@ export const AddTrxDtl_getdataBills = async (db: SQLiteDatabase, tableName: stri
   }
 };
 
+export const AddTrxDtl_getdataBillsDetails = async (db: SQLiteDatabase, tableName: string, docnumbr: string): Promise<AddTrxDtl[]> => {
+  try {
+    const Lists: AddTrxDtl[] = [];
+    const results = await db.executeSql(`SELECT * FROM ${tableName} where DOCNUMBER = '${docnumbr}'`);
+    results.forEach(result => {
+      for (let index = 0; index < result.rows.length; index++) {
+        Lists.push(result.rows.item(index))
+      }
+    });
+    return Lists;
+  } catch (error) {
+    console.error(error);
+    throw Error('Failed to get Add Item !!!');
+  }
+};
+
+export const AddTrxDtl_getdataBillsCount = async (db: SQLiteDatabase, tableName: string, docnumbr: string): Promise<AddTrxDtl[]> => {
+  try {
+    const Lists: AddTrxDtl[] = [];
+    const results = await db.executeSql(`SELECT COUNT(*) AS TOTALDETAIL FROM ${tableName}`);
+    results.forEach(result => {
+      for (let index = 0; index < result.rows.length; index++) {
+        Lists.push(result.rows.item(index))
+      }
+    });
+    return Lists;
+  } catch (error) {
+    console.error(error);
+    throw Error('Failed to get Add Item !!!');
+  }
+};
+
 export const AddTrxDtl_savedata = async (db: SQLiteDatabase, tableName: string ,
    docnumbr: string, date: string, lnitmseq: number, qty: number, notes: string, itemnmbr: string, itemname: string, itemprice: number,
    itemcost: number, variantname: string) => {
