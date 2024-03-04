@@ -163,7 +163,7 @@ export const AddTrxDtl_getdataBillsDetails = async (db: SQLiteDatabase, tableNam
 export const AddTrxDtl_getdataBillsCount = async (db: SQLiteDatabase, tableName: string, docnumbr: string): Promise<AddTrxDtl[]> => {
   try {
     const Lists: AddTrxDtl[] = [];
-    const results = await db.executeSql(`SELECT COUNT(*) AS TOTALDETAIL FROM ${tableName}`);
+    const results = await db.executeSql(`SELECT COUNT(*) AS TOTALDETAIL FROM ${tableName} WHERE DOCNUMBER = '${docnumbr}' `);
     results.forEach(result => {
       for (let index = 0; index < result.rows.length; index++) {
         Lists.push(result.rows.item(index))

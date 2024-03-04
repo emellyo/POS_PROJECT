@@ -79,16 +79,16 @@ export default function Menu({navigation}) {
   const [bills, setBills] = useState([]);
   const [discount, setDisCount] = useState([]);
   const [tax, setTax] = useState([]);
-  const [total, setTotal] = useState([]);
-  const [grandtotal, setGrandTotal] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [grandtotal, setGrandTotal] = useState(0);
   const [seqTemp, setSeqTemp] = useState(0);
   const [paymentType, setPaymentType] = useState([]);
   const [salesid, setSalesID] = useState('');
   const [amttendered, setAmtTender] = useState({});
   const [tottender, setTotTender] = useState('');
-  const [changes, setChanges] = useState('');
+  const [changes, setChanges] = useState(0);
   const [paymentID, setPaymentID] = useState('');
-  const [totaldtl, setTotDetail] = useState([]);
+  const [totaldtl, setTotDetail] = useState(0);
   const [hasDot, setHasDot] = useState(false);
   const [totchanges, setTotChanges] = useState('');
   //#endregion
@@ -102,6 +102,7 @@ export default function Menu({navigation}) {
     LOADTBLADDITEM();
     GetDiscount();
     GetSalesType();
+    GetRunnoBatch();
     BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     return () => {
       clearInterval(increment.current);
@@ -454,21 +455,21 @@ export default function Menu({navigation}) {
       console.log('HASIL TAX: ', querytax[0].totalppn);
       // console.log('HASIL TOTAL: ', total);
       if (querytotal.length == 0) {
-        setGrandTotal([0]);
+        setGrandTotal(0);
       } else {
-        setGrandTotal([querytotal[0].GRANDTOTAL]);
+        setGrandTotal(JSON.stringify(querytotal[0].GRANDTOTAL));
       }
       if (querytax.length == 0) {
-        setTax([0]);
+        setTax(0);
       } else {
-        setTax([querytax[0].totalppn]);
+        setTax(JSON.stringify(querytax[0].totalppn));
       }
 
       if (qty.length == 0) {
         console.log('haha: ', qty.length);
-        setTotal([0]);
+        setTotal(0);
       } else {
-        setTotal([qty[0].TOTAL]);
+        setTotal(JSON.stringify(qty[0].TOTAL));
       }
       console.log('nilai total: ', total);
     } catch (error) {
@@ -558,69 +559,87 @@ export default function Menu({navigation}) {
         let msg = 'Nominal Pembayaran tidak sesuai, mohon diperiksa kembali';
         CallModalInfo(msg);
       } else {
-        const db = dbconnTrx.getDBConnection();
-        let countdtl = [];
-        console.log('masuk kondisi else');
-        setTotTender('');
-        setTotChanges('');
-        setGrandTotal('');
-        setChanges('');
-        setMdlPayment(false);
-        const today = new Date();
-        // Get various parts of the date
-        const year = today.getFullYear();
-        const month = today.getMonth() + 1; // Months are zero-indexed
-        const day = today.getDate();
-        const formattedDate = `${month}/${day}/${year}`;
-        let datauser = await AsyncStorage.getItem('@dtUser');
-        datauser = JSON.parse(datauser);
-        var userid = datauser[0].userid;
-        var storeid = datauser[0].store_ID;
-        //let querycount = `SELECT COUNT(*) as totaldetail FROM AddTrxDtl where DOCNUMBER = '${runno}' `;
-        countdtl = await dbconnTrx.AddTrxDtl_getdataBillsCount(db, 'AddTrxDtl');
-        //let countline = await dbconnTrx.querydynamic(db, querycount);
-        console.log('total detail count: ', countdtl);
-        setTotDetail(countdtl);
-        let detail = await dbconnTrx.AddTrxDtl_getdataBillsDetails(
-          db,
-          `AddTrxDtl`,
-          runno,
-        );
-
-        console.log('total detail : ', detail);
-
-        syncup({
-          UserID: userid,
-          DOCNUMBER: runno,
-          DOCTYPE: 1,
-          DOCDATE: formattedDate,
-          Store_ID: storeid,
-          Site_ID: '',
-          SalesType_ID: salesid,
-          CustName: '',
-          Total_Line_Item: totaldtl,
-          ORIGTOTAL: grandtotal,
-          SUBTOTAL: total,
-          Tax_Amount: tax,
-          Discount_ID: '',
-          Discount_Amount: 0,
-          Amount_Tendered: tottender,
-          Change_Amount: changes,
-          Batch_ID: runnobatch,
-          POS_Device_ID: '',
-          POS_Version: '',
-          SyncStatus: 0,
-          Payment_ID: paymentID,
-          Payment_Type: paymentID,
-          Lnitmseq: 0,
-          TrxDetailTYPE: detail,
-        });
+        SyncUpFinal();
       }
     } catch (error) {
       let msg = error.message;
       console.log(error);
       CallModalInfo(msg);
     }
+  };
+
+  const SyncUpFinal = async () => {
+    try {
+      let countdtl = [];
+      console.log('masuk kondisi else');
+      setTotTender('');
+      //setTotChanges('');
+      setGrandTotal('');
+      setChanges('');
+      setMdlPayment(false);
+      const today = new Date();
+      // Get various parts of the date
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1; // Months are zero-indexed
+      const day = today.getDate();
+      const formattedDate = `${month}/${day}/${year}`;
+      let datauser = await AsyncStorage.getItem('@dtUser');
+      datauser = JSON.parse(datauser);
+      var userid = datauser[0].userid;
+      var storeid = datauser[0].store_ID;
+      console.log('STORE ID: ', storeid[0].value);
+      const db = await dbconnTrx.getDBConnection();
+      //let querycount = `SELECT COUNT(*) as totaldetail FROM AddTrxDtl where DOCNUMBER = '${runno}' `;
+      countdtl = await dbconnTrx.AddTrxDtl_getdataBillsCount(
+        db,
+        'AddTrxDtl',
+        runno,
+      );
+      //let countline = await dbconnTrx.querydynamic(db, querycount);
+      console.log('total detail count: ', countdtl);
+      setTotDetail(JSON.stringify(countdtl));
+      let detail = await dbconnTrx.AddTrxDtl_getdataBillsDetails(
+        db,
+        `AddTrxDtl`,
+        runno,
+      );
+      console.log('total detail : ', detail);
+      syncup({
+        UserID: userid,
+        DOCNUMBER: runno,
+        DOCTYPE: 1,
+        DOCDATE: formattedDate,
+        Store_ID: storeid[0].value,
+        Site_ID: '',
+        SalesType_ID: salesid,
+        CustName: '',
+        Total_Line_Item: JSON.stringify(totaldtl),
+        ORIGTOTAL: grandtotal,
+        SUBTOTAL: total,
+        Tax_Amount: tax,
+        Discount_ID: '',
+        Discount_Amount: 0,
+        Amount_Tendered: tottender,
+        Change_Amount: changes,
+        Batch_ID: runnobatch,
+        POS_Device_ID: '',
+        POS_Version: '',
+        SyncStatus: 0,
+        Payment_ID: paymentID,
+        Payment_Type: paymentID,
+        Lnitmseq: 0,
+        TrxDetailTYPE: detail,
+      }).then(async result => {
+        var hasil = result.data;
+        console.log('hasil syncup ', hasil);
+        if (hasil.code == 400) {
+          CallModalInfo(hasil.desc);
+        } else if (hasil.code == 200) {
+          handleBackButtonClick();
+        }
+        //console.log('HASIL GET VARIANT', hasil);
+      });
+    } catch (error) {}
   };
   const handleIncrement = () => {
     // Increase count by 1
