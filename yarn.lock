@@ -4586,9 +4586,9 @@ flow-parser@0.*:
   integrity sha512-wstw46/C/8bRv/8RySCl15lK376j8DHxm41xFjD9eVL+jSS1UmVpbdLdA0LzGuS2v5uGgQiBLEj6mgSJQwW+MA==
 
 follow-redirects@^1.15.0:
-  version "1.15.2"
-  resolved "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.15.2.tgz"
-  integrity sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==
+  version "1.15.5"
+  resolved "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.15.5.tgz"
+  integrity sha512-vSFWUON1B+yAw1VN4xMfxgn5fTUiaOzAJCKBwIIgT/+7CuGy9+r+5gITvP62j3RmaD5Ph65UaERdOSRGUzZtgw==
 
 for-each@^0.3.3:
   version "0.3.3"
@@ -4966,9 +4966,9 @@ invariant@*, invariant@^2.2.4:
     loose-envify "^1.0.0"
 
 ip@^1.1.5:
-  version "1.1.8"
-  resolved "https://registry.npmjs.org/ip/-/ip-1.1.8.tgz"
-  integrity sha512-PuExPYUiu6qMBQb4l06ecm6T6ujzhmh+MeJcW9wa89PoAz5pvd4zPgN5WJV104mb6S2T1AwNIAaB70JNrLQWhg==
+  version "1.1.9"
+  resolved "https://registry.npmjs.org/ip/-/ip-1.1.9.tgz"
+  integrity sha512-cyRxvOEpNHNtchU3Ln9KC/auJgup87llfQpQ+t5ghoC/UhL16SWzbueiCsdTnWmqAWl7LadfuwhlqmtOaqMHdQ==
 
 is-array-buffer@^3.0.1, is-array-buffer@^3.0.2:
   version "3.0.2"
@@ -7189,6 +7189,11 @@ react-is@^17.0.1:
   resolved "https://registry.npmjs.org/react-is/-/react-is-17.0.2.tgz"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
+react-native-bluetooth-escpos-printer@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.npmjs.org/react-native-bluetooth-escpos-printer/-/react-native-bluetooth-escpos-printer-0.0.5.tgz"
+  integrity sha512-a+GTlz8dctb48wkoJ8woE7gV24NCOoA13J95A+RFEKhjONEWf3/dP5pIqrrlO5fsf/2QYDeMfU3P8bIVQoEqig==
+
 react-native-device-info@^10.9.0:
   version "10.9.0"
   resolved "https://registry.npmjs.org/react-native-device-info/-/react-native-device-info-10.9.0.tgz"
@@ -7274,7 +7279,7 @@ react-native-vector-icons@^10.0.0, react-native-vector-icons@>7.0.0:
     prop-types "^15.7.2"
     yargs "^16.1.1"
 
-react-native@*, "react-native@^0.0.0-0 || 0.60 - 0.72 || 1000.0.0", "react-native@>= 0.62", "react-native@>= 0.67", react-native@>=0.14.0, react-native@>=0.59, react-native@>=0.71.0, react-native@0.72.4:
+react-native@*, "react-native@^0.0.0-0 || 0.60 - 0.72 || 1000.0.0", "react-native@>= 0.62", "react-native@>= 0.67", react-native@>=0.14.0, react-native@>=0.55.4, react-native@>=0.59, react-native@>=0.71.0, react-native@0.72.4:
   version "0.72.4"
   resolved "https://registry.npmjs.org/react-native/-/react-native-0.72.4.tgz"
   integrity sha512-+vrObi0wZR+NeqL09KihAAdVlQ9IdplwznJWtYrjnQ4UbCW6rkzZJebRsugwUneSOKNFaHFEo1uKU89HsgtYBg==

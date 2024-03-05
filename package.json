@@ -26,6 +26,7 @@
     "native-base": "^3.4.28",
     "react": "18.2.0",
     "react-native": "0.72.4",
+    "react-native-bluetooth-escpos-printer": "^0.0.5",
     "react-native-device-info": "^10.9.0",
     "react-native-dropdown-picker": "^5.4.6",
     "react-native-gesture-handler": "^2.12.1",

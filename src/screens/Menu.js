@@ -613,7 +613,7 @@ export default function Menu({navigation}) {
         Site_ID: '',
         SalesType_ID: salesid,
         CustName: '',
-        Total_Line_Item: JSON.stringify(totaldtl),
+        Total_Line_Item: totaldtl,
         ORIGTOTAL: grandtotal,
         SUBTOTAL: total,
         Tax_Amount: tax,
@@ -631,10 +631,10 @@ export default function Menu({navigation}) {
         TrxDetailTYPE: detail,
       }).then(async result => {
         var hasil = result.data;
-        console.log('hasil syncup ', hasil);
-        if (hasil.code == 400) {
+        console.log('hasil syncup ', hasil[0].code);
+        if (hasil[0].code == 400) {
           CallModalInfo(hasil.desc);
-        } else if (hasil.code == 200) {
+        } else if (hasil[0].code == 200) {
           handleBackButtonClick();
         }
         //console.log('HASIL GET VARIANT', hasil);
