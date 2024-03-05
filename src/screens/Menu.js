@@ -1329,7 +1329,8 @@ export default function Menu({navigation}) {
                         invrecStyles.labelinputbills,
                         {backgroundColor: colors.card, color: colors.text},
                       ]}>
-                      Rp {total.toLocaleString('id-ID')}
+                      {/* Rp {total.toLocaleString('id-ID')} */}
+                      Rp {Intl.NumberFormat('id-ID').format(total)}
                     </Text>
                   </View>
                 </SafeAreaView>
@@ -1369,7 +1370,7 @@ export default function Menu({navigation}) {
                         invrecStyles.labelinputbills,
                         {backgroundColor: colors.card, color: colors.text},
                       ]}>
-                      Rp {tax.toLocaleString('id-ID')}
+                      Rp {Intl.NumberFormat('id-ID').format(tax)}
                     </Text>
                   </View>
                 </SafeAreaView>
@@ -1389,7 +1390,7 @@ export default function Menu({navigation}) {
                         invrecStyles.labelinputbills,
                         {backgroundColor: colors.card, color: colors.text},
                       ]}>
-                      Rp {grandtotal.toLocaleString('id-ID')}
+                      Rp {Intl.NumberFormat('id-ID').format(grandtotal)}
                     </Text>
                   </View>
                 </SafeAreaView>
