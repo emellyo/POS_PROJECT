@@ -42,7 +42,7 @@ const Drawer = createDrawerNavigator();
 const App = () => {
 return (
     <NavigationContainer>
-    <Stack.Navigator initialRouteName="Login"
+    <Stack.Navigator initialRouteName="Print"
       screenOptions={{headerShown: false}}>
         {/* You can add a Login screen here */}
         <Stack.Screen 
@@ -73,10 +73,10 @@ return (
             </Drawer.Navigator> 
           )}
           </Stack.Screen> 
-        {/* <Stack.Screen 
+        <Stack.Screen 
         name="Print" 
         component={PrintBluetooth}
-        options={{ title: 'Print Bluetooth Page'}} /> */}
+        options={{ title: 'Print Bluetooth Page'}} />
       </Stack.Navigator>
     </NavigationContainer>
   // <NavigationContainer>
