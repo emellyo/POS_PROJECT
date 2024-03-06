@@ -11,6 +11,7 @@ import {
   View,
   Button,
 } from 'react-native';
+import {useTheme, useRoute, useNavigation} from '@react-navigation/native';
 import {BluetoothManager} from 'react-native-bluetooth-escpos-printer';
 import {PERMISSIONS, requestMultiple, RESULTS} from 'react-native-permissions';
 import ItemList from './ItemList';
@@ -24,6 +25,9 @@ const PrintBluetooth = () => {
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState('');
   const [boundAddress, setBoundAddress] = useState('');
+
+  const colors = useTheme().colors;
+  const navigation = useNavigation();
 
   useEffect(() => {
     BluetoothManager.isBluetoothEnabled().then(
