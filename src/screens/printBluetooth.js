@@ -16,7 +16,7 @@ import {BluetoothManager} from 'react-native-bluetooth-escpos-printer';
 import {PERMISSIONS, requestMultiple, RESULTS} from 'react-native-permissions';
 import ItemList from './ItemList';
 import SamplePrint from './SamplePrint';
-import {globalStyles} from '../css/global';
+import {styles} from '../css/styles';
 
 const PrintBluetooth = () => {
   const [pairedDevices, setPairedDevices] = useState([]);
@@ -258,21 +258,16 @@ const PrintBluetooth = () => {
   };
 
   return (
-    <ScrollView style={globalStyles.container}>
-      <View style={globalStyles.bluetoothStatusContainer}>
-        <Text
-          style={globalStyles.bluetoothStatus(
-            bleOpend ? '#47BF34' : '#A8A9AA',
-          )}>
+    <ScrollView style={styles.container}>
+      <View style={styles.bluetoothStatusContainer}>
+        <Text style={styles.bluetoothStatus(bleOpend ? '#47BF34' : '#A8A9AA')}>
           Bluetooth {bleOpend ? 'Aktif' : 'Non Aktif'}
         </Text>
       </View>
       {!bleOpend && (
-        <Text style={globalStyles.bluetoothInfo}>
-          Mohon aktifkan bluetooth anda
-        </Text>
+        <Text style={styles.bluetoothInfo}>Mohon aktifkan bluetooth anda</Text>
       )}
-      <Text style={globalStyles.sectionTitle}>
+      <Text style={styles.sectionTitle}>
         Printer yang terhubung ke aplikasi:
       </Text>
       {boundAddress.length > 0 && (
@@ -287,11 +282,11 @@ const PrintBluetooth = () => {
       {boundAddress.length < 1 && (
         <Text style={styles.printerInfo}>Belum ada printer yang terhubung</Text>
       )}
-      <Text style={globalStyles.sectionTitle}>
+      <Text style={styles.sectionTitle}>
         Bluetooth yang terhubung ke HP ini:
       </Text>
       {loading ? <ActivityIndicator animating={true} /> : null}
-      <View style={globalStyles.containerList}>
+      <View style={styles.containerList}>
         {pairedDevices.map((item, index) => {
           return (
             <ItemList
