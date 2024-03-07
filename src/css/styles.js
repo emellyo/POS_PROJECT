@@ -19,14 +19,14 @@ export const styles = StyleSheet.create({
   bluetoothInfo: {
     textAlign: 'center',
     fontSize: 16,
-    color: '#FFC806',
+    color: '#0096FF',
     marginBottom: 20,
   },
   sectionTitle: {fontWeight: 'bold', fontSize: 18, marginBottom: 12},
   printerInfo: {
     textAlign: 'center',
     fontSize: 16,
-    color: '#E9493F',
+    color: '#0096FF',
     marginBottom: 20,
   },
 });
