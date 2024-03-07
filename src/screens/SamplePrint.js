@@ -36,7 +36,6 @@ const SamplePrint = () => {
           title="Print QRCode"
         />
       </View>
-
       <View style={styles.btn}>
         <Button
           onPress={async () => {
