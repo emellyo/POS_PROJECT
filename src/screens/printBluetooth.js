@@ -10,13 +10,17 @@ import {
   ToastAndroid,
   View,
   Button,
+  SafeAreaView,
+  TouchableOpacity,
 } from 'react-native';
 import {useTheme, useRoute, useNavigation} from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import {BluetoothManager} from 'react-native-bluetooth-escpos-printer';
 import {PERMISSIONS, requestMultiple, RESULTS} from 'react-native-permissions';
 import ItemList from './ItemList';
 import SamplePrint from './SamplePrint';
 import {styles} from '../css/styles';
+import {invrecStyles} from '../css/global';
 
 const PrintBluetooth = () => {
   const [pairedDevices, setPairedDevices] = useState([]);
@@ -95,6 +99,11 @@ const PrintBluetooth = () => {
       scan();
     }
   }, [boundAddress, deviceAlreadPaired, deviceFoundEvent, pairedDevices, scan]);
+
+  function handleBackButtonClick() {
+    navigation.goBack();
+    return true;
+  }
 
   const deviceAlreadPaired = useCallback(
     rsp => {
@@ -259,6 +268,23 @@ const PrintBluetooth = () => {
 
   return (
     <ScrollView style={styles.container}>
+      <SafeAreaView style={invrecStyles.bannermenuprint}>
+        <TouchableOpacity
+          style={invrecStyles.bannerpanahback}
+          // onPress={() => navigation.replace('Home')}
+          onPress={handleBackButtonClick}>
+          <Icon name={'arrow-left'} size={20} color="#FFFFFF" />
+        </TouchableOpacity>
+        <View
+          style={{
+            display: 'flex',
+            justifyContent: 'space-around',
+            width: '100%',
+            flexDirection: 'row',
+          }}>
+          <Text style={invrecStyles.bannermenutext}></Text>
+        </View>
+      </SafeAreaView>
       <View style={styles.bluetoothStatusContainer}>
         <Text style={styles.bluetoothStatus(bleOpend ? '#47BF34' : '#A8A9AA')}>
           Bluetooth {bleOpend ? 'Aktif' : 'Non Aktif'}

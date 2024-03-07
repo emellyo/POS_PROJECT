@@ -1475,6 +1475,15 @@ export const invrecStyles = StyleSheet.create({
     // alignItems: 'center',
     padding: 10,
   },
+  bannermenuprint: {
+    //flexDirection: 'column',
+    backgroundColor: '#0096FF',
+    //height: '20%',
+    alignContent: 'center',
+    justifyContent: 'center',
+    // alignItems: 'center',
+    padding: 10,
+  },
   bannermenu2: {
     flexDirection: 'column',
     backgroundColor: '#0096FF',

@@ -42,7 +42,7 @@ const Drawer = createDrawerNavigator();
 const App = () => {
 return (
     <NavigationContainer>
-    <Stack.Navigator initialRouteName="Print"
+    <Stack.Navigator initialRouteName="Login"
       screenOptions={{headerShown: false}}>
         {/* You can add a Login screen here */}
         <Stack.Screen 

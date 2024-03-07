@@ -78,6 +78,7 @@ const Login = () => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const [open, setOpen] = useState(false);
   const [store, setStore] = useState([]);
+  const [address, setAdress] = useState('');
   const [jmlstore, setJmlStore] = useState([]);
   const [domain, setDomain] = useState('');
 
@@ -307,21 +308,27 @@ const Login = () => {
           for (let i = 0; i < hasil.length; i++) {
             let data = hasil[i];
             let value = data.store_ID;
+            let alamat = data.address;
             if (i == 0) {
               store = value;
+              alamat = alamat;
             }
             var joined = {
               label: data.store_Name,
+              alamat: data.address,
               value: value,
             };
             results.push(joined);
           }
         }
         setStore(results);
+        setAdress(results);
         setJmlStore(results.length);
+
         if (results.length > 0) {
           setDomain(store);
         }
+        console.log('alamat toko: ', address);
         console.log('HASIL SET STORE: ', store);
       })
       .catch(async err => {

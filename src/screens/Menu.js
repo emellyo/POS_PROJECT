@@ -20,6 +20,7 @@ import {globalStyles, invrecStyles} from '../css/global';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {useRoute, useTheme} from '@react-navigation/native';
 import CheckBox from '@react-native-community/checkbox';
+import {BluetoothEscposPrinter} from 'react-native-bluetooth-escpos-printer';
 import * as Utils from '../Helpers/Utils';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -612,7 +613,7 @@ export default function Menu({navigation}) {
         Store_ID: storeid[0].value,
         Site_ID: '',
         SalesType_ID: salesid,
-        CustName: '',
+        CustName: custname,
         Total_Line_Item: totaldtl,
         ORIGTOTAL: grandtotal,
         SUBTOTAL: total,
@@ -641,6 +642,166 @@ export default function Menu({navigation}) {
       });
     } catch (error) {}
   };
+
+  const PrintStruk = async () => {
+    let columnWidths = [8, 20, 20];
+    try {
+      await BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
+      //  await BluetoothEscposPrinter.printPic(hsdLogo, {
+      //    width: 250,
+      //    left: 150,
+      //  });
+      await BluetoothEscposPrinter.printerAlign(
+        [48],
+        BluetoothEscposPrinter.ALIGN.CENTER,
+        [],
+      );
+      await BluetoothEscposPrinter.printColumn(
+        [48],
+        [BluetoothEscposPrinter.ALIGN.CENTER],
+        ['Jl. Brigjen Saptadji Hadiprawira No.93'],
+        {},
+      );
+      await BluetoothEscposPrinter.printColumn(
+        [32],
+        [BluetoothEscposPrinter.ALIGN.CENTER],
+        ['https://xfood.id'],
+        {},
+      );
+      await BluetoothEscposPrinter.printText(
+        '================================================',
+        {},
+      );
+      await BluetoothEscposPrinter.printColumn(
+        [24, 24],
+        [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+        ['Customer', 'Prawito Hudoro'],
+        {},
+      );
+      await BluetoothEscposPrinter.printColumn(
+        [24, 24],
+        [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+        ['Packaging', 'Iya'],
+        {},
+      );
+      await BluetoothEscposPrinter.printColumn(
+        [24, 24],
+        [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+        ['Delivery', 'Ambil Sendiri'],
+        {},
+      );
+      await BluetoothEscposPrinter.printText(
+        '================================================',
+        {},
+      );
+      await BluetoothEscposPrinter.printText('Products\r\n', {
+        widthtimes: 1,
+      });
+      await BluetoothEscposPrinter.printText(
+        '================================================',
+        {},
+      );
+      await BluetoothEscposPrinter.printColumn(
+        columnWidths,
+        [
+          BluetoothEscposPrinter.ALIGN.LEFT,
+          BluetoothEscposPrinter.ALIGN.LEFT,
+          BluetoothEscposPrinter.ALIGN.RIGHT,
+        ],
+        ['1x', 'Cumi-Cumi', 'Rp.200.000'],
+        {},
+      );
+      await BluetoothEscposPrinter.printColumn(
+        columnWidths,
+        [
+          BluetoothEscposPrinter.ALIGN.LEFT,
+          BluetoothEscposPrinter.ALIGN.LEFT,
+          BluetoothEscposPrinter.ALIGN.RIGHT,
+        ],
+        ['1x', 'Tongkol Kering', 'Rp.300.000'],
+        {},
+      );
+      await BluetoothEscposPrinter.printColumn(
+        columnWidths,
+        [
+          BluetoothEscposPrinter.ALIGN.LEFT,
+          BluetoothEscposPrinter.ALIGN.LEFT,
+          BluetoothEscposPrinter.ALIGN.RIGHT,
+        ],
+        ['1x', 'Ikan Tuna', 'Rp.400.000'],
+        {},
+      );
+      await BluetoothEscposPrinter.printText(
+        '================================================',
+        {},
+      );
+      await BluetoothEscposPrinter.printColumn(
+        [24, 24],
+        [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+        ['Subtotal', 'Rp.900.000'],
+        {},
+      );
+      await BluetoothEscposPrinter.printColumn(
+        [24, 24],
+        [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+        ['Packaging', 'Rp.6.000'],
+        {},
+      );
+      await BluetoothEscposPrinter.printColumn(
+        [24, 24],
+        [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+        ['Delivery', 'Rp.0'],
+        {},
+      );
+      await BluetoothEscposPrinter.printText(
+        '================================================',
+        {},
+      );
+      await BluetoothEscposPrinter.printColumn(
+        [24, 24],
+        [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+        ['Total', 'Rp.906.000'],
+        {},
+      );
+      await BluetoothEscposPrinter.printText('\r\n\r\n', {});
+      await BluetoothEscposPrinter.printerAlign(
+        BluetoothEscposPrinter.ALIGN.CENTER,
+      );
+      await BluetoothEscposPrinter.printQRCode(
+        'DP0837849839',
+        280,
+        BluetoothEscposPrinter.ERROR_CORRECTION.L,
+      );
+      await BluetoothEscposPrinter.printerAlign(
+        BluetoothEscposPrinter.ALIGN.CENTER,
+      );
+      await BluetoothEscposPrinter.printColumn(
+        [48],
+        [BluetoothEscposPrinter.ALIGN.CENTER],
+        ['DP0837849839'],
+        {widthtimes: 2},
+      );
+      await BluetoothEscposPrinter.printText(
+        '================================================',
+        {},
+      );
+      await BluetoothEscposPrinter.printColumn(
+        [48],
+        [BluetoothEscposPrinter.ALIGN.CENTER],
+        ['Sabtu, 18 Juni 2022 - 06:00 WIB'],
+        {},
+      );
+      await BluetoothEscposPrinter.printText(
+        '================================================',
+        {},
+      );
+      await BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
+      await BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
+    } catch (e) {
+      Alert(e.message || 'ERROR');
+    }
+  };
+
   const handleIncrement = () => {
     // Increase count by 1
     setCount(count + 1);
@@ -783,11 +944,8 @@ export default function Menu({navigation}) {
                     {backgroundColor: colors.card, color: colors.text},
                   ]}
                   maxLength={100}
-                  //placeholder={'Masukkan Kata Sandi'}
-                  //placeholderTextColor={colors.text}
-                  //secureTextEntry={seePassword}
-                  //value={password}
-                  //onChangeText={text => setPassword(text)}
+                  value={custname}
+                  onChangeText={text => setCount(text)}
                 />
               </View>
               <View
