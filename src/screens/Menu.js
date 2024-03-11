@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {
   View,
   Text,
@@ -20,7 +20,11 @@ import {globalStyles, invrecStyles} from '../css/global';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {useRoute, useTheme} from '@react-navigation/native';
 import CheckBox from '@react-native-community/checkbox';
-import {BluetoothEscposPrinter} from 'react-native-bluetooth-escpos-printer';
+import {
+  BluetoothEscposPrinter,
+  BluetoothManager,
+} from 'react-native-bluetooth-escpos-printer';
+import {PERMISSIONS, requestMultiple, RESULTS} from 'react-native-permissions';
 import * as Utils from '../Helpers/Utils';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -33,6 +37,7 @@ import {getrunnobatch} from '../api/getrunnobatch';
 import {getdiscount} from '../api/getdiscount';
 import {getpayment} from '../api/getpaymentype';
 import {syncup} from '../api/syncuptrx';
+import {hsdLogo} from './dummy-logo';
 import * as dbconn from '../db/Variant';
 import * as dbconnTrx from '../db/AddTrx';
 import {run} from 'jest';
@@ -92,6 +97,14 @@ export default function Menu({navigation}) {
   const [totaldtl, setTotDetail] = useState(0);
   const [hasDot, setHasDot] = useState(false);
   const [totchanges, setTotChanges] = useState('');
+  const [namatoko1, setNamaToko] = useState('');
+  const [alamattoko, setAlamatToko] = useState('');
+  const [pairedDevices, setPairedDevices] = useState([]);
+  const [foundDs, setFoundDs] = useState([]);
+  const [bleOpend, setBleOpend] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [name, setName] = useState('');
+  const [boundAddress, setBoundAddress] = useState('');
   //#endregion
 
   useEffect(() => {
@@ -104,6 +117,7 @@ export default function Menu({navigation}) {
     GetDiscount();
     GetSalesType();
     GetRunnoBatch();
+    GetStorename();
     BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     return () => {
       clearInterval(increment.current);
@@ -154,6 +168,167 @@ export default function Menu({navigation}) {
   };
 
   //#region //* FUNCTION
+
+  // const deviceAlreadPaired = useCallback(
+  //   rsp => {
+  //     var ds = null;
+  //     if (typeof rsp.devices === 'object') {
+  //       ds = rsp.devices;
+  //     } else {
+  //       try {
+  //         ds = JSON.parse(rsp.devices);
+  //       } catch (e) {}
+  //     }
+  //     if (ds && ds.length) {
+  //       let pared = pairedDevices;
+  //       if (pared.length < 1) {
+  //         pared = pared.concat(ds || []);
+  //       }
+  //       setPairedDevices(pared);
+  //     }
+  //   },
+  //   [pairedDevices],
+  // );
+
+  // const deviceFoundEvent = useCallback(
+  //   rsp => {
+  //     var r = null;
+  //     try {
+  //       if (typeof rsp.device === 'object') {
+  //         r = rsp.device;
+  //       } else {
+  //         r = JSON.parse(rsp.device);
+  //       }
+  //     } catch (e) {
+  //       // ignore error
+  //     }
+
+  //     if (r) {
+  //       let found = foundDs || [];
+  //       if (found.findIndex) {
+  //         let duplicated = found.findIndex(function (x) {
+  //           return x.address == r.address;
+  //         });
+  //         if (duplicated == -1) {
+  //           found.push(r);
+  //           setFoundDs(found);
+  //         }
+  //       }
+  //     }
+  //   },
+  //   [foundDs],
+  // );
+
+  // const connect = row => {
+  //   setLoading(true);
+  //   BluetoothManager.connect(row.address).then(
+  //     s => {
+  //       setLoading(false);
+  //       setBoundAddress(row.address);
+  //       setName(row.name || 'UNKNOWN');
+  //     },
+  //     e => {
+  //       setLoading(false);
+  //       alert(e);
+  //     },
+  //   );
+  // };
+
+  // const unPair = address => {
+  //   setLoading(true);
+  //   BluetoothManager.unpaire(address).then(
+  //     s => {
+  //       setLoading(false);
+  //       setBoundAddress('');
+  //       setName('');
+  //     },
+  //     e => {
+  //       setLoading(false);
+  //       alert(e);
+  //     },
+  //   );
+  // };
+
+  // const scanDevices = useCallback(() => {
+  //   setLoading(true);
+  //   BluetoothManager.scanDevices().then(
+  //     s => {
+  //       // const pairedDevices = s.paired;
+  //       var found = s.found;
+  //       try {
+  //         found = JSON.parse(found); //@FIX_it: the parse action too weired..
+  //       } catch (e) {
+  //         //ignore
+  //       }
+  //       var fds = foundDs;
+  //       if (found && found.length) {
+  //         fds = found;
+  //       }
+  //       setFoundDs(fds);
+  //       setLoading(false);
+  //     },
+  //     er => {
+  //       setLoading(false);
+  //       // ignore
+  //     },
+  //   );
+  // }, [foundDs]);
+
+  // const scan = useCallback(() => {
+  //   try {
+  //     async function blueTooth() {
+  //       const permissions = {
+  //         title: 'HSD bluetooth meminta izin untuk mengakses bluetooth',
+  //         message:
+  //           'HSD bluetooth memerlukan akses ke bluetooth untuk proses koneksi ke bluetooth printer',
+  //         buttonNeutral: 'Lain Waktu',
+  //         buttonNegative: 'Tidak',
+  //         buttonPositive: 'Boleh',
+  //       };
+
+  //       const bluetoothConnectGranted = await PermissionsAndroid.request(
+  //         PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+  //         permissions,
+  //       );
+  //       if (bluetoothConnectGranted === PermissionsAndroid.RESULTS.GRANTED) {
+  //         const bluetoothScanGranted = await PermissionsAndroid.request(
+  //           PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
+  //           permissions,
+  //         );
+  //         if (bluetoothScanGranted === PermissionsAndroid.RESULTS.GRANTED) {
+  //           scanDevices();
+  //         }
+  //       } else {
+  //         // ignore akses ditolak
+  //       }
+  //     }
+  //     blueTooth();
+  //   } catch (err) {
+  //     console.warn(err);
+  //   }
+  // }, [scanDevices]);
+
+  // const scanBluetoothDevice = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const request = await requestMultiple([
+  //       PERMISSIONS.ANDROID.BLUETOOTH_CONNECT,
+  //       PERMISSIONS.ANDROID.BLUETOOTH_SCAN,
+  //       PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+  //     ]);
+
+  //     if (
+  //       request['android.permission.ACCESS_FINE_LOCATION'] === RESULTS.GRANTED
+  //     ) {
+  //       scanDevices();
+  //       setLoading(false);
+  //     } else {
+  //       setLoading(false);
+  //     }
+  //   } catch (err) {
+  //     setLoading(false);
+  //   }
+  // };
 
   const Categories = async () => {
     setCategory([]);
@@ -569,6 +744,23 @@ export default function Menu({navigation}) {
     }
   };
 
+  const GetStorename = async () => {
+    try {
+      let datauser = await AsyncStorage.getItem('@dtUser');
+      datauser = JSON.parse(datauser);
+      let alamat = datauser[0].alamat;
+      let namatoko = datauser[0].namatoko;
+      setAlamatToko(alamat[0].alamat);
+      setNamaToko(namatoko[0].label);
+      console.log('alamat: ', alamattoko);
+      console.log('nama toko: ', namatoko1);
+    } catch (error) {
+      console.log(error);
+      let msg = error.message;
+      CallModalInfo(msg);
+    }
+  };
+
   const SyncUpFinal = async () => {
     try {
       let countdtl = [];
@@ -636,7 +828,8 @@ export default function Menu({navigation}) {
         if (hasil[0].code == 400) {
           CallModalInfo(hasil.desc);
         } else if (hasil[0].code == 200) {
-          handleBackButtonClick();
+          PrintStruk();
+          //handleBackButtonClick();
         }
         //console.log('HASIL GET VARIANT', hasil);
       });
@@ -644,22 +837,26 @@ export default function Menu({navigation}) {
   };
 
   const PrintStruk = async () => {
+    setTimeout(1000);
     let columnWidths = [8, 20, 20];
     try {
+      console.log('alamat: ', alamattoko);
+      console.log('nama toko: ', namatoko1);
       await BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
-      //  await BluetoothEscposPrinter.printPic(hsdLogo, {
-      //    width: 250,
-      //    left: 150,
-      //  });
+      await BluetoothEscposPrinter.printPic(hsdLogo, {width: 250, left: 150});
+      await BluetoothEscposPrinter.printerAlign(
+        BluetoothEscposPrinter.ALIGN.CENTER,
+      );
       await BluetoothEscposPrinter.printerAlign(
         [48],
         BluetoothEscposPrinter.ALIGN.CENTER,
-        [],
+        ['TEST STORE'],
+        {},
       );
       await BluetoothEscposPrinter.printColumn(
         [48],
         [BluetoothEscposPrinter.ALIGN.CENTER],
-        ['Jl. Brigjen Saptadji Hadiprawira No.93'],
+        ['ALAMAT TEST'],
         {},
       );
       await BluetoothEscposPrinter.printColumn(

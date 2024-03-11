@@ -78,7 +78,8 @@ const Login = () => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const [open, setOpen] = useState(false);
   const [store, setStore] = useState([]);
-  const [address, setAdress] = useState('');
+  const [storename, setStoreName] = useState([]);
+  const [address, setAdress] = useState([]);
   const [jmlstore, setJmlStore] = useState([]);
   const [domain, setDomain] = useState('');
 
@@ -262,6 +263,8 @@ const Login = () => {
               fullname: business_Name,
               country: country,
               store_ID: store,
+              alamat: address,
+              namatoko: storename,
             };
             datauserall.push(dataparams);
 
@@ -308,10 +311,13 @@ const Login = () => {
           for (let i = 0; i < hasil.length; i++) {
             let data = hasil[i];
             let value = data.store_ID;
-            let alamat = data.address;
+            let alamat1 = data.address;
+            let namastore = data.store_Name;
+            console.log('alamat: ', alamat1);
             if (i == 0) {
               store = value;
-              alamat = alamat;
+              alamattoko = alamat1;
+              namatoko = namastore;
             }
             var joined = {
               label: data.store_Name,
@@ -323,13 +329,15 @@ const Login = () => {
         }
         setStore(results);
         setAdress(results);
+        setStoreName(results);
         setJmlStore(results.length);
 
         if (results.length > 0) {
           setDomain(store);
         }
         console.log('alamat toko: ', address);
-        console.log('HASIL SET STORE: ', store);
+        console.log('nama toko: ', storename);
+        console.log('HASIL SET STORE: ', results);
       })
       .catch(async err => {
         console.log('respon: ' + err.message);

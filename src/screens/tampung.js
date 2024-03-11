@@ -120,3 +120,173 @@
 {
   /* //* MODAL EDIT VARIANT */
 }
+
+// const PrintStruk = async () => {
+//    //   let columnWidths = [8, 20, 20];
+// //   try {
+// //     let datauser = await AsyncStorage.getItem('@dtUser');
+// //     datauser = JSON.parse(datauser);
+// //     let alamat = datauser[0].alamat;
+// //     let namatoko = datauser[0].namatoko;
+// //     setAlamatToko(alamat[0].alamat);
+// //     setNamaToko(namatoko[0].label);
+// //     console.log('alamat: ', alamattoko);
+// //     console.log('nama toko: ', namatoko1);
+// //     await BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
+// //     //  await BluetoothEscposPrinter.printPic(hsdLogo, {
+// //     //    width: 250,
+// //     //    left: 150,
+// //     //  });
+// //     await BluetoothEscposPrinter.printerAlign(
+// //       BluetoothEscposPrinter.ALIGN.CENTER,
+// //     );
+// //     await BluetoothEscposPrinter.printerAlign(
+// //       [48],
+// //       BluetoothEscposPrinter.ALIGN.CENTER,
+// //       [{namatoko1}],
+// //       {},
+// //     );
+// //     await BluetoothEscposPrinter.printColumn(
+// //       [48],
+// //       [BluetoothEscposPrinter.ALIGN.CENTER],
+// //       [{alamattoko}],
+// //       {},
+// //     );
+// //     await BluetoothEscposPrinter.printColumn(
+// //       [32],
+// //       [BluetoothEscposPrinter.ALIGN.CENTER],
+// //       ['https://xfood.id'],
+// //       {},
+// //     );
+// //     await BluetoothEscposPrinter.printText(
+// //       '================================================',
+// //       {},
+// //     );
+// //     await BluetoothEscposPrinter.printColumn(
+// //       [24, 24],
+// //       [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+// //       ['Customer', 'Prawito Hudoro'],
+// //       {},
+// //     );
+// //     await BluetoothEscposPrinter.printColumn(
+// //       [24, 24],
+// //       [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+// //       ['Packaging', 'Iya'],
+// //       {},
+// //     );
+// //     await BluetoothEscposPrinter.printColumn(
+// //       [24, 24],
+// //       [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+// //       ['Delivery', 'Ambil Sendiri'],
+// //       {},
+// //     );
+// //     await BluetoothEscposPrinter.printText(
+// //       '================================================',
+// //       {},
+// //     );
+// //     await BluetoothEscposPrinter.printText('Products\r\n', {
+// //       widthtimes: 1,
+// //     });
+// //     await BluetoothEscposPrinter.printText(
+// //       '================================================',
+// //       {},
+// //     );
+// //     await BluetoothEscposPrinter.printColumn(
+// //       columnWidths,
+// //       [
+// //         BluetoothEscposPrinter.ALIGN.LEFT,
+// //         BluetoothEscposPrinter.ALIGN.LEFT,
+// //         BluetoothEscposPrinter.ALIGN.RIGHT,
+// //       ],
+// //       ['1x', 'Cumi-Cumi', 'Rp.200.000'],
+// //       {},
+// //     );
+// //     await BluetoothEscposPrinter.printColumn(
+// //       columnWidths,
+// //       [
+// //         BluetoothEscposPrinter.ALIGN.LEFT,
+// //         BluetoothEscposPrinter.ALIGN.LEFT,
+// //         BluetoothEscposPrinter.ALIGN.RIGHT,
+// //       ],
+// //       ['1x', 'Tongkol Kering', 'Rp.300.000'],
+// //       {},
+// //     );
+// //     await BluetoothEscposPrinter.printColumn(
+// //       columnWidths,
+// //       [
+// //         BluetoothEscposPrinter.ALIGN.LEFT,
+// //         BluetoothEscposPrinter.ALIGN.LEFT,
+// //         BluetoothEscposPrinter.ALIGN.RIGHT,
+// //       ],
+// //       ['1x', 'Ikan Tuna', 'Rp.400.000'],
+// //       {},
+// //     );
+// //     await BluetoothEscposPrinter.printText(
+// //       '================================================',
+// //       {},
+// //     );
+// //     await BluetoothEscposPrinter.printColumn(
+// //       [24, 24],
+// //       [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+// //       ['Subtotal', 'Rp.900.000'],
+// //       {},
+// //     );
+// //     await BluetoothEscposPrinter.printColumn(
+// //       [24, 24],
+// //       [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+// //       ['Packaging', 'Rp.6.000'],
+// //       {},
+// //     );
+// //     await BluetoothEscposPrinter.printColumn(
+// //       [24, 24],
+// //       [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+// //       ['Delivery', 'Rp.0'],
+// //       {},
+// //     );
+// //     await BluetoothEscposPrinter.printText(
+// //       '================================================',
+// //       {},
+// //     );
+// //     await BluetoothEscposPrinter.printColumn(
+// //       [24, 24],
+// //       [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+// //       ['Total', 'Rp.906.000'],
+// //       {},
+// //     );
+// //     await BluetoothEscposPrinter.printText('\r\n\r\n', {});
+// //     await BluetoothEscposPrinter.printerAlign(
+// //       BluetoothEscposPrinter.ALIGN.CENTER,
+// //     );
+// //     await BluetoothEscposPrinter.printQRCode(
+// //       'DP0837849839',
+// //       280,
+// //       BluetoothEscposPrinter.ERROR_CORRECTION.L,
+// //     );
+// //     await BluetoothEscposPrinter.printerAlign(
+// //       BluetoothEscposPrinter.ALIGN.CENTER,
+// //     );
+// //     await BluetoothEscposPrinter.printColumn(
+// //       [48],
+// //       [BluetoothEscposPrinter.ALIGN.CENTER],
+// //       ['DP0837849839'],
+// //       {widthtimes: 2},
+// //     );
+// //     await BluetoothEscposPrinter.printText(
+// //       '================================================',
+// //       {},
+// //     );
+// //     await BluetoothEscposPrinter.printColumn(
+// //       [48],
+// //       [BluetoothEscposPrinter.ALIGN.CENTER],
+// //       ['Sabtu, 18 Juni 2022 - 06:00 WIB'],
+// //       {},
+// //     );
+// //     await BluetoothEscposPrinter.printText(
+// //       '================================================',
+// //       {},
+// //     );
+// //     await BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
+// //     await BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
+// //   } catch (e) {
+// //     Alert(e.message || 'ERROR');
+// //   }
