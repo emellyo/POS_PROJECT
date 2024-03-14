@@ -15,6 +15,9 @@ import {
   RefreshControl,
   Alert,
   LogBox,
+  PermissionsAndroid,
+  Platform,
+  ToastAndroid,
 } from 'react-native';
 import {globalStyles, invrecStyles} from '../css/global';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -108,6 +111,15 @@ export default function Menu({navigation}) {
   //#endregion
 
   useEffect(() => {
+    BluetoothManager.isBluetoothEnabled().then(
+      enabled => {
+        setBleOpend(Boolean(enabled));
+        setLoading(false);
+      },
+      err => {
+        err;
+      },
+    );
     setMdlPayment(false);
     LOADMENU();
     Categories();
@@ -837,11 +849,8 @@ export default function Menu({navigation}) {
   };
 
   const PrintStruk = async () => {
-    setTimeout(1000);
     let columnWidths = [8, 20, 20];
     try {
-      console.log('alamat: ', alamattoko);
-      console.log('nama toko: ', namatoko1);
       await BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
       await BluetoothEscposPrinter.printPic(hsdLogo, {width: 250, left: 150});
       await BluetoothEscposPrinter.printerAlign(
