@@ -108,6 +108,7 @@ export default function Menu({navigation}) {
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState('');
   const [boundAddress, setBoundAddress] = useState('');
+  const [currenttime, setCurrentTime] = useState('');
   //#endregion
 
   useEffect(() => {
@@ -130,6 +131,8 @@ export default function Menu({navigation}) {
     GetSalesType();
     GetRunnoBatch();
     GetStorename();
+    getCurrentTime();
+    console.log('Current time:', getCurrentTime());
     BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     return () => {
       clearInterval(increment.current);
@@ -138,7 +141,7 @@ export default function Menu({navigation}) {
         handleBackButtonClick,
       );
     };
-  }, []);
+  }, [boundAddress, deviceAlreadPaired, deviceFoundEvent, pairedDevices, scan]);
 
   const LOADMENU = async () => {
     try {
@@ -181,166 +184,166 @@ export default function Menu({navigation}) {
 
   //#region //* FUNCTION
 
-  // const deviceAlreadPaired = useCallback(
-  //   rsp => {
-  //     var ds = null;
-  //     if (typeof rsp.devices === 'object') {
-  //       ds = rsp.devices;
-  //     } else {
-  //       try {
-  //         ds = JSON.parse(rsp.devices);
-  //       } catch (e) {}
-  //     }
-  //     if (ds && ds.length) {
-  //       let pared = pairedDevices;
-  //       if (pared.length < 1) {
-  //         pared = pared.concat(ds || []);
-  //       }
-  //       setPairedDevices(pared);
-  //     }
-  //   },
-  //   [pairedDevices],
-  // );
+  const deviceAlreadPaired = useCallback(
+    rsp => {
+      var ds = null;
+      if (typeof rsp.devices === 'object') {
+        ds = rsp.devices;
+      } else {
+        try {
+          ds = JSON.parse(rsp.devices);
+        } catch (e) {}
+      }
+      if (ds && ds.length) {
+        let pared = pairedDevices;
+        if (pared.length < 1) {
+          pared = pared.concat(ds || []);
+        }
+        setPairedDevices(pared);
+      }
+    },
+    [pairedDevices],
+  );
 
-  // const deviceFoundEvent = useCallback(
-  //   rsp => {
-  //     var r = null;
-  //     try {
-  //       if (typeof rsp.device === 'object') {
-  //         r = rsp.device;
-  //       } else {
-  //         r = JSON.parse(rsp.device);
-  //       }
-  //     } catch (e) {
-  //       // ignore error
-  //     }
+  const deviceFoundEvent = useCallback(
+    rsp => {
+      var r = null;
+      try {
+        if (typeof rsp.device === 'object') {
+          r = rsp.device;
+        } else {
+          r = JSON.parse(rsp.device);
+        }
+      } catch (e) {
+        // ignore error
+      }
 
-  //     if (r) {
-  //       let found = foundDs || [];
-  //       if (found.findIndex) {
-  //         let duplicated = found.findIndex(function (x) {
-  //           return x.address == r.address;
-  //         });
-  //         if (duplicated == -1) {
-  //           found.push(r);
-  //           setFoundDs(found);
-  //         }
-  //       }
-  //     }
-  //   },
-  //   [foundDs],
-  // );
+      if (r) {
+        let found = foundDs || [];
+        if (found.findIndex) {
+          let duplicated = found.findIndex(function (x) {
+            return x.address == r.address;
+          });
+          if (duplicated == -1) {
+            found.push(r);
+            setFoundDs(found);
+          }
+        }
+      }
+    },
+    [foundDs],
+  );
 
-  // const connect = row => {
-  //   setLoading(true);
-  //   BluetoothManager.connect(row.address).then(
-  //     s => {
-  //       setLoading(false);
-  //       setBoundAddress(row.address);
-  //       setName(row.name || 'UNKNOWN');
-  //     },
-  //     e => {
-  //       setLoading(false);
-  //       alert(e);
-  //     },
-  //   );
-  // };
+  const connect = row => {
+    setLoading(true);
+    BluetoothManager.connect(row.address).then(
+      s => {
+        setLoading(false);
+        setBoundAddress(row.address);
+        setName(row.name || 'UNKNOWN');
+      },
+      e => {
+        setLoading(false);
+        alert(e);
+      },
+    );
+  };
 
-  // const unPair = address => {
-  //   setLoading(true);
-  //   BluetoothManager.unpaire(address).then(
-  //     s => {
-  //       setLoading(false);
-  //       setBoundAddress('');
-  //       setName('');
-  //     },
-  //     e => {
-  //       setLoading(false);
-  //       alert(e);
-  //     },
-  //   );
-  // };
+  const unPair = address => {
+    setLoading(true);
+    BluetoothManager.unpaire(address).then(
+      s => {
+        setLoading(false);
+        setBoundAddress('');
+        setName('');
+      },
+      e => {
+        setLoading(false);
+        alert(e);
+      },
+    );
+  };
 
-  // const scanDevices = useCallback(() => {
-  //   setLoading(true);
-  //   BluetoothManager.scanDevices().then(
-  //     s => {
-  //       // const pairedDevices = s.paired;
-  //       var found = s.found;
-  //       try {
-  //         found = JSON.parse(found); //@FIX_it: the parse action too weired..
-  //       } catch (e) {
-  //         //ignore
-  //       }
-  //       var fds = foundDs;
-  //       if (found && found.length) {
-  //         fds = found;
-  //       }
-  //       setFoundDs(fds);
-  //       setLoading(false);
-  //     },
-  //     er => {
-  //       setLoading(false);
-  //       // ignore
-  //     },
-  //   );
-  // }, [foundDs]);
+  const scanDevices = useCallback(() => {
+    setLoading(true);
+    BluetoothManager.scanDevices().then(
+      s => {
+        // const pairedDevices = s.paired;
+        var found = s.found;
+        try {
+          found = JSON.parse(found); //@FIX_it: the parse action too weired..
+        } catch (e) {
+          //ignore
+        }
+        var fds = foundDs;
+        if (found && found.length) {
+          fds = found;
+        }
+        setFoundDs(fds);
+        setLoading(false);
+      },
+      er => {
+        setLoading(false);
+        // ignore
+      },
+    );
+  }, [foundDs]);
 
-  // const scan = useCallback(() => {
-  //   try {
-  //     async function blueTooth() {
-  //       const permissions = {
-  //         title: 'HSD bluetooth meminta izin untuk mengakses bluetooth',
-  //         message:
-  //           'HSD bluetooth memerlukan akses ke bluetooth untuk proses koneksi ke bluetooth printer',
-  //         buttonNeutral: 'Lain Waktu',
-  //         buttonNegative: 'Tidak',
-  //         buttonPositive: 'Boleh',
-  //       };
+  const scan = useCallback(() => {
+    try {
+      async function blueTooth() {
+        const permissions = {
+          title: 'HSD bluetooth meminta izin untuk mengakses bluetooth',
+          message:
+            'HSD bluetooth memerlukan akses ke bluetooth untuk proses koneksi ke bluetooth printer',
+          buttonNeutral: 'Lain Waktu',
+          buttonNegative: 'Tidak',
+          buttonPositive: 'Boleh',
+        };
 
-  //       const bluetoothConnectGranted = await PermissionsAndroid.request(
-  //         PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
-  //         permissions,
-  //       );
-  //       if (bluetoothConnectGranted === PermissionsAndroid.RESULTS.GRANTED) {
-  //         const bluetoothScanGranted = await PermissionsAndroid.request(
-  //           PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
-  //           permissions,
-  //         );
-  //         if (bluetoothScanGranted === PermissionsAndroid.RESULTS.GRANTED) {
-  //           scanDevices();
-  //         }
-  //       } else {
-  //         // ignore akses ditolak
-  //       }
-  //     }
-  //     blueTooth();
-  //   } catch (err) {
-  //     console.warn(err);
-  //   }
-  // }, [scanDevices]);
+        const bluetoothConnectGranted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+          permissions,
+        );
+        if (bluetoothConnectGranted === PermissionsAndroid.RESULTS.GRANTED) {
+          const bluetoothScanGranted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
+            permissions,
+          );
+          if (bluetoothScanGranted === PermissionsAndroid.RESULTS.GRANTED) {
+            scanDevices();
+          }
+        } else {
+          // ignore akses ditolak
+        }
+      }
+      blueTooth();
+    } catch (err) {
+      console.warn(err);
+    }
+  }, [scanDevices]);
 
-  // const scanBluetoothDevice = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const request = await requestMultiple([
-  //       PERMISSIONS.ANDROID.BLUETOOTH_CONNECT,
-  //       PERMISSIONS.ANDROID.BLUETOOTH_SCAN,
-  //       PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
-  //     ]);
+  const scanBluetoothDevice = async () => {
+    setLoading(true);
+    try {
+      const request = await requestMultiple([
+        PERMISSIONS.ANDROID.BLUETOOTH_CONNECT,
+        PERMISSIONS.ANDROID.BLUETOOTH_SCAN,
+        PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+      ]);
 
-  //     if (
-  //       request['android.permission.ACCESS_FINE_LOCATION'] === RESULTS.GRANTED
-  //     ) {
-  //       scanDevices();
-  //       setLoading(false);
-  //     } else {
-  //       setLoading(false);
-  //     }
-  //   } catch (err) {
-  //     setLoading(false);
-  //   }
-  // };
+      if (
+        request['android.permission.ACCESS_FINE_LOCATION'] === RESULTS.GRANTED
+      ) {
+        scanDevices();
+        setLoading(false);
+      } else {
+        setLoading(false);
+      }
+    } catch (err) {
+      setLoading(false);
+    }
+  };
 
   const Categories = async () => {
     setCategory([]);
@@ -773,6 +776,24 @@ export default function Menu({navigation}) {
     }
   };
 
+  const getCurrentTime = () => {
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
+
+    // Format hours, minutes, and seconds to ensure they are always displayed with two digits
+    const formattedHours = hours < 10 ? '0' + hours : hours;
+    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+    const formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
+    const formattedtime = `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+    setCurrentTime(formattedtime);
+    console.log('time sekarang: ', currenttime);
+    // Return the formatted time as a string
+
+    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+  };
+
   const SyncUpFinal = async () => {
     try {
       let countdtl = [];
@@ -850,59 +871,74 @@ export default function Menu({navigation}) {
 
   const PrintStruk = async () => {
     let columnWidths = [8, 20, 20];
+    const today = new Date();
+    // Get various parts of the date
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1; // Months are zero-indexed
+    const day = today.getDate();
+    const formattedDate = `${month}/${day}/${year}`;
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
+
+    // Format hours, minutes, and seconds to ensure they are always displayed with two digits
+    const formattedHours = hours < 10 ? '0' + hours : hours;
+    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+    const formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
+    const formattedtime = `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
     try {
       await BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
-      await BluetoothEscposPrinter.printPic(hsdLogo, {width: 250, left: 150});
       await BluetoothEscposPrinter.printerAlign(
         BluetoothEscposPrinter.ALIGN.CENTER,
       );
-      await BluetoothEscposPrinter.printerAlign(
+      await BluetoothEscposPrinter.printColumn(
         [48],
-        BluetoothEscposPrinter.ALIGN.CENTER,
-        ['TEST STORE'],
+        [BluetoothEscposPrinter.ALIGN.CENTER],
+        [namatoko1],
         {},
       );
       await BluetoothEscposPrinter.printColumn(
         [48],
         [BluetoothEscposPrinter.ALIGN.CENTER],
-        ['ALAMAT TEST'],
+        [alamattoko],
         {},
       );
+      await BluetoothEscposPrinter.printText(
+        '================================================',
+        {},
+      );
+      await BluetoothEscposPrinter.printColumn(
+        [24, 24],
+        [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+        [formattedDate, formattedtime],
+        {},
+      );
+      await BluetoothEscposPrinter.printColumn(
+        [24, 24],
+        [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+        ['Receipt Numbers', runno],
+        {},
+      );
+      await BluetoothEscposPrinter.printColumn(
+        [24, 24],
+        [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+        ['Customer Name', custname],
+        {},
+      );
+      await BluetoothEscposPrinter.printText(
+        '================================================',
+        {},
+      );
+      // await BluetoothEscposPrinter.printText(salesid '', {
+      //   widthtimes: 1,
+      // });
       await BluetoothEscposPrinter.printColumn(
         [32],
         [BluetoothEscposPrinter.ALIGN.CENTER],
-        ['https://xfood.id'],
+        [salesid],
         {},
       );
-      await BluetoothEscposPrinter.printText(
-        '================================================',
-        {},
-      );
-      await BluetoothEscposPrinter.printColumn(
-        [24, 24],
-        [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
-        ['Customer', 'Prawito Hudoro'],
-        {},
-      );
-      await BluetoothEscposPrinter.printColumn(
-        [24, 24],
-        [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
-        ['Packaging', 'Iya'],
-        {},
-      );
-      await BluetoothEscposPrinter.printColumn(
-        [24, 24],
-        [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
-        ['Delivery', 'Ambil Sendiri'],
-        {},
-      );
-      await BluetoothEscposPrinter.printText(
-        '================================================',
-        {},
-      );
-      await BluetoothEscposPrinter.printText('Products\r\n', {
-        widthtimes: 1,
-      });
       await BluetoothEscposPrinter.printText(
         '================================================',
         {},
@@ -972,30 +1008,6 @@ export default function Menu({navigation}) {
       await BluetoothEscposPrinter.printText('\r\n\r\n', {});
       await BluetoothEscposPrinter.printerAlign(
         BluetoothEscposPrinter.ALIGN.CENTER,
-      );
-      await BluetoothEscposPrinter.printQRCode(
-        'DP0837849839',
-        280,
-        BluetoothEscposPrinter.ERROR_CORRECTION.L,
-      );
-      await BluetoothEscposPrinter.printerAlign(
-        BluetoothEscposPrinter.ALIGN.CENTER,
-      );
-      await BluetoothEscposPrinter.printColumn(
-        [48],
-        [BluetoothEscposPrinter.ALIGN.CENTER],
-        ['DP0837849839'],
-        {widthtimes: 2},
-      );
-      await BluetoothEscposPrinter.printText(
-        '================================================',
-        {},
-      );
-      await BluetoothEscposPrinter.printColumn(
-        [48],
-        [BluetoothEscposPrinter.ALIGN.CENTER],
-        ['Sabtu, 18 Juni 2022 - 06:00 WIB'],
-        {},
       );
       await BluetoothEscposPrinter.printText(
         '================================================',
@@ -1151,7 +1163,7 @@ export default function Menu({navigation}) {
                   ]}
                   maxLength={100}
                   value={custname}
-                  onChangeText={text => setCount(text)}
+                  onChangeText={text => setCustName(text)}
                 />
               </View>
               <View

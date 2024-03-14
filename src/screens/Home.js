@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {
   View,
   Text,
@@ -74,6 +74,11 @@ const Home = () => {
   const [openamount, setOpenAmount] = useState('');
   const [lastSeenDate, setLastSeenDate] = useState(null);
   const [salesType, setSalesType] = useState([]);
+  const [pairedDevices, setPairedDevices] = useState([]);
+  const [foundDs, setFoundDs] = useState([]);
+  const [bleOpend, setBleOpend] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [boundAddress, setBoundAddress] = useState('');
 
   //#endregion
 
@@ -111,7 +116,14 @@ const Home = () => {
       //backHandler.remove();
       BackHandler.removeEventListener('hardwareBackPress', viewConfirmLogout);
     };
-  }, [route.params]);
+  }, [
+    route.params,
+    boundAddress,
+    deviceAlreadPaired,
+    deviceFoundEvent,
+    pairedDevices,
+    scan,
+  ]);
 
   //#region //* FUNCTION
 
@@ -158,6 +170,167 @@ const Home = () => {
   function emptyStr(str) {
     return !str || !/[^\s]+/.test(str);
   }
+
+  const deviceAlreadPaired = useCallback(
+    rsp => {
+      var ds = null;
+      if (typeof rsp.devices === 'object') {
+        ds = rsp.devices;
+      } else {
+        try {
+          ds = JSON.parse(rsp.devices);
+        } catch (e) {}
+      }
+      if (ds && ds.length) {
+        let pared = pairedDevices;
+        if (pared.length < 1) {
+          pared = pared.concat(ds || []);
+        }
+        setPairedDevices(pared);
+      }
+    },
+    [pairedDevices],
+  );
+
+  const deviceFoundEvent = useCallback(
+    rsp => {
+      var r = null;
+      try {
+        if (typeof rsp.device === 'object') {
+          r = rsp.device;
+        } else {
+          r = JSON.parse(rsp.device);
+        }
+      } catch (e) {
+        // ignore error
+      }
+
+      if (r) {
+        let found = foundDs || [];
+        if (found.findIndex) {
+          let duplicated = found.findIndex(function (x) {
+            return x.address == r.address;
+          });
+          if (duplicated == -1) {
+            found.push(r);
+            setFoundDs(found);
+          }
+        }
+      }
+    },
+    [foundDs],
+  );
+
+  const connect = row => {
+    setLoading(true);
+    BluetoothManager.connect(row.address).then(
+      s => {
+        setLoading(false);
+        setBoundAddress(row.address);
+        setName(row.name || 'UNKNOWN');
+      },
+      e => {
+        setLoading(false);
+        alert(e);
+      },
+    );
+  };
+
+  const unPair = address => {
+    setLoading(true);
+    BluetoothManager.unpaire(address).then(
+      s => {
+        setLoading(false);
+        setBoundAddress('');
+        setName('');
+      },
+      e => {
+        setLoading(false);
+        alert(e);
+      },
+    );
+  };
+
+  const scanDevices = useCallback(() => {
+    setLoading(true);
+    BluetoothManager.scanDevices().then(
+      s => {
+        // const pairedDevices = s.paired;
+        var found = s.found;
+        try {
+          found = JSON.parse(found); //@FIX_it: the parse action too weired..
+        } catch (e) {
+          //ignore
+        }
+        var fds = foundDs;
+        if (found && found.length) {
+          fds = found;
+        }
+        setFoundDs(fds);
+        setLoading(false);
+      },
+      er => {
+        setLoading(false);
+        // ignore
+      },
+    );
+  }, [foundDs]);
+
+  const scan = useCallback(() => {
+    try {
+      async function blueTooth() {
+        const permissions = {
+          title: 'HSD bluetooth meminta izin untuk mengakses bluetooth',
+          message:
+            'HSD bluetooth memerlukan akses ke bluetooth untuk proses koneksi ke bluetooth printer',
+          buttonNeutral: 'Lain Waktu',
+          buttonNegative: 'Tidak',
+          buttonPositive: 'Boleh',
+        };
+
+        const bluetoothConnectGranted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+          permissions,
+        );
+        if (bluetoothConnectGranted === PermissionsAndroid.RESULTS.GRANTED) {
+          const bluetoothScanGranted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
+            permissions,
+          );
+          if (bluetoothScanGranted === PermissionsAndroid.RESULTS.GRANTED) {
+            scanDevices();
+          }
+        } else {
+          // ignore akses ditolak
+        }
+      }
+      blueTooth();
+    } catch (err) {
+      console.warn(err);
+    }
+  }, [scanDevices]);
+
+  const scanBluetoothDevice = async () => {
+    setLoading(true);
+    try {
+      const request = await requestMultiple([
+        PERMISSIONS.ANDROID.BLUETOOTH_CONNECT,
+        PERMISSIONS.ANDROID.BLUETOOTH_SCAN,
+        PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+      ]);
+
+      if (
+        request['android.permission.ACCESS_FINE_LOCATION'] === RESULTS.GRANTED
+      ) {
+        scanDevices();
+        setLoading(false);
+      } else {
+        setLoading(false);
+      }
+    } catch (err) {
+      setLoading(false);
+    }
+  };
 
   const delaynew = ms => new Promise(res => setTimeout(res, ms));
 
