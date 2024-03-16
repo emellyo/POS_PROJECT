@@ -97,6 +97,7 @@ export default function Menu({navigation}) {
   const [tottender, setTotTender] = useState('');
   const [changes, setChanges] = useState(0);
   const [paymentID, setPaymentID] = useState('');
+  const [paymentName, setPaymentName] = useState('');
   const [totaldtl, setTotDetail] = useState(0);
   const [hasDot, setHasDot] = useState(false);
   const [totchanges, setTotChanges] = useState('');
@@ -109,6 +110,7 @@ export default function Menu({navigation}) {
   const [name, setName] = useState('');
   const [boundAddress, setBoundAddress] = useState('');
   const [currenttime, setCurrentTime] = useState('');
+  const [dataprint, setDataPrint] = useState([]);
   //#endregion
 
   useEffect(() => {
@@ -710,10 +712,12 @@ export default function Menu({navigation}) {
     try {
       setAmtTender('');
       console.log('payment ID, ', paymentid.payment_ID);
+      console.log('payment name: ', paymentid.payment_Name);
       console.log('amount tender: ', amounttender);
       let changes = amounttender - grandtotal;
       let tendertot = amounttender;
       console.log('hasil changes: ', changes);
+      setPaymentName(paymentid.payment_Name);
       setPaymentID(paymentid.payment_ID);
       setTotTender(tendertot);
       setChanges(changes);
@@ -726,10 +730,12 @@ export default function Menu({navigation}) {
 
   const ChangesAll = async paymentid => {
     try {
+      console.log('payment name: ', paymentid.payment_Name);
       let tenderall = grandtotal;
       let changesall = grandtotal - grandtotal;
       setTotTender(tenderall);
       setTotChanges(changesall);
+      setPaymentName(paymentid.payment_Name);
       setPaymentID(paymentid.payment_ID);
       console.log('TOTAL TENDER ALL: ', tenderall);
     } catch (error) {
@@ -750,6 +756,14 @@ export default function Menu({navigation}) {
         let msg = 'Nominal Pembayaran tidak sesuai, mohon diperiksa kembali';
         CallModalInfo(msg);
       } else {
+        const db = await dbconnTrx.getDBConnection();
+        let getbills = await dbconnTrx.AddTrxDtl_getdataPrint(
+          db,
+          'AddTrxDtl',
+          runno,
+        );
+        console.log('ISI DATA PRINT: ', getbills);
+        setDataPrint(getbills);
         SyncUpFinal();
       }
     } catch (error) {
@@ -871,6 +885,7 @@ export default function Menu({navigation}) {
 
   const PrintStruk = async () => {
     let columnWidths = [8, 20, 20];
+    let columnWidths2 = [15, 25, 8];
     const today = new Date();
     // Get various parts of the date
     const year = today.getFullYear();
@@ -881,7 +896,6 @@ export default function Menu({navigation}) {
     const hours = now.getHours();
     const minutes = now.getMinutes();
     const seconds = now.getSeconds();
-
     // Format hours, minutes, and seconds to ensure they are always displayed with two digits
     const formattedHours = hours < 10 ? '0' + hours : hours;
     const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
@@ -943,34 +957,37 @@ export default function Menu({navigation}) {
         '================================================',
         {},
       );
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        ['1x', 'Cumi-Cumi', 'Rp.200.000'],
+      dataprint.forEach(row => {
+        const rowData = [
+          row.Quantity,
+          row.Item_Description,
+          `Rp.${row.Item_Price}`,
+        ];
+        console.log('rowData:', rowData);
+        BluetoothEscposPrinter.printColumn(
+          columnWidths,
+          [
+            BluetoothEscposPrinter.ALIGN.LEFT,
+            BluetoothEscposPrinter.ALIGN.LEFT,
+            BluetoothEscposPrinter.ALIGN.RIGHT,
+          ],
+          rowData,
+          {},
+        );
+      });
+
+      await BluetoothEscposPrinter.printText(
+        '================================================',
         {},
       );
       await BluetoothEscposPrinter.printColumn(
-        columnWidths,
+        columnWidths2,
         [
           BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.LEFT,
+          BluetoothEscposPrinter.ALIGN.RIGHT,
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ],
-        ['1x', 'Tongkol Kering', 'Rp.300.000'],
-        {},
-      );
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        ['1x', 'Ikan Tuna', 'Rp.400.000'],
+        ['Discount', 'Rp.', '0'],
         {},
       );
       await BluetoothEscposPrinter.printText(
@@ -978,21 +995,23 @@ export default function Menu({navigation}) {
         {},
       );
       await BluetoothEscposPrinter.printColumn(
-        [24, 24],
-        [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
-        ['Subtotal', 'Rp.900.000'],
+        columnWidths2,
+        [
+          BluetoothEscposPrinter.ALIGN.LEFT,
+          BluetoothEscposPrinter.ALIGN.RIGHT,
+          BluetoothEscposPrinter.ALIGN.RIGHT,
+        ],
+        ['Total', 'Rp.', Intl.NumberFormat('id-ID').format(total)],
         {},
       );
       await BluetoothEscposPrinter.printColumn(
-        [24, 24],
-        [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
-        ['Packaging', 'Rp.6.000'],
-        {},
-      );
-      await BluetoothEscposPrinter.printColumn(
-        [24, 24],
-        [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
-        ['Delivery', 'Rp.0'],
+        columnWidths2,
+        [
+          BluetoothEscposPrinter.ALIGN.LEFT,
+          BluetoothEscposPrinter.ALIGN.RIGHT,
+          BluetoothEscposPrinter.ALIGN.RIGHT,
+        ],
+        ['PPN 11%', 'Rp.', Intl.NumberFormat('id-ID').format(tax)],
         {},
       );
       await BluetoothEscposPrinter.printText(
@@ -1000,9 +1019,33 @@ export default function Menu({navigation}) {
         {},
       );
       await BluetoothEscposPrinter.printColumn(
-        [24, 24],
-        [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
-        ['Total', 'Rp.906.000'],
+        columnWidths2,
+        [
+          BluetoothEscposPrinter.ALIGN.LEFT,
+          BluetoothEscposPrinter.ALIGN.RIGHT,
+          BluetoothEscposPrinter.ALIGN.RIGHT,
+        ],
+        ['Grand Total', 'Rp.', Intl.NumberFormat('id-ID').format(grandtotal)],
+        {},
+      );
+      await BluetoothEscposPrinter.printColumn(
+        columnWidths2,
+        [
+          BluetoothEscposPrinter.ALIGN.LEFT,
+          BluetoothEscposPrinter.ALIGN.RIGHT,
+          BluetoothEscposPrinter.ALIGN.RIGHT,
+        ],
+        [paymentName, 'Rp.', Intl.NumberFormat('id-ID').format(tottender)],
+        {},
+      );
+      await BluetoothEscposPrinter.printColumn(
+        columnWidths2,
+        [
+          BluetoothEscposPrinter.ALIGN.LEFT,
+          BluetoothEscposPrinter.ALIGN.RIGHT,
+          BluetoothEscposPrinter.ALIGN.RIGHT,
+        ],
+        ['Changes', 'Rp.', Intl.NumberFormat('id-ID').format(changes)],
         {},
       );
       await BluetoothEscposPrinter.printText('\r\n\r\n', {});
