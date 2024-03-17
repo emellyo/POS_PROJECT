@@ -974,6 +974,7 @@ export default function Menu({navigation}) {
           rowData,
           {},
         );
+        BluetoothEscposPrinter.append('\n');
       });
 
       await BluetoothEscposPrinter.printText(
