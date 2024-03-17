@@ -93,6 +93,7 @@ export default function Menu({navigation}) {
   const [seqTemp, setSeqTemp] = useState(0);
   const [paymentType, setPaymentType] = useState([]);
   const [salesid, setSalesID] = useState('');
+  const [salesname, setSalesName] = useState('');
   const [amttendered, setAmtTender] = useState({});
   const [tottender, setTotTender] = useState('');
   const [changes, setChanges] = useState(0);
@@ -494,7 +495,9 @@ export default function Menu({navigation}) {
       let datatipesales = await AsyncStorage.getItem('@datasalestype');
       datatipesales = JSON.parse(datatipesales);
       var param_tipesales = datatipesales[0].salesid;
+      var param_salesname = datatipesales[0].tipesales;
       setSalesID(param_tipesales);
+      setSalesName(param_salesname);
       console.log('TIPE SALES: ', param_tipesales);
     } catch (error) {
       let msg = error.message;
@@ -944,28 +947,26 @@ export default function Menu({navigation}) {
         '================================================',
         {},
       );
-      // await BluetoothEscposPrinter.printText(salesid '', {
-      //   widthtimes: 1,
-      // });
+
       await BluetoothEscposPrinter.printColumn(
         [32],
         [BluetoothEscposPrinter.ALIGN.CENTER],
-        [salesid],
+        [salesname],
         {},
       );
       await BluetoothEscposPrinter.printText(
         '================================================',
         {},
       );
-      dataprint.forEach(row => {
+      dataprint.forEach(async row => {
+        // Use async for each item
         const rowData = [
           row.Quantity,
           row.Item_Description,
           `Rp.${row.Item_Price}`,
         ];
-        console.log('rowData:', rowData);
-        BluetoothEscposPrinter.printColumn(
-          columnWidths,
+        await BluetoothEscposPrinter.printColumn(
+          columnWidths, // Adjust column widths as needed
           [
             BluetoothEscposPrinter.ALIGN.LEFT,
             BluetoothEscposPrinter.ALIGN.LEFT,
@@ -974,7 +975,7 @@ export default function Menu({navigation}) {
           rowData,
           {},
         );
-        BluetoothEscposPrinter.append('\n');
+        await BluetoothEscposPrinter.append('\n'); // Add newline for next line
       });
 
       await BluetoothEscposPrinter.printText(
@@ -1049,7 +1050,7 @@ export default function Menu({navigation}) {
         ['Changes', 'Rp.', Intl.NumberFormat('id-ID').format(changes)],
         {},
       );
-      await BluetoothEscposPrinter.printText('\r\n\r\n', {});
+      await BluetoothEscposPrinter.printText('\r\n', {});
       await BluetoothEscposPrinter.printerAlign(
         BluetoothEscposPrinter.ALIGN.CENTER,
       );
@@ -1057,8 +1058,27 @@ export default function Menu({navigation}) {
         '================================================',
         {},
       );
+      await BluetoothEscposPrinter.printText('\r\n\r\n', {});
+      await BluetoothEscposPrinter.printColumn(
+        [48],
+        [BluetoothEscposPrinter.ALIGN.CENTER],
+        ['THANK YOU'],
+        {},
+      );
+      await BluetoothEscposPrinter.printColumn(
+        [48],
+        [BluetoothEscposPrinter.ALIGN.CENTER],
+        ['Barang yang sudah dibeli tidak dapat ditukar atau dikembalikan'],
+        {},
+      );
+      await BluetoothEscposPrinter.printColumn(
+        [48],
+        [BluetoothEscposPrinter.ALIGN.CENTER],
+        ['(kecuali ada perjanjian).'],
+        {},
+      );
       await BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
-      await BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
+      //await BluetoothEscposPrinter.print();
     } catch (e) {
       Alert(e.message || 'ERROR');
     }

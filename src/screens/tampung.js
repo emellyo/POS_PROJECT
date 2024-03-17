@@ -120,7 +120,16 @@
 {
   /* //* MODAL EDIT VARIANT */
 }
-
+// BluetoothEscposPrinter.printColumn(
+//   columnWidths,
+//   [
+//     BluetoothEscposPrinter.ALIGN.LEFT,
+//     BluetoothEscposPrinter.ALIGN.LEFT,
+//     BluetoothEscposPrinter.ALIGN.RIGHT,
+//   ],
+//   rowData,
+//   {},
+// );
 // const PrintStruk = async () => {
 //    //   let columnWidths = [8, 20, 20];
 // //   try {
