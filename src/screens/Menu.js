@@ -958,8 +958,10 @@ export default function Menu({navigation}) {
         '================================================',
         {},
       );
+      console.log('dataprint:', dataprint);
       dataprint.forEach(async row => {
         // Use async for each item
+        console.log('row:', row);
         const rowData = [
           row.Quantity,
           row.Item_Description,
@@ -1078,7 +1080,7 @@ export default function Menu({navigation}) {
         {},
       );
       await BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
-      //await BluetoothEscposPrinter.print();
+      await BluetoothEscposPrinter.print();
     } catch (e) {
       Alert(e.message || 'ERROR');
     }
