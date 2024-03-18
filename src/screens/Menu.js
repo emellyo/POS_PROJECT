@@ -947,7 +947,6 @@ export default function Menu({navigation}) {
         '================================================',
         {},
       );
-
       await BluetoothEscposPrinter.printColumn(
         [32],
         [BluetoothEscposPrinter.ALIGN.CENTER],
