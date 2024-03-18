@@ -750,6 +750,7 @@ export default function Menu({navigation}) {
 
   const SyncPayment = async () => {
     try {
+      let getbills = [];
       console.log('isi tot tender: ', tottender);
       if (tottender == 0) {
         console.log('MASUK KONDISI VALIDASI');
@@ -760,13 +761,14 @@ export default function Menu({navigation}) {
         CallModalInfo(msg);
       } else {
         const db = await dbconnTrx.getDBConnection();
-        let getbills = await dbconnTrx.AddTrxDtl_getdataPrint(
+        getbills = await dbconnTrx.AddTrxDtl_getdataPrint(
           db,
           'AddTrxDtl',
           runno,
         );
-        console.log('ISI DATA PRINT: ', getbills);
+        console.log('DATA YANG MAU DI PRINT: ', getbills);
         setDataPrint(getbills);
+        console.log('ISI DATA PRINT: ', dataprint);
         SyncUpFinal();
       }
     } catch (error) {
@@ -815,6 +817,7 @@ export default function Menu({navigation}) {
     try {
       let countdtl = [];
       console.log('masuk kondisi else');
+
       setTotTender('');
       //setTotChanges('');
       setGrandTotal('');
@@ -889,6 +892,8 @@ export default function Menu({navigation}) {
   const PrintStruk = async () => {
     let columnWidths = [8, 20, 20];
     let columnWidths2 = [15, 25, 8];
+    const db = await dbconnTrx.getDBConnection();
+    let getbills = [];
     const today = new Date();
     // Get various parts of the date
     const year = today.getFullYear();
@@ -957,14 +962,14 @@ export default function Menu({navigation}) {
         '================================================',
         {},
       );
-      console.log('dataprint:', dataprint);
-      dataprint.forEach(async row => {
+      getbills = await dbconnTrx.AddTrxDtl_getdataPrint(db, 'AddTrxDtl', runno);
+      getbills.forEach(async row => {
         // Use async for each item
         console.log('row:', row);
         const rowData = [
-          row.Quantity,
+          row.Quantity.toString(),
           row.Item_Description,
-          `Rp.${row.Item_Price}`,
+          `Rp.${Intl.NumberFormat('id-ID').format(row.Item_Price)}`,
         ];
         await BluetoothEscposPrinter.printColumn(
           columnWidths, // Adjust column widths as needed
@@ -976,7 +981,6 @@ export default function Menu({navigation}) {
           rowData,
           {},
         );
-        await BluetoothEscposPrinter.append('\n'); // Add newline for next line
       });
 
       await BluetoothEscposPrinter.printText(
@@ -1069,7 +1073,13 @@ export default function Menu({navigation}) {
       await BluetoothEscposPrinter.printColumn(
         [48],
         [BluetoothEscposPrinter.ALIGN.CENTER],
-        ['Barang yang sudah dibeli tidak dapat ditukar atau dikembalikan'],
+        ['Barang yang sudah dibeli tidak dapat ditukar'],
+        {},
+      );
+      await BluetoothEscposPrinter.printColumn(
+        [48],
+        [BluetoothEscposPrinter.ALIGN.CENTER],
+        ['atau dikembalikan'],
         {},
       );
       await BluetoothEscposPrinter.printColumn(
@@ -1079,7 +1089,7 @@ export default function Menu({navigation}) {
         {},
       );
       await BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
-      await BluetoothEscposPrinter.print();
+      handleBackButtonClick();
     } catch (e) {
       Alert(e.message || 'ERROR');
     }
