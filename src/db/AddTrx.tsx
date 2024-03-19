@@ -148,7 +148,7 @@ export const AddTrxDtl_getdataBills = async (db: SQLiteDatabase, tableName: stri
 export const AddTrxDtl_getdataPrint = async (db: SQLiteDatabase, tableName: string, docnumbr: string): Promise<AddTrxDtl[]> => {
   try {
     const Lists: AddTrxDtl[] = [];
-    const results = await db.executeSql(`SELECT Quantity, Item_Description, Item_Price FROM ${tableName}`);
+    const results = await db.executeSql(`SELECT Quantity, Item_Description, Item_Price, variant_Name FROM ${tableName}`);
     results.forEach(result => {
       for (let index = 0; index < result.rows.length; index++) {
         Lists.push(result.rows.item(index))

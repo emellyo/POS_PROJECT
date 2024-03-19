@@ -890,7 +890,7 @@ export default function Menu({navigation}) {
   };
 
   const PrintStruk = async () => {
-    let columnWidths = [8, 20, 20];
+    let columnWidths = [3, 20, 17, 8];
     let columnWidths2 = [15, 25, 8];
     const db = await dbconnTrx.getDBConnection();
     let getbills = [];
@@ -969,16 +969,25 @@ export default function Menu({navigation}) {
         const rowData = [
           row.Quantity.toString(),
           row.Item_Description,
-          `Rp.${Intl.NumberFormat('id-ID').format(row.Item_Price)}`,
+          `Rp.`,
+          Intl.NumberFormat('id-ID').format(row.Item_Price),
         ];
+        const rowVariant = [row.variant_Name];
         await BluetoothEscposPrinter.printColumn(
           columnWidths, // Adjust column widths as needed
           [
             BluetoothEscposPrinter.ALIGN.LEFT,
             BluetoothEscposPrinter.ALIGN.LEFT,
             BluetoothEscposPrinter.ALIGN.RIGHT,
+            BluetoothEscposPrinter.ALIGN.RIGHT,
           ],
           rowData,
+          {},
+        );
+        await BluetoothEscposPrinter.printColumn(
+          [48], // Adjust column widths as needed
+          [BluetoothEscposPrinter.ALIGN.LEFT],
+          rowVariant,
           {},
         );
       });
