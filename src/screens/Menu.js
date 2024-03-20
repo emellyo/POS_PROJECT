@@ -985,13 +985,13 @@ export default function Menu({navigation}) {
           {},
         );
         await BluetoothEscposPrinter.printColumn(
-          [48], // Adjust column widths as needed
+          [40], // Adjust column widths as needed
           [BluetoothEscposPrinter.ALIGN.LEFT],
           rowVariant,
           {},
         );
       });
-
+      await BluetoothEscposPrinter.printText('\n', {});
       await BluetoothEscposPrinter.printText(
         '================================================',
         {},
