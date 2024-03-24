@@ -120,52 +120,69 @@
 {
   /* //* MODAL EDIT VARIANT */
 }
+//  const printData = [
+//    [row.Quantity.toString(), row.Item_Description, currency, formattedPrice],
+//    [variantLine, '', '', ''], // Adjust alignment for variant line if needed
+//  ];
+//  console.log('Print Data:', printData);
+//  await BluetoothEscposPrinter.printColumn(
+//    columnWidths,
+//    alignments,
+//    printData,
+//    {},
+//  );
+// const columnWidths = [3, 20, 0, 0];
+// let alignments = [
+//   BluetoothEscposPrinter.ALIGN.LEFT,
+//   BluetoothEscposPrinter.ALIGN.LEFT,
+//   BluetoothEscposPrinter.ALIGN.RIGHT,
+//   BluetoothEscposPrinter.ALIGN.RIGHT,
+// ];
+// let printData = [];
+// getbills.forEach(async row => {
+//   const formattedPrice = `${Intl.NumberFormat('id-ID').format(row.Item_Price)}`;
+//   const currency = `Rp.`;
+//   const itemLine = `${row.Quantity.toString()}x ${
+//     row.Item_Description
+//   } ${currency} ${formattedPrice}`;
+//   const variantLine = row.variant_Name;
+//   const itemLineWidth = itemLine.length;
+//   const variantLineWidth = variantLine.length;
+//   let maxWidth = Math.max(itemLineWidth, variantLineWidth);
+//   let columnWidths = [3, maxWidth, 0, 0]; // Adjust column widths
+//   let alignments = [
+//     BluetoothEscposPrinter.ALIGN.LEFT,
+//     BluetoothEscposPrinter.ALIGN.LEFT,
+//     BluetoothEscposPrinter.ALIGN.RIGHT,
+//     BluetoothEscposPrinter.ALIGN.RIGHT,
+//   ];
+//   printData = [[itemLine, variantLine]];
+//   await BluetoothEscposPrinter.printColumn(
+//     columnWidths,
+//     alignments,
+//     printData,
+//     {},
+//   );
+// });
 
-let printData = [];
-getbills.forEach(async row => {
-  const formattedPrice = `${Intl.NumberFormat('id-ID').format(row.Item_Price)}`;
-  const currency = `Rp.`;
-  const itemLine = `${row.Quantity.toString()}x ${
-    row.Item_Description
-  } ${currency} ${formattedPrice}`;
-  const variantLine = row.variant_Name;
-  const itemLineWidth = itemLine.length;
-  const variantLineWidth = variantLine.length;
-  let maxWidth = Math.max(itemLineWidth, variantLineWidth);
-  let columnWidths = [3, maxWidth, 0, 0]; // Adjust column widths
-  let alignments = [
-    BluetoothEscposPrinter.ALIGN.LEFT,
-    BluetoothEscposPrinter.ALIGN.LEFT,
-    BluetoothEscposPrinter.ALIGN.RIGHT,
-    BluetoothEscposPrinter.ALIGN.RIGHT,
-  ];
-  printData = [[itemLine, variantLine]];
-  await BluetoothEscposPrinter.printColumn(
-    columnWidths,
-    alignments,
-    printData,
-    {},
-  );
-});
+// try {
+//   await BluetoothEscposPrinter.printColumn(
+//     columnWidths, // Adjust column widths as needed
+//     [
+//       BluetoothEscposPrinter.ALIGN.LEFT,
+//       BluetoothEscposPrinter.ALIGN.LEFT,
+//       BluetoothEscposPrinter.ALIGN.RIGHT,
+//       BluetoothEscposPrinter.ALIGN.RIGHT,
+//     ],
+//     printData,
+//     {},
+//   );
+// } catch (error) {
+//   console.error('Error printing: ', error);
+// }
 
-try {
-  await BluetoothEscposPrinter.printColumn(
-    columnWidths, // Adjust column widths as needed
-    [
-      BluetoothEscposPrinter.ALIGN.LEFT,
-      BluetoothEscposPrinter.ALIGN.LEFT,
-      BluetoothEscposPrinter.ALIGN.RIGHT,
-      BluetoothEscposPrinter.ALIGN.RIGHT,
-    ],
-    printData,
-    {},
-  );
-} catch (error) {
-  console.error('Error printing: ', error);
-}
-
-const combinedLine = `${itemLine}\n${variantLine}`;
-printData.push(combinedLine);
+// const combinedLine = `${itemLine}\n${variantLine}`;
+// printData.push(combinedLine);
 
 // const itemLength = itemSplitLine.length;
 // const variantLength = variantSplitLine.length;

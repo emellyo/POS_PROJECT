@@ -890,7 +890,7 @@ export default function Menu({navigation}) {
   };
 
   const PrintStruk = async () => {
-    //let columnWidths = [3, 20, 17, 8];
+    let columnWidths = [3, 20, 17, 8];
     let columnWidths2 = [15, 25, 8];
     const db = await dbconnTrx.getDBConnection();
     let getbills = [];
@@ -969,9 +969,6 @@ export default function Menu({navigation}) {
             row.Item_Price,
           )}`;
           const currency = `Rp.`;
-          // const itemLine = `${row.Quantity}x ${row.Item_Description} ${currency} ${formattedPrice}`;
-          const variantLine = row.variant_Name;
-          const columnWidths = [3, 20, 0, 0];
           let alignments = [
             BluetoothEscposPrinter.ALIGN.LEFT,
             BluetoothEscposPrinter.ALIGN.LEFT,
@@ -985,7 +982,7 @@ export default function Menu({navigation}) {
               currency,
               formattedPrice,
             ],
-            [variantLine, '', '', ''], // Adjust alignment for variant line if needed
+            [row.variant_Name, '', '', ''], // Adjust alignment for variant line if needed
           ];
           console.log('Print Data:', printData);
           await BluetoothEscposPrinter.printColumn(
@@ -998,7 +995,6 @@ export default function Menu({navigation}) {
       } catch (error) {
         console.error('Error printing: ', error);
       }
-
       await BluetoothEscposPrinter.printText('\n', {});
       await BluetoothEscposPrinter.printText(
         '================================================',
