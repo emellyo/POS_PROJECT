@@ -965,31 +965,77 @@ export default function Menu({navigation}) {
       getbills = await dbconnTrx.AddTrxDtl_getdataPrint(db, 'AddTrxDtl', runno);
       getbills.forEach(async row => {
         // Use async for each item
-        console.log('row:', row);
-        const rowData = [
-          row.Quantity.toString(),
-          row.Item_Description,
-          `Rp.`,
-          Intl.NumberFormat('id-ID').format(row.Item_Price),
+        // console.log('row:', row);
+
+        const formattedPrice = `${Intl.NumberFormat('id-ID').format(
+          row.Item_Price,
+        )}`;
+        const currency = `Rp.`;
+        const itemSplitLine = [
+          row.Quantity.toString().padEnd(columnWidths[0]),
+          row.Item_Description.padEnd(columnWidths[1]),
+          currency.padStart(columnWidths[2]),
+          formattedPrice.padStart(columnWidths[3]),
         ];
-        const rowVariant = [row.variant_Name];
-        await BluetoothEscposPrinter.printColumn(
-          columnWidths, // Adjust column widths as needed
-          [
-            BluetoothEscposPrinter.ALIGN.LEFT,
-            BluetoothEscposPrinter.ALIGN.LEFT,
-            BluetoothEscposPrinter.ALIGN.RIGHT,
-            BluetoothEscposPrinter.ALIGN.RIGHT,
-          ],
-          rowData,
-          {},
-        );
-        await BluetoothEscposPrinter.printColumn(
-          [40], // Adjust column widths as needed
-          [BluetoothEscposPrinter.ALIGN.LEFT],
-          rowVariant,
-          {},
-        );
+        const variantLine = row.variant_Name;
+        const variantSplitLine = [
+          '', // First column
+          variantLine.padEnd(columnWidths[1]), // Second column
+          '', // Third column
+          '', // Fourth column
+        ];
+        itemSplitLine = itemSplitLine.filter(element => element !== '');
+        variantSplitLine = variantSplitLine.filter(element => element !== '');
+        const itemLength = itemSplitLine.length;
+        const variantLength = variantSplitLine.length;
+        console.log('itemSplitLine:', itemSplitLine);
+        console.log('variantSplitLine:', variantSplitLine);
+        console.log('itemSplitLine length:', itemLength);
+        console.log('variantSplitLine length:', variantLength);
+
+        if (itemLength > columnWidths.length) {
+          itemSplitLine.splice(columnWidths.length); // Remove extra elements
+        } else if (itemLength < columnWidths.length) {
+          while (itemSplitLine.length < columnWidths.length) {
+            itemSplitLine.push('');
+          }
+        }
+
+        if (variantLength > columnWidths.length) {
+          variantSplitLine.splice(columnWidths.length); // Remove extra elements
+        } else if (variantLength < columnWidths.length) {
+          while (variantSplitLine.length < columnWidths.length) {
+            variantSplitLine.push('');
+          }
+        }
+
+        try {
+          await BluetoothEscposPrinter.printColumn(
+            columnWidths, // Adjust column widths as needed
+            [
+              BluetoothEscposPrinter.ALIGN.LEFT,
+              BluetoothEscposPrinter.ALIGN.LEFT,
+              BluetoothEscposPrinter.ALIGN.RIGHT,
+              BluetoothEscposPrinter.ALIGN.RIGHT,
+            ],
+            [itemSplitLine],
+            {},
+          );
+          await BluetoothEscposPrinter.printText('\n', {});
+          await BluetoothEscposPrinter.printColumn(
+            columnWidths,
+            [
+              BluetoothEscposPrinter.ALIGN.LEFT, // Adjust for variant alignment if needed
+              BluetoothEscposPrinter.ALIGN.LEFT, // Adjust for variant alignment if needed
+              BluetoothEscposPrinter.ALIGN.RIGHT, // Adjust for variant alignment if needed
+              BluetoothEscposPrinter.ALIGN.RIGHT, // Adjust for variant alignment if needed
+            ],
+            variantSplitLine,
+            {},
+          );
+        } catch (error) {
+          console.error('Error printing: ', error);
+        }
       });
       await BluetoothEscposPrinter.printText('\n', {});
       await BluetoothEscposPrinter.printText(

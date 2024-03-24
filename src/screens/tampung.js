@@ -120,6 +120,29 @@
 {
   /* //* MODAL EDIT VARIANT */
 }
+// const rowData = [
+//   row.Quantity.toString(),
+//   row.Item_Description,
+//   `Rp.`,
+//   Intl.NumberFormat('id-ID').format(row.Item_Price),
+// ];
+// const splitLine = combinedLine.split(/\s+/);
+// const rowData = [combinedLine];
+//  const itemLine = `${row.Quantity}x ${
+//    row.Item_Description
+//  } ${'Rp.'} ${formattedPrice}`;
+// const combinedLine = `${row.Quantity}x ${
+//   row.Item_Description
+// } {Rp.} ${Intl.NumberFormat('id-ID').format(row.Item_Price)} \n${
+//   row.variant_Name
+// }`;
+//  await BluetoothEscposPrinter.append('\n');
+//  await BluetoothEscposPrinter.printColumn(
+//    [40], // Adjust column widths as needed
+//    [BluetoothEscposPrinter.ALIGN.LEFT],
+//    rowVariant,
+//    {},
+//  );
 // BluetoothEscposPrinter.printColumn(
 //   columnWidths,
 //   [
