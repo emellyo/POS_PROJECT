@@ -120,6 +120,88 @@
 {
   /* //* MODAL EDIT VARIANT */
 }
+
+let printData = [];
+getbills.forEach(async row => {
+  const formattedPrice = `${Intl.NumberFormat('id-ID').format(row.Item_Price)}`;
+  const currency = `Rp.`;
+  const itemLine = `${row.Quantity.toString()}x ${
+    row.Item_Description
+  } ${currency} ${formattedPrice}`;
+  const variantLine = row.variant_Name;
+  const itemLineWidth = itemLine.length;
+  const variantLineWidth = variantLine.length;
+  let maxWidth = Math.max(itemLineWidth, variantLineWidth);
+  let columnWidths = [3, maxWidth, 0, 0]; // Adjust column widths
+  let alignments = [
+    BluetoothEscposPrinter.ALIGN.LEFT,
+    BluetoothEscposPrinter.ALIGN.LEFT,
+    BluetoothEscposPrinter.ALIGN.RIGHT,
+    BluetoothEscposPrinter.ALIGN.RIGHT,
+  ];
+  printData = [[itemLine, variantLine]];
+  await BluetoothEscposPrinter.printColumn(
+    columnWidths,
+    alignments,
+    printData,
+    {},
+  );
+});
+
+try {
+  await BluetoothEscposPrinter.printColumn(
+    columnWidths, // Adjust column widths as needed
+    [
+      BluetoothEscposPrinter.ALIGN.LEFT,
+      BluetoothEscposPrinter.ALIGN.LEFT,
+      BluetoothEscposPrinter.ALIGN.RIGHT,
+      BluetoothEscposPrinter.ALIGN.RIGHT,
+    ],
+    printData,
+    {},
+  );
+} catch (error) {
+  console.error('Error printing: ', error);
+}
+
+const combinedLine = `${itemLine}\n${variantLine}`;
+printData.push(combinedLine);
+
+// const itemLength = itemSplitLine.length;
+// const variantLength = variantSplitLine.length;
+// console.log('itemSplitLine:', itemSplitLine);
+// console.log('variantSplitLine:', variantSplitLine);
+// console.log('itemSplitLine length:', itemLength);
+// console.log('variantSplitLine length:', variantLength);
+
+// if (itemLength > columnWidths.length) {
+//   itemSplitLine.splice(columnWidths.length); // Remove extra elements
+// } else if (itemLength < columnWidths.length) {
+//   while (itemSplitLine.length < columnWidths.length) {
+//     itemSplitLine.push('');
+//   }
+// }
+
+// if (variantLength > columnWidths.length) {
+//   variantSplitLine.splice(columnWidths.length); // Remove extra elements
+// } else if (variantLength < columnWidths.length) {
+//   while (variantSplitLine.length < columnWidths.length) {
+//     variantSplitLine.push('');
+//   }
+// }
+
+// await BluetoothEscposPrinter.printColumn(
+//   columnWidths,
+//   [
+//     BluetoothEscposPrinter.ALIGN.LEFT, // Adjust for variant alignment if needed
+//     BluetoothEscposPrinter.ALIGN.LEFT, // Adjust for variant alignment if needed
+//     BluetoothEscposPrinter.ALIGN.RIGHT, // Adjust for variant alignment if needed
+//     BluetoothEscposPrinter.ALIGN.RIGHT, // Adjust for variant alignment if needed
+//   ],
+//   variantSplitLine,
+//   {},
+// );
+
 // const rowData = [
 //   row.Quantity.toString(),
 //   row.Item_Description,
