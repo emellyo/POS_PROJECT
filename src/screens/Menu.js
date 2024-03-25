@@ -638,14 +638,16 @@ export default function Menu({navigation}) {
       // let sumtotal = await dbconnTrx.querydynamic(db, querysum);
       let querytax = await dbconnTrx.queryselectTrx(
         db,
-        `SELECT (${qty[0].TOTAL} * 0.11) as totalppn`,
+        `SELECT (${qty[0].TOTAL / 1.11} * 0.11) as totalppn`,
       );
       let querytotal = await dbconnTrx.queryselectTrx(
         db,
-        `SELECT (${qty[0].TOTAL} + ${querytax[0].totalppn}) AS GRANDTOTAL`,
+        `SELECT (${qty[0].TOTAL / 1.11} + ${
+          querytax[0].totalppn
+        }) AS GRANDTOTAL`,
       );
       // let total = await dbconnTrx.querydynamic(db, querytotal);
-      console.log('HASIL QTY * PRICE: ', qty[0].TOTAL);
+      console.log('HASIL QTY * PRICE: ', qty[0].TOTAL / 1.11);
       // console.log('HASIL SUM TOTAL', sumtotal);
 
       console.log('HASIL TAX: ', querytax[0].totalppn);
@@ -658,14 +660,14 @@ export default function Menu({navigation}) {
       if (querytax.length == 0) {
         setTax(0);
       } else {
-        setTax(JSON.stringify(querytax[0].totalppn));
+        setTax(JSON.stringify(querytax[0].totalppn).split('.')[0]);
       }
 
       if (qty.length == 0) {
         console.log('haha: ', qty.length);
         setTotal(0);
       } else {
-        setTotal(JSON.stringify(qty[0].TOTAL));
+        setTotal(JSON.stringify(qty[0].TOTAL / 1.11).split('.')[0]);
       }
       console.log('nilai total: ', total);
     } catch (error) {
@@ -984,8 +986,8 @@ export default function Menu({navigation}) {
           )}`;
           const currency = `Rp.`;
           const printData = [
-            row.Quantity.toString(),
             row.Item_Description,
+            `{row.Quantity}x`,
             currency,
             formattedPrice,
           ];
