@@ -964,17 +964,17 @@ export default function Menu({navigation}) {
       );
       getbills = await dbconnTrx.AddTrxDtl_getdataPrint(db, 'AddTrxDtl', runno);
       try {
+        let alignments = [
+          BluetoothEscposPrinter.ALIGN.LEFT,
+          BluetoothEscposPrinter.ALIGN.LEFT,
+          BluetoothEscposPrinter.ALIGN.RIGHT,
+          BluetoothEscposPrinter.ALIGN.RIGHT,
+        ];
         for (let row of getbills) {
           const formattedPrice = `${Intl.NumberFormat('id-ID').format(
             row.Item_Price,
           )}`;
           const currency = `Rp.`;
-          let alignments = [
-            BluetoothEscposPrinter.ALIGN.LEFT,
-            BluetoothEscposPrinter.ALIGN.LEFT,
-            BluetoothEscposPrinter.ALIGN.RIGHT,
-            BluetoothEscposPrinter.ALIGN.RIGHT,
-          ];
           const printData = [
             [
               row.Quantity.toString(),
