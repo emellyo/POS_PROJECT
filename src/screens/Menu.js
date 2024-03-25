@@ -891,6 +891,7 @@ export default function Menu({navigation}) {
 
   const PrintStruk = async () => {
     let columnWidths = [3, 20, 17, 8];
+    let columnWidthsVAR = [20, 3, 17, 8];
     let columnWidths2 = [15, 25, 8];
     const db = await dbconnTrx.getDBConnection();
     let getbills = [];
@@ -970,25 +971,36 @@ export default function Menu({navigation}) {
           BluetoothEscposPrinter.ALIGN.RIGHT,
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ];
+        const variantAlignments = [
+          // Separate alignments for variant line
+          BluetoothEscposPrinter.ALIGN.LEFT, // Adjust for variant alignment if needed
+          BluetoothEscposPrinter.ALIGN.LEFT, // Adjust for variant alignment if needed
+          BluetoothEscposPrinter.ALIGN.RIGHT, // Align with description column
+          BluetoothEscposPrinter.ALIGN.RIGHT, // Align with description column
+        ];
         for (let row of getbills) {
           const formattedPrice = `${Intl.NumberFormat('id-ID').format(
             row.Item_Price,
           )}`;
           const currency = `Rp.`;
           const printData = [
-            [
-              row.Quantity.toString(),
-              row.Item_Description,
-              currency,
-              formattedPrice,
-            ],
-            [row.variant_Name, '', '', ''], // Adjust alignment for variant line if needed
+            row.Quantity.toString(),
+            row.Item_Description,
+            currency,
+            formattedPrice,
           ];
+          // Adjust alignment for variant line if needed
           console.log('Print Data:', printData);
           await BluetoothEscposPrinter.printColumn(
             columnWidths,
             alignments,
             printData,
+            {},
+          );
+          await BluetoothEscposPrinter.printColumn(
+            columnWidthsVAR,
+            variantAlignments,
+            [row.variant_Name, '', '', ''],
             {},
           );
         }
