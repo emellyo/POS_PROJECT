@@ -892,7 +892,7 @@ export default function Menu({navigation}) {
   };
 
   const PrintStruk = async () => {
-    let columnWidths = [3, 20, 17, 8];
+    let columnWidths = [20, 3, 17, 8];
     let columnWidthsVAR = [20, 3, 17, 8];
     let columnWidths2 = [15, 25, 8];
     const db = await dbconnTrx.getDBConnection();
@@ -987,7 +987,7 @@ export default function Menu({navigation}) {
           const currency = `Rp.`;
           const printData = [
             row.Item_Description,
-            `{row.Quantity}x`,
+            `${row.Quantity}x`,
             currency,
             formattedPrice,
           ];
@@ -1373,7 +1373,7 @@ export default function Menu({navigation}) {
                     ]}
                     editable={false}
                     maxLength={100}
-                    value={grandtotal.toLocaleString('id-ID')}
+                    value={Intl.NumberFormat('id-ID').format(grandtotal)}
                   />
                 </View>
                 <View style={globalStyles.labelinputtotalanbillsdisc}>
@@ -1393,7 +1393,7 @@ export default function Menu({navigation}) {
                     ]}
                     editable={false}
                     maxLength={100}
-                    value={tottender.toLocaleString('id-ID')}
+                    value={Intl.NumberFormat('id-ID').format(tottender)}
                   />
                 </View>
                 <View style={globalStyles.labelinputtotalanbillsdisc}>
@@ -1413,7 +1413,7 @@ export default function Menu({navigation}) {
                     ]}
                     editable={false}
                     maxLength={100}
-                    value={changes.toLocaleString('id-ID')}
+                    value={Intl.NumberFormat('id-ID').format(changes)}
                     //onChangeText={text => setPassword(text)}
                   />
                 </View>
