@@ -655,19 +655,22 @@ export default function Menu({navigation}) {
       if (querytotal.length == 0) {
         setGrandTotal(0);
       } else {
-        setGrandTotal(JSON.stringify(querytotal[0].GRANDTOTAL));
+        const roundedTotal = Math.round(querytotal[0].GRANDTOTAL);
+        setGrandTotal(JSON.stringify(roundedTotal));
       }
       if (querytax.length == 0) {
         setTax(0);
       } else {
-        setTax(JSON.stringify(querytax[0].totalppn).split('.')[0]);
+        const roundedTotal = Math.round(querytax[0].totalppn);
+        setTax(JSON.stringify(roundedTotal).split('.')[0]);
       }
 
       if (qty.length == 0) {
         console.log('haha: ', qty.length);
         setTotal(0);
       } else {
-        setTotal(JSON.stringify(qty[0].TOTAL / 1.11).split('.')[0]);
+        const roundedTotal = Math.round(qty[0].TOTAL / 1.11);
+        setTotal(JSON.stringify(roundedTotal).split('.')[0]);
       }
       console.log('nilai total: ', total);
     } catch (error) {
