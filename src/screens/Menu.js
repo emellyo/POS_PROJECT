@@ -112,6 +112,8 @@ export default function Menu({navigation}) {
   const [boundAddress, setBoundAddress] = useState('');
   const [currenttime, setCurrentTime] = useState('');
   const [dataprint, setDataPrint] = useState([]);
+  const [isChecked, setIsChecked] = useState(discount.map(() => false));
+  const [nilaidisc, setNilaiDisc] = useState(0);
   //#endregion
 
   useEffect(() => {
@@ -624,6 +626,22 @@ export default function Menu({navigation}) {
     } catch (error) {
       let msg = error.message;
       CallModalInfo(msg);
+    }
+  };
+
+  const DiscBill = async index => {
+    setIsChecked(prevChecked => {
+      const updateCheckedArray = [...prevChecked];
+      updateCheckedArray[index] = !prevChecked[index];
+      return updateCheckedArray;
+    });
+    discountFunc(index);
+  };
+
+  const discountFunc = async index => {
+    if (index.discount_Type == 1) {
+      let decimalPercentage = index.discount_Value / 100;
+      setNilaiDisc(decimalPercentage.toString());
     }
   };
 
@@ -1783,10 +1801,8 @@ export default function Menu({navigation}) {
                       <View style={globalStyles.viewinput2}>
                         <CheckBox
                           tintColors={{true: '#0096FF', false: 'black'}}
-                          //value={toggleCheckBox}
-                          onValueChange={newValue =>
-                            setToggleCheckBox(newValue)
-                          }
+                          value={isChecked}
+                          onValueChange={() => DiscBill()}
                         />
                       </View>
                     </View>
