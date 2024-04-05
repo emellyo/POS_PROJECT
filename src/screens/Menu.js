@@ -629,19 +629,22 @@ export default function Menu({navigation}) {
     }
   };
 
-  const DiscBill = async index => {
+  const DiscBill = async discount => {
     setIsChecked(prevChecked => {
       const updateCheckedArray = [...prevChecked];
-      updateCheckedArray[index] = !prevChecked[index];
+      updateCheckedArray[discount] = !prevChecked[discount];
       return updateCheckedArray;
     });
-    discountFunc(index);
+    discountFunc(discount);
   };
 
-  const discountFunc = async index => {
-    if (index.discount_Type == 1) {
-      let decimalPercentage = index.discount_Value / 100;
+  const discountFunc = async discount => {
+    if (discount.discount_Type == 1) {
+      let decimalPercentage = discount.discount_Value / 100;
       setNilaiDisc(decimalPercentage.toString());
+    } else if (discount.discount_Type == 2) {
+      let nominalDisc = discount.discount_Value;
+      setNilaiDisc(nominalDisc.toString());
     }
   };
 
@@ -1802,7 +1805,7 @@ export default function Menu({navigation}) {
                         <CheckBox
                           tintColors={{true: '#0096FF', false: 'black'}}
                           value={isChecked}
-                          onValueChange={() => DiscBill()}
+                          onValueChange={() => DiscBill(discount)}
                         />
                       </View>
                     </View>
