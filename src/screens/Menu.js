@@ -487,6 +487,7 @@ export default function Menu({navigation}) {
       setAddTemp(dtVariant);
       console.log('isi dtVariant: ', dtVariant);
       setVariant(hasil);
+      setCount(1);
       viewModalVariant();
       //console.log('HASIL GET VARIANT', hasil);
     });
@@ -907,7 +908,13 @@ export default function Menu({navigation}) {
         if (hasil[0].code == 400) {
           CallModalInfo(hasil.desc);
         } else if (hasil[0].code == 200) {
-          PrintStruk();
+          if (tottender < grandtotal) {
+            let msg = 'nominal pembayaran kurang dari total';
+            CallModalInfo(msg);
+          } else {
+            PrintStruk();
+          }
+
           //handleBackButtonClick();
         }
         //console.log('HASIL GET VARIANT', hasil);
@@ -1532,15 +1539,15 @@ export default function Menu({navigation}) {
                       placeholder={'Comment'}
                       placeholderTextColor={colors.text}
                       value={notes}
+                      onChangeText={text => setNotes(text)}
                     />
                   </View>
                 </SafeAreaView>
                 <SafeAreaView style={[invrecStyles.inputanqty]}>
-                  <TouchableOpacity style={[globalStyles.buttonQTYMinus]}>
-                    <Text style={globalStyles.textNo} onPress={handleDecrement}>
-                      {' '}
-                      -{' '}
-                    </Text>
+                  <TouchableOpacity
+                    style={[globalStyles.buttonQTYMinus]}
+                    onPress={handleDecrement}>
+                    <Text style={globalStyles.textNo}> - </Text>
                   </TouchableOpacity>
                   <TextInput
                     style={[
@@ -1552,11 +1559,10 @@ export default function Menu({navigation}) {
                     maxLength={100}
                     keyboardType="numeric"
                   />
-                  <TouchableOpacity style={[globalStyles.buttonQTYPlus]}>
-                    <Text style={globalStyles.textNo} onPress={handleIncrement}>
-                      {' '}
-                      +{' '}
-                    </Text>
+                  <TouchableOpacity
+                    style={[globalStyles.buttonQTYPlus]}
+                    onPress={handleIncrement}>
+                    <Text style={globalStyles.textNo}> + </Text>
                   </TouchableOpacity>
                 </SafeAreaView>
               </View>
@@ -1656,11 +1662,10 @@ export default function Menu({navigation}) {
                   </View>
                 </SafeAreaView>
                 <SafeAreaView style={[invrecStyles.inputanqty]}>
-                  <TouchableOpacity style={[globalStyles.buttonQTYMinus]}>
-                    <Text style={globalStyles.textNo} onPress={handleDecrement}>
-                      {' '}
-                      -{' '}
-                    </Text>
+                  <TouchableOpacity
+                    style={[globalStyles.buttonQTYMinus]}
+                    onPress={handleDecrement}>
+                    <Text style={globalStyles.textNo}> - </Text>
                   </TouchableOpacity>
                   <TextInput
                     style={[
@@ -1672,11 +1677,10 @@ export default function Menu({navigation}) {
                     maxLength={100}
                     keyboardType="numeric"
                   />
-                  <TouchableOpacity style={[globalStyles.buttonQTYPlus]}>
-                    <Text style={globalStyles.textNo} onPress={handleIncrement}>
-                      {' '}
-                      +{' '}
-                    </Text>
+                  <TouchableOpacity
+                    style={[globalStyles.buttonQTYPlus]}
+                    onPress={handleIncrement}>
+                    <Text style={globalStyles.textNo}> + </Text>
                   </TouchableOpacity>
                 </SafeAreaView>
               </View>
@@ -1804,8 +1808,8 @@ export default function Menu({navigation}) {
                       <View style={globalStyles.viewinput2}>
                         <CheckBox
                           tintColors={{true: '#0096FF', false: 'black'}}
-                          value={isChecked}
-                          onValueChange={() => DiscBill(discount)}
+                          //value={isChecked}
+                          //onValueChange={() => DiscBill(discount)}
                         />
                       </View>
                     </View>
