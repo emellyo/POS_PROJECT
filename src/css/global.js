@@ -298,6 +298,9 @@ export const globalStyles = StyleSheet.create({
     borderColor: '#0096FF',
     marginTop: 25,
   },
+  disabledButton: {
+    opacity: 0.5,
+  },
   buttonSubmitDisable: {
     width: '100%',
     paddingVertical: 12,

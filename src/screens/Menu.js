@@ -114,6 +114,7 @@ export default function Menu({navigation}) {
   const [dataprint, setDataPrint] = useState([]);
   const [isChecked, setIsChecked] = useState(discount.map(() => false));
   const [nilaidisc, setNilaiDisc] = useState(0);
+  const [selectedButtonIndex, setSelectedButtonIndex] = useState(null);
   //#endregion
 
   useEffect(() => {
@@ -1170,6 +1171,17 @@ export default function Menu({navigation}) {
     } catch (error) {}
   }
 
+  const handleButtonPress = (
+    itemNumber,
+    flag,
+    lineItemVariant,
+    lineItemOption,
+    index,
+  ) => {
+    setSelectedButtonIndex(index === selectedButtonIndex ? null : index); // Toggle selection on every click
+    UpdateDataList(itemNumber, flag, lineItemVariant, lineItemOption);
+  };
+
   const UpdateDataList = async (
     itemnumber,
     flag,
@@ -1345,41 +1357,86 @@ export default function Menu({navigation}) {
                           {paymentType.payment_Name}
                         </Text>
                       </View>
-                      <View style={globalStyles.kanan2}>
-                        <TextInput
-                          style={[
-                            globalStyles.textinputpayment,
-                            {backgroundColor: colors.card, color: colors.text},
-                          ]}
-                          maxLength={100}
-                          keyboardType="numeric"
-                          value={
-                            amttendered &&
-                            amttendered[`${paymentType.payment_ID}`] !==
-                              undefined
-                              ? amttendered[`${paymentType.payment_ID}`]
-                              : ''
-                          }
-                          onChangeText={value => {
-                            const newValue = value ? value : '';
-                            handleTextInputChange(
-                              `${paymentType.payment_ID}`,
-                              newValue,
-                            );
-                          }}
-                          onBlur={() => {
-                            Changes(
-                              paymentType,
-                              amttendered[`${paymentType.payment_ID}`],
-                            );
-                          }}
-                        />
-                        <TouchableOpacity
-                          style={[globalStyles.buttonAll]}
-                          onPress={() => ChangesAll(paymentType)}>
-                          <Text style={globalStyles.textStyle}>All</Text>
-                        </TouchableOpacity>
-                      </View>
+                      {paymentType.payment_Name == 'CASH' ? (
+                        <View style={globalStyles.kanan2}>
+                          <TextInput
+                            style={[
+                              globalStyles.textinputpayment,
+                              {
+                                backgroundColor: colors.card,
+                                color: colors.text,
+                              },
+                            ]}
+                            maxLength={100}
+                            keyboardType="numeric"
+                            value={
+                              amttendered &&
+                              amttendered[`${paymentType.payment_ID}`] !==
+                                undefined
+                                ? amttendered[`${paymentType.payment_ID}`]
+                                : ''
+                            }
+                            onChangeText={value => {
+                              const newValue = value ? value : '';
+                              handleTextInputChange(
+                                `${paymentType.payment_ID}`,
+                                newValue,
+                              );
+                            }}
+                            onBlur={() => {
+                              Changes(
+                                paymentType,
+                                amttendered[`${paymentType.payment_ID}`],
+                              );
+                            }}
+                          />
+                          <TouchableOpacity
+                            style={[globalStyles.buttonAll]}
+                            onPress={() => ChangesAll(paymentType)}>
+                            <Text style={globalStyles.textStyle}>All</Text>
+                          </TouchableOpacity>
+                        </View>
+                      ) : (
+                        <View style={globalStyles.kanan2}>
+                          <TextInput
+                            editable={false}
+                            style={[
+                              globalStyles.textinputpayment,
+                              {
+                                backgroundColor: colors.card,
+                                color: colors.text,
+                              },
+                            ]}
+                            maxLength={100}
+                            keyboardType="numeric"
+                            value={
+                              amttendered &&
+                              amttendered[`${paymentType.payment_ID}`] !==
+                                undefined
+                                ? amttendered[`${paymentType.payment_ID}`]
+                                : ''
+                            }
+                            onChangeText={value => {
+                              const newValue = value ? value : '';
+                              handleTextInputChange(
+                                `${paymentType.payment_ID}`,
+                                newValue,
+                              );
+                            }}
+                            onBlur={() => {
+                              Changes(
+                                paymentType,
+                                amttendered[`${paymentType.payment_ID}`],
+                              );
+                            }}
+                          />
+                          <TouchableOpacity
+                            style={[globalStyles.buttonAll]}
+                            onPress={() => ChangesAll(paymentType)}>
+                            <Text style={globalStyles.textStyle}>All</Text>
+                          </TouchableOpacity>
+                        </View>
+                      )}
                     </View>
                   );
                 })}
@@ -1483,44 +1540,34 @@ export default function Menu({navigation}) {
                   {variant.map((variant, index) => {
                     return (
                       <View key={index} style={globalStyles.inputtotalan}>
-                        {variant.flag == 1 ? (
-                          <TouchableOpacity
-                            style={[globalStyles.buttonSubmitFlagChoose]}
-                            //disabled={true}
-                            onPress={() =>
-                              UpdateDataList(
-                                variant.item_Number,
-                                variant.flag,
-                                variant.lineItem_Variant,
-                                variant.lineItem_Option,
-                              )
-                            }>
-                            <Text style={globalStyles.textFlag}>
-                              {variant.variant_Name}
-                            </Text>
-                            <Text style={globalStyles.textFlag2}>
-                              {variant.item_Price}
-                            </Text>
-                          </TouchableOpacity>
-                        ) : (
-                          <TouchableOpacity
-                            style={[globalStyles.buttonSubmitFlag]}
-                            onPress={() =>
-                              UpdateDataList(
-                                variant.item_Number,
-                                variant.flag,
-                                variant.lineItem_Variant,
-                                variant.lineItem_Option,
-                              )
-                            }>
-                            <Text style={globalStyles.textFlag}>
-                              {variant.variant_Name}
-                            </Text>
-                            <Text style={globalStyles.textFlag2}>
-                              {variant.item_Price}
-                            </Text>
-                          </TouchableOpacity>
-                        )}
+                        <TouchableOpacity
+                          style={[
+                            globalStyles.buttonSubmitFlag,
+                            selectedButtonIndex !== null &&
+                              index !== selectedButtonIndex &&
+                              globalStyles.disabledButton,
+                          ]}
+                          onPress={() =>
+                            handleButtonPress(
+                              variant.item_Number,
+                              variant.flag,
+                              variant.lineItem_Variant,
+                              variant.lineItem_Option,
+                              index,
+                            )
+                          }
+                          disabled={
+                            selectedButtonIndex !== null &&
+                            index !== selectedButtonIndex
+                          } // Disable based on selectedButtonIndex
+                        >
+                          <Text style={globalStyles.textFlag}>
+                            {variant.variant_Name}
+                          </Text>
+                          <Text style={globalStyles.textFlag2}>
+                            {variant.item_Price}
+                          </Text>
+                        </TouchableOpacity>
                       </View>
                     );
                   })}
@@ -1602,44 +1649,34 @@ export default function Menu({navigation}) {
                   {variant.map((variant, index) => {
                     return (
                       <View key={index} style={globalStyles.inputtotalan}>
-                        {variant.flag == 1 ? (
-                          <TouchableOpacity
-                            style={[globalStyles.buttonSubmitFlagChoose]}
-                            //disabled={true}
-                            onPress={() =>
-                              UpdateDataList(
-                                variant.item_Number,
-                                variant.flag,
-                                variant.lineItem_Variant,
-                                variant.lineItem_Option,
-                              )
-                            }>
-                            <Text style={globalStyles.textFlag}>
-                              {variant.variant_Name}
-                            </Text>
-                            <Text style={globalStyles.textFlag2}>
-                              {variant.item_Cost}
-                            </Text>
-                          </TouchableOpacity>
-                        ) : (
-                          <TouchableOpacity
-                            style={[globalStyles.buttonSubmitFlag]}
-                            onPress={() =>
-                              UpdateDataList(
-                                variant.item_Number,
-                                variant.flag,
-                                variant.lineItem_Variant,
-                                variant.lineItem_Option,
-                              )
-                            }>
-                            <Text style={globalStyles.textFlag}>
-                              {variant.variant_Name}
-                            </Text>
-                            <Text style={globalStyles.textFlag2}>
-                              {variant.item_Cost}
-                            </Text>
-                          </TouchableOpacity>
-                        )}
+                        <TouchableOpacity
+                          style={[
+                            globalStyles.buttonSubmitFlag,
+                            selectedButtonIndex !== null &&
+                              index !== selectedButtonIndex &&
+                              globalStyles.disabledButton,
+                          ]}
+                          onPress={() =>
+                            handleButtonPress(
+                              variant.item_Number,
+                              variant.flag,
+                              variant.lineItem_Variant,
+                              variant.lineItem_Option,
+                              index,
+                            )
+                          }
+                          disabled={
+                            selectedButtonIndex !== null &&
+                            index !== selectedButtonIndex
+                          } // Disable based on selectedButtonIndex
+                        >
+                          <Text style={globalStyles.textFlag}>
+                            {variant.variant_Name}
+                          </Text>
+                          <Text style={globalStyles.textFlag2}>
+                            {variant.item_Price}
+                          </Text>
+                        </TouchableOpacity>
                       </View>
                     );
                   })}
