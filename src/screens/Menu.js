@@ -741,7 +741,6 @@ export default function Menu({navigation}) {
 
   const Changes = async (paymentid, amounttender) => {
     try {
-      setAmtTender('');
       console.log('payment ID, ', paymentid.payment_ID);
       console.log('payment name: ', paymentid.payment_Name);
       console.log('amount tender: ', amounttender);
@@ -1369,15 +1368,7 @@ export default function Menu({navigation}) {
                             ]}
                             maxLength={100}
                             keyboardType="numeric"
-                            value={
-                              amttendered &&
-                              amttendered[`${paymentType.payment_ID}`] !==
-                                undefined
-                                ? amttendered[`${paymentType.payment_ID}`]
-                                : paymentType.amount
-                                ? paymentType.amount.toString()
-                                : ''
-                            }
+                            value={amttendered[paymentType.payment_ID] || ''}
                             onChangeText={value => {
                               const newValue = value ? value : '';
                               handleTextInputChange(
@@ -1388,7 +1379,8 @@ export default function Menu({navigation}) {
                             onBlur={() => {
                               Changes(
                                 paymentType,
-                                amttendered[`${paymentType.payment_ID}`],
+                                amttendered[`${paymentType.payment_ID}`] ||
+                                  paymentType.amount.toString(),
                               );
                             }}
                           />
@@ -1405,7 +1397,7 @@ export default function Menu({navigation}) {
                             style={[
                               globalStyles.textinputpayment,
                               {
-                                backgroundColor: colors.card,
+                                backgroundColor: '#f5f5f5',
                                 color: colors.text,
                               },
                             ]}
