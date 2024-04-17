@@ -1374,6 +1374,8 @@ export default function Menu({navigation}) {
                               amttendered[`${paymentType.payment_ID}`] !==
                                 undefined
                                 ? amttendered[`${paymentType.payment_ID}`]
+                                : paymentType.amount
+                                ? paymentType.amount.toString()
                                 : ''
                             }
                             onChangeText={value => {
