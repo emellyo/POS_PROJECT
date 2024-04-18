@@ -845,7 +845,6 @@ export default function Menu({navigation}) {
     try {
       let countdtl = [];
       console.log('masuk kondisi else');
-
       setTotTender('');
       //setTotChanges('');
       setGrandTotal('');
