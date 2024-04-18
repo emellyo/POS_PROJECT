@@ -763,6 +763,7 @@ export default function Menu({navigation}) {
       console.log('payment name: ', paymentid.payment_Name);
       let tenderall = grandtotal;
       let changesall = grandtotal - grandtotal;
+      setAmtTender(tenderall);
       setTotTender(tenderall);
       setTotChanges(changesall);
       setPaymentName(paymentid.payment_Name);
@@ -1403,13 +1404,7 @@ export default function Menu({navigation}) {
                             ]}
                             maxLength={100}
                             keyboardType="numeric"
-                            value={
-                              amttendered &&
-                              amttendered[`${paymentType.payment_ID}`] !==
-                                undefined
-                                ? amttendered[`${paymentType.payment_ID}`]
-                                : ''
-                            }
+                            value={amttendered[paymentType.payment_ID] || ''}
                             onChangeText={value => {
                               const newValue = value ? value : '';
                               handleTextInputChange(
