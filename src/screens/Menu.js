@@ -761,14 +761,21 @@ export default function Menu({navigation}) {
   const ChangesAll = async paymentid => {
     try {
       console.log('payment name: ', paymentid.payment_Name);
+      console.log('Previous amttendered:', amttendered);
+      console.log('paymentType:', paymentType);
       let tenderall = grandtotal;
       let changesall = grandtotal - grandtotal;
-      setAmtTender(tenderall);
+      const updatedAmtTender = {
+        ...amttendered,
+        [paymentid.payment_ID]: tenderall,
+      };
+      setAmtTender(updatedAmtTender);
       setTotTender(tenderall);
       setTotChanges(changesall);
       setPaymentName(paymentid.payment_Name);
       setPaymentID(paymentid.payment_ID);
       console.log('TOTAL TENDER ALL: ', tenderall);
+      console.log('New amttendered:', amttendered);
     } catch (error) {
       let msg = error.message;
       console.log(error);
@@ -1384,11 +1391,11 @@ export default function Menu({navigation}) {
                               );
                             }}
                           />
-                          <TouchableOpacity
+                          {/* <TouchableOpacity
                             style={[globalStyles.buttonAll]}
                             onPress={() => ChangesAll(paymentType)}>
                             <Text style={globalStyles.textStyle}>All</Text>
-                          </TouchableOpacity>
+                          </TouchableOpacity> */}
                         </View>
                       ) : (
                         <View style={globalStyles.kanan2}>
@@ -1404,19 +1411,6 @@ export default function Menu({navigation}) {
                             maxLength={100}
                             keyboardType="numeric"
                             value={amttendered[paymentType.payment_ID] || ''}
-                            onChangeText={value => {
-                              const newValue = value ? value : '';
-                              handleTextInputChange(
-                                `${paymentType.payment_ID}`,
-                                newValue,
-                              );
-                            }}
-                            onBlur={() => {
-                              Changes(
-                                paymentType,
-                                amttendered[`${paymentType.payment_ID}`],
-                              );
-                            }}
                           />
                           <TouchableOpacity
                             style={[globalStyles.buttonAll]}
