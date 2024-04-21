@@ -94,7 +94,7 @@ export default function Menu({navigation}) {
   const [paymentType, setPaymentType] = useState([]);
   const [salesid, setSalesID] = useState('');
   const [salesname, setSalesName] = useState('');
-  const [amttendered, setAmtTender] = useState({});
+  const [amttendered, setAmtTender] = useState([]);
   const [tottender, setTotTender] = useState('');
   const [changes, setChanges] = useState(0);
   const [paymentID, setPaymentID] = useState('');
@@ -708,6 +708,7 @@ export default function Menu({navigation}) {
       setMdlBills(false);
       setMdlPayment(true);
       setTotChanges('');
+      setAmtTender([]);
       const db = await dbconnTrx.getDBConnection();
       let datatipesales = await AsyncStorage.getItem('@datasalestype');
       datatipesales = JSON.parse(datatipesales);
@@ -1361,7 +1362,8 @@ export default function Menu({navigation}) {
                           {paymentType.payment_Name}
                         </Text>
                       </View>
-                      {paymentType.payment_Name == 'CASH' ? (
+                      {paymentType.payment_Name === 'CASH' ||
+                      paymentType.amount !== 0 ? (
                         <View style={globalStyles.kanan2}>
                           <TextInput
                             style={[
@@ -1389,11 +1391,40 @@ export default function Menu({navigation}) {
                               );
                             }}
                           />
-                          {/* <TouchableOpacity
-                            style={[globalStyles.buttonAll]}
-                            onPress={() => ChangesAll(paymentType)}>
-                            <Text style={globalStyles.textStyle}>All</Text>
-                          </TouchableOpacity> */}
+                          {amttendered.length > 0 &&
+                          amttendered.some(
+                            (amt, index) =>
+                              amt !== 0 && index !== paymentType.payment_ID,
+                          ) ? (
+                            <View style={globalStyles.kanan2}>
+                              <TextInput
+                                editable={false}
+                                style={[
+                                  globalStyles.textinputpayment,
+                                  {
+                                    backgroundColor: '#f5f5f5',
+                                    color: colors.text,
+                                  },
+                                ]}
+                                maxLength={100}
+                                keyboardType="numeric"
+                                value={
+                                  amttendered[paymentType.payment_ID] || ''
+                                }
+                              />
+                              <TouchableOpacity
+                                style={[globalStyles.buttonAll, {opacity: 0.5}]}
+                                disabled={true}>
+                                <Text style={globalStyles.textStyle}>All</Text>
+                              </TouchableOpacity>
+                            </View>
+                          ) : (
+                            <TouchableOpacity
+                              style={globalStyles.buttonAll}
+                              onPress={() => ChangesAll(paymentType)}>
+                              <Text style={globalStyles.textStyle}>All</Text>
+                            </TouchableOpacity>
+                          )}
                         </View>
                       ) : (
                         <View style={globalStyles.kanan2}>
@@ -1420,7 +1451,6 @@ export default function Menu({navigation}) {
                     </View>
                   );
                 })}
-
                 {/* //* TENDER INPUT*/}
               </ScrollView>
               <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
