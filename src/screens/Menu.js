@@ -794,6 +794,9 @@ export default function Menu({navigation}) {
       } else if (tottender < 0) {
         let msg = 'Nominal Pembayaran tidak sesuai, mohon diperiksa kembali';
         CallModalInfo(msg);
+      } else if (tottender < grandtotal) {
+        let msg = 'Nominal Pembayaran tidak sesuai, mohon diperiksa kembali';
+        CallModalInfo(msg);
       } else {
         const db = await dbconnTrx.getDBConnection();
         getbills = await dbconnTrx.AddTrxDtl_getdataPrint(
@@ -915,12 +918,7 @@ export default function Menu({navigation}) {
         if (hasil[0].code == 400) {
           CallModalInfo(hasil.desc);
         } else if (hasil[0].code == 200) {
-          if (tottender < grandtotal) {
-            let msg = 'nominal pembayaran kurang dari total';
-            CallModalInfo(msg);
-          } else {
-            PrintStruk();
-          }
+          PrintStruk();
 
           //handleBackButtonClick();
         }
