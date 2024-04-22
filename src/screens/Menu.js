@@ -742,6 +742,7 @@ export default function Menu({navigation}) {
 
   const Changes = async (paymentid, amounttender) => {
     try {
+      setAmtTender([]);
       console.log('payment ID, ', paymentid.payment_ID);
       console.log('payment name: ', paymentid.payment_Name);
       console.log('amount tender: ', amounttender);
@@ -761,6 +762,7 @@ export default function Menu({navigation}) {
 
   const ChangesAll = async paymentid => {
     try {
+      setAmtTender([]);
       console.log('payment name: ', paymentid.payment_Name);
       console.log('Previous amttendered:', amttendered);
       console.log('paymentType:', paymentType);
@@ -1391,39 +1393,37 @@ export default function Menu({navigation}) {
                               );
                             }}
                           />
-                          {amttendered.length > 0 &&
-                          amttendered.some(
-                            (amt, index) =>
-                              amt !== 0 && index !== paymentType.payment_ID,
-                          ) ? (
+                          {amttendered.length > 0 && (
                             <View style={globalStyles.kanan2}>
-                              <TextInput
-                                editable={false}
-                                style={[
-                                  globalStyles.textinputpayment,
-                                  {
-                                    backgroundColor: '#f5f5f5',
-                                    color: colors.text,
-                                  },
-                                ]}
-                                maxLength={100}
-                                keyboardType="numeric"
-                                value={
-                                  amttendered[paymentType.payment_ID] || ''
-                                }
-                              />
-                              <TouchableOpacity
-                                style={[globalStyles.buttonAll, {opacity: 0.5}]}
-                                disabled={true}>
-                                <Text style={globalStyles.textStyle}>All</Text>
-                              </TouchableOpacity>
+                              {amttendered.map((amt, index) => (
+                                <TextInput
+                                  key={index} // Add a unique key for each input
+                                  editable={false}
+                                  style={[
+                                    globalStyles.textinputpayment,
+                                    {
+                                      backgroundColor: '#F5F5F5',
+                                      color: colors.text,
+                                    },
+                                  ]}
+                                  maxLength={100}
+                                  keyboardType="numeric"
+                                  value={amt || ''}
+                                />
+                              ))}
+                              {paymentType.payment_Name !== 'CASH' && ( // Only show "All" for non-CASH payments
+                                <TouchableOpacity
+                                  style={[
+                                    globalStyles.buttonAll,
+                                    {opacity: amttendered.length > 0 ? 0.5 : 1},
+                                  ]}
+                                  disabled={amttendered.length > 0}>
+                                  <Text style={globalStyles.textStyle}>
+                                    All
+                                  </Text>
+                                </TouchableOpacity>
+                              )}
                             </View>
-                          ) : (
-                            <TouchableOpacity
-                              style={globalStyles.buttonAll}
-                              onPress={() => ChangesAll(paymentType)}>
-                              <Text style={globalStyles.textStyle}>All</Text>
-                            </TouchableOpacity>
                           )}
                         </View>
                       ) : (
