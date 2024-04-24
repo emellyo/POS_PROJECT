@@ -1774,7 +1774,7 @@ export default function Menu({navigation}) {
               <View style={globalStyles.modalheader}>
                 <Text style={globalStyles.modalText}>Invoice</Text>
               </View>
-              <Text style={globalStyles.TextHeaderBills}>Tipe Transaksi</Text>
+              <Text style={globalStyles.TextHeaderBills}>{salesname}</Text>
               <ScrollView
                 style={globalStyles.InputBills}
                 nestedScrollEnabled={true}>
