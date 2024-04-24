@@ -115,6 +115,7 @@ export default function Menu({navigation}) {
   const [isChecked, setIsChecked] = useState(discount.map(() => false));
   const [nilaidisc, setNilaiDisc] = useState(0);
   const [selectedButtonIndex, setSelectedButtonIndex] = useState(null);
+  const [activePaymentID, setActivePaymentID] = useState(null);
   //#endregion
 
   useEffect(() => {
@@ -753,6 +754,7 @@ export default function Menu({navigation}) {
       setPaymentID(paymentid.payment_ID);
       setTotTender(tendertot);
       setChanges(changes);
+      handleActivePayment(paymentid.payment_ID);
     } catch (error) {
       let msg = error.message;
       console.log(error);
@@ -779,11 +781,23 @@ export default function Menu({navigation}) {
       setPaymentID(paymentid.payment_ID);
       console.log('TOTAL TENDER ALL: ', tenderall);
       console.log('New amttendered:', amttendered);
+      handleActivePayment(paymentid.payment_ID);
     } catch (error) {
       let msg = error.message;
       console.log(error);
       CallModalInfo(msg);
     }
+  };
+
+  const handleActivePayment = paymentID => {
+    // Clear any previously active payment ID
+    if (activePaymentID) {
+      setAmtTender(prevState => ({
+        ...prevState,
+        [activePaymentID]: '',
+      }));
+    }
+    setActivePaymentID(paymentID);
   };
 
   const SyncPayment = async () => {
@@ -1385,7 +1399,7 @@ export default function Menu({navigation}) {
                                 newValue,
                               );
                             }}
-                            onBlur={() => {
+                            onFocus={() => {
                               Changes(
                                 paymentType,
                                 amttendered[`${paymentType.payment_ID}`] ||
