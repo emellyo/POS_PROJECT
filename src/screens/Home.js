@@ -71,7 +71,7 @@ const Home = () => {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [runno, setRunno] = useState('');
-  const [openamount, setOpenAmount] = useState('');
+  const [openamount, setOpenAmount] = useState(0);
   const [lastSeenDate, setLastSeenDate] = useState(null);
   const [salesType, setSalesType] = useState([]);
   const [pairedDevices, setPairedDevices] = useState([]);
@@ -515,7 +515,7 @@ const Home = () => {
                   const numericValue = parseFloat(cleanedValue);
                   if (!isNaN(numericValue)) {
                     // Update the state with the formatted value
-                    setOpenAmount(numericValue.toLocaleString());
+                    setOpenAmount(numericValue);
                   } else {
                     // Handle invalid input, for example, setting an empty string
                     setOpenAmount('');
