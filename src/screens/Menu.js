@@ -1399,7 +1399,7 @@ export default function Menu({navigation}) {
                                 newValue,
                               );
                             }}
-                            onFocus={() => {
+                            onBlur={() => {
                               Changes(
                                 paymentType,
                                 amttendered[`${paymentType.payment_ID}`] ||
