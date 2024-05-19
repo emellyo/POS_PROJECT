@@ -304,10 +304,15 @@ const Login = () => {
     })
       .then(async result => {
         const results = [];
+        console.log('result:' + JSON.stringify(result));
         var store;
-        var hasil = result.data;
+        var hasil = Array.isArray(result.data)
+          ? result.data
+          : JSON.parse(result.data);
+        var len = hasil.length;
         console.log('HASIL GET STORE: ', hasil);
-        if (hasil.length > 0) {
+        console.log('length store: ', hasil.length);
+        if (len > 0) {
           for (let i = 0; i < hasil.length; i++) {
             let data = hasil[i];
             let value = data.store_ID;
@@ -327,6 +332,7 @@ const Login = () => {
             results.push(joined);
           }
         }
+
         setStore(results);
         setAdress(results);
         setStoreName(results);

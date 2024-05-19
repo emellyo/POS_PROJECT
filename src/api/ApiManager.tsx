@@ -2,7 +2,7 @@ import axios, { AxiosResponse, AxiosError } from 'axios';
 import * as Utils from '../Helpers/Utils';
 
 const ApiManager = axios.create({
-    baseURL: 'http://jodohsejati-001-site2.ftempurl.com/',
+    baseURL: 'http://jodohsejati-001-site2.ftempurl.com/api',
     //baseURL: 'https://bluverseapi23.azurewebsites.net/api',    
     //baseURL: 'http://localhost:8080/BluversePOS/BluverseAPI/api',
     //baseURL: 'http://localhost:8080/BlueVerse/api',
