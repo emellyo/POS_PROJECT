@@ -762,12 +762,12 @@ export default function Menu({navigation}) {
     }
   };
 
-  const ChangesAll = async paymentid => {
+  const ChangesAll = paymentid => {
     try {
       setAmtTender([]);
       console.log('payment name: ', paymentid.payment_Name);
       console.log('Previous amttendered:', amttendered);
-      console.log('paymentType:', paymentType);
+      console.log('isi array amttender:', amttendered);
       let tenderall = grandtotal;
       let changesall = grandtotal - grandtotal;
       const updatedAmtTender = {
@@ -1425,13 +1425,21 @@ export default function Menu({navigation}) {
                                   value={amt || ''}
                                 />
                               ))}
-                              {paymentType.payment_Name !== 'CASH' && ( // Only show "All" for non-CASH payments
+                              {paymentType.payment_Name !== 'CASH' ? ( // Only show "All" for non-CASH payments
                                 <TouchableOpacity
                                   style={[
                                     globalStyles.buttonAll,
                                     {opacity: amttendered.length > 0 ? 0.5 : 1},
                                   ]}
                                   disabled={amttendered.length > 0}>
+                                  <Text style={globalStyles.textStyle}>
+                                    All
+                                  </Text>
+                                </TouchableOpacity>
+                              ) : (
+                                <TouchableOpacity
+                                  style={[globalStyles.buttonAll]}
+                                  onPress={() => ChangesAll(paymentType)}>
                                   <Text style={globalStyles.textStyle}>
                                     All
                                   </Text>
