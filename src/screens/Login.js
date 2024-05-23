@@ -297,12 +297,12 @@ const Login = () => {
   };
 
   const GetStore = async () => {
-    setStore([]);
-    getstore({
-      interid: '',
-      ID: '',
-    })
-      .then(async result => {
+    try {
+      setStore([]);
+      getstore({
+        interid: '',
+        ID: '',
+      }).then(async result => {
         const results = [];
         console.log('result:' + JSON.stringify(result));
         var store;
@@ -332,7 +332,6 @@ const Login = () => {
             results.push(joined);
           }
         }
-
         setStore(results);
         setAdress(results);
         setStoreName(results);
@@ -344,12 +343,12 @@ const Login = () => {
         console.log('alamat toko: ', address);
         console.log('nama toko: ', storename);
         console.log('HASIL SET STORE: ', results);
-      })
-      .catch(async err => {
-        console.log('respon: ' + err.message);
-        let msg = 'Servers is not available.';
-        msg = err.message;
       });
+    } catch (error) {
+      console.log('respon: ' + err.message);
+      let msg = 'Servers is not available.';
+      msg = err.message;
+    }
   };
 
   const delaynew = ms => new Promise(res => setTimeout(res, ms));
