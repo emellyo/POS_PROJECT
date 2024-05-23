@@ -17,6 +17,7 @@ import {
   LogBox,
 } from 'react-native';
 import {useTheme, useRoute, useNavigation} from '@react-navigation/native';
+import * as Utils from '../Helpers/Utils';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import DropDownPicker from 'react-native-dropdown-picker';
 import CheckBox from '@react-native-community/checkbox';
@@ -99,6 +100,13 @@ const Login = () => {
   function emptyStr(str) {
     return !str || !/[^\s]+/.test(str);
   }
+
+  const deviceID = async () => {
+    var deviceid = await Utils.DeviceInfoConstants();
+    var id = deviceid.uniqueId._j;
+    console.log('device ID: ', deviceid);
+    console.log('model: ', id);
+  };
 
   const getrememberme = async () => {
     try {
@@ -289,9 +297,8 @@ const Login = () => {
       })
       .catch(err => {
         console.log(err);
-        let msg = 'Servers is not available.';
         msg = err.message;
-        CallModalInfo(msg);
+        CallModalInfo(err.message);
       });
     // */
   };
@@ -345,9 +352,10 @@ const Login = () => {
         console.log('HASIL SET STORE: ', results);
       });
     } catch (error) {
-      console.log('respon: ' + err.message);
-      let msg = 'Servers is not available.';
-      msg = err.message;
+      console.log('respon: ' + error.message);
+      //let msg = 'Servers is not available.';
+      msg = error.message;
+      CallModalInfo(error.message);
     }
   };
 
