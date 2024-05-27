@@ -1219,6 +1219,12 @@ export default function Menu({navigation}) {
     GetlistAfterUpdateVar();
   };
 
+  const CancelPayment = async () => {
+    setChanges(0);
+    setAmtTender([]);
+    setMdlPayment(false);
+  };
+
   GetlistAfterUpdateVar = async () => {
     const db = await dbconn.getDBConnection();
     let dtVariant = await dbconn.Variant_getdata(db, 'Variant');
@@ -1542,7 +1548,7 @@ export default function Menu({navigation}) {
                 <SafeAreaView style={[invrecStyles.buttontotalan]}>
                   <TouchableOpacity
                     style={[globalStyles.buttonNoPayment]}
-                    onPress={() => setMdlPayment(!mdlPayment)}>
+                    onPress={() => CancelPayment()}>
                     <Text style={globalStyles.textNo}>Cancel</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
@@ -1561,9 +1567,9 @@ export default function Menu({navigation}) {
           <View style={globalStyles.centeredViewPayment}>
             <View style={globalStyles.modalViewPayment}>
               <View style={globalStyles.modalheader}>
-                <Text style={globalStyles.modalText}>Variant</Text>
+                <Text style={globalStyles.modalText}>Item Desc</Text>
               </View>
-              <Text style={globalStyles.TextHeaderVariant}>Variant</Text>
+              <Text style={globalStyles.TextHeaderVariant}>Item Desc</Text>
               <ScrollView
                 style={globalStyles.InputVariant}
                 nestedScrollEnabled={true}>
@@ -1670,9 +1676,9 @@ export default function Menu({navigation}) {
           <View style={globalStyles.centeredViewPayment}>
             <View style={globalStyles.modalViewPayment}>
               <View style={globalStyles.modalheader}>
-                <Text style={globalStyles.modalText}>Variant</Text>
+                <Text style={globalStyles.modalText}>Item Desc</Text>
               </View>
-              <Text style={globalStyles.TextHeaderVariant}>Variant</Text>
+              <Text style={globalStyles.TextHeaderVariant}>Item Desc</Text>
               <ScrollView
                 style={globalStyles.InputVariant}
                 nestedScrollEnabled={true}>
