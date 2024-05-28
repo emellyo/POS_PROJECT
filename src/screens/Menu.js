@@ -116,6 +116,7 @@ export default function Menu({navigation}) {
   const [nilaidisc, setNilaiDisc] = useState(0);
   const [selectedButtonIndex, setSelectedButtonIndex] = useState(null);
   const [activePaymentID, setActivePaymentID] = useState(null);
+  const [itemdescvar, setItemDescvar] = useState('');
   //#endregion
 
   useEffect(() => {
@@ -473,6 +474,8 @@ export default function Menu({navigation}) {
     setVariant([]);
     var itmno = variant.item_Number;
     var cat = variant.category_ID;
+    var itmdesc = variant.item_Name;
+    setItemDescvar(itmdesc);
     console.log('category: ', variant);
     getvariant({
       UserID: '',
@@ -743,7 +746,7 @@ export default function Menu({navigation}) {
 
   const Changes = async (paymentid, amounttender) => {
     try {
-      setAmtTender([]);
+      //setAmtTender([]);
       console.log('payment ID, ', paymentid.payment_ID);
       console.log('payment name: ', paymentid.payment_Name);
       console.log('amount tender: ', amounttender);
@@ -765,6 +768,7 @@ export default function Menu({navigation}) {
   const ChangesAll = paymentid => {
     try {
       setAmtTender([]);
+      setChanges(0);
       console.log('payment name: ', paymentid.payment_Name);
       console.log('Previous amttendered:', amttendered);
       console.log('isi array amttender:', amttendered);
@@ -1397,7 +1401,7 @@ export default function Menu({navigation}) {
                             ]}
                             maxLength={100}
                             keyboardType="numeric"
-                            value={amttendered[paymentType.payment_ID] || ''}
+                            value={amttendered[paymentType.payment_ID]}
                             onChangeText={value => {
                               const newValue = value ? value : '';
                               handleTextInputChange(
@@ -1567,9 +1571,9 @@ export default function Menu({navigation}) {
           <View style={globalStyles.centeredViewPayment}>
             <View style={globalStyles.modalViewPayment}>
               <View style={globalStyles.modalheader}>
-                <Text style={globalStyles.modalText}>Item Desc</Text>
+                <Text style={globalStyles.modalText}>{itemdescvar}</Text>
               </View>
-              <Text style={globalStyles.TextHeaderVariant}>Item Desc</Text>
+              <Text style={globalStyles.TextHeaderVariant}>{itemdescvar}</Text>
               <ScrollView
                 style={globalStyles.InputVariant}
                 nestedScrollEnabled={true}>
@@ -1676,9 +1680,9 @@ export default function Menu({navigation}) {
           <View style={globalStyles.centeredViewPayment}>
             <View style={globalStyles.modalViewPayment}>
               <View style={globalStyles.modalheader}>
-                <Text style={globalStyles.modalText}>Item Desc</Text>
+                <Text style={globalStyles.modalText}>{itemdescvar}</Text>
               </View>
-              <Text style={globalStyles.TextHeaderVariant}>Item Desc</Text>
+              <Text style={globalStyles.TextHeaderVariant}>{itemdescvar}</Text>
               <ScrollView
                 style={globalStyles.InputVariant}
                 nestedScrollEnabled={true}>
