@@ -712,7 +712,7 @@ export default function Menu({navigation}) {
       setMdlBills(false);
       setMdlPayment(true);
       setTotChanges('');
-      setAmtTender([]);
+      //setAmtTender([]);
       const db = await dbconnTrx.getDBConnection();
       let datatipesales = await AsyncStorage.getItem('@datasalestype');
       datatipesales = JSON.parse(datatipesales);
@@ -795,7 +795,7 @@ export default function Menu({navigation}) {
 
   const handleActivePayment = paymentID => {
     // Clear any previously active payment ID
-    if (activePaymentID) {
+    if (activePaymentID && activePaymentID !== paymentID) {
       setAmtTender(prevState => ({
         ...prevState,
         [activePaymentID]: '',
@@ -1401,7 +1401,7 @@ export default function Menu({navigation}) {
                             ]}
                             maxLength={100}
                             keyboardType="numeric"
-                            value={amttendered[paymentType.payment_ID]}
+                            value={amttendered[paymentType.payment_ID] || ''}
                             onChangeText={value => {
                               const newValue = value ? value : '';
                               handleTextInputChange(
