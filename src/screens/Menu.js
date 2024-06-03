@@ -523,7 +523,9 @@ export default function Menu({navigation}) {
       const day = today.getDate();
       const formattedDate = `${month}/${day}/${year}`;
       console.log('TODAY DATE: ', formattedDate);
-
+      let datauser = await AsyncStorage.getItem('@dtUser');
+      datauser = JSON.parse(datauser);
+      var storeid = datauser[0].store_ID;
       const db = await dbconnTrx.getDBConnection();
       let dtVariant = await dbconn.Variant_getdataChoose(db, 'Variant');
       let noitem = 0;
@@ -546,6 +548,7 @@ export default function Menu({navigation}) {
       }
       console.log('kelar ngitung sequence');
       console.log('ISI DETAIL VARIANT: ', dtVariant[0].item_Price);
+      console.log('ISI STORE ID: ', storeid[0].value);
       console.log('RUNNING NUMBER: ', runno);
       console.log('DATE: ', formattedDate);
       console.log('SEQUENCE: ', noitem);
@@ -564,6 +567,7 @@ export default function Menu({navigation}) {
         dtVariant[0].item_Price,
         dtVariant[0].item_Cost,
         dtVariant[0].variant_Name,
+        storeid[0].value,
       );
       let dataDetail = await dbconnTrx.AddTrxDtl_getdata(db, 'AddTrxDtl');
       console.log('data detail: ', dataDetail);
