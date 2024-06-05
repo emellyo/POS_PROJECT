@@ -1,3 +1,5 @@
+import { NumericAnimation } from "react-native-reanimated";
+
 export type Variant ={
     DOCID: string;
     item_Number: string;
@@ -76,4 +78,28 @@ export type AddTrxDtl ={
     POS_Device_ID: string;
     POS_Version: string;
     variant_Name: string;
+}
+
+export type ShiftDetail ={
+    Batch_ID: string,
+    LastEdit_Date: string,
+    LastEdit_time: string,
+    Store_ID: string,
+    POS_Device_ID: string,
+    Opening_Date: string,
+    Opening_time: string,
+    Closing_Date: string,
+    Closing_time: string,
+    Sum_Amount_Opening: number,
+    Sum_Amount_Closing: number,
+    Sum_Invoice_Posted: number,
+    Sum_Tendered: number,
+    Sum_Changes: number,
+    Sum_Amount_Discount: number,
+    Sum_Amount_Tax: number,
+    Sum_Invoice_Refund_Posted: number,
+    Sum_Amount_PayOut: number,
+    Sum_Amount_PayIn: number,
+    Count_Customers: number,
+    Status_Batch: number
 }
