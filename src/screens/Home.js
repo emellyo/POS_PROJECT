@@ -32,6 +32,7 @@ import {openshift} from '../api/openshift';
 import {getBrand} from 'react-native-device-info';
 import {getsalestype} from '../api/getsalestype';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as dbconn from '../db/ShiftDetails';
 // import {
 //   loadingartha,
 //   invenreceiving,
@@ -104,6 +105,7 @@ const Home = () => {
     }
     GetSalesType();
     GetUserData();
+    LOADTBLADDSHIFT();
     //setMdlPrinter(true);
     if (route.params?.showModal) {
       setMdlConfirm(true);
@@ -124,6 +126,23 @@ const Home = () => {
     pairedDevices,
     scan,
   ]);
+
+  const LOADTBLADDSHIFT = async () => {
+    try {
+      const db = await dbconn.getDBConnection();
+      //await dbconnTrx.dropTbl(db, 'AddTrxDtl');
+      //await dbconn.dropTbl(db, 'Variant');
+      await dbconn.Variant_CreateTbl(db, 'ShiftDetail');
+      const storedTbl = await dbconn.Variant_getdata(db, 'ShiftDetail');
+      if (storedTbl.length) {
+        console.log('datastored:', storedTbl);
+      } else {
+        console.log('no data');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   //#region //* FUNCTION
 
@@ -153,6 +172,21 @@ const Home = () => {
 
   const PostOpenShift = async openamount => {
     console.log('nilai Amount_Opening', openamount);
+    let datauser = await AsyncStorage.getItem('@dtUser');
+    datauser = JSON.parse(datauser);
+    var storeid = datauser[0].store_ID;
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1;
+    const day = today.getDate();
+    const hours = today.getHours();
+    const minutes = today.getMinutes();
+    const seconds = today.getSeconds();
+    const formattedDate = `${month}/${day}/${year}`;
+    const formattedtime = `${hours}:${minutes}/${seconds}`;
+    console.log('TODAY DATE: ', formattedDate);
+    console.log('CURRENT TIME: ', formattedtime);
+    const db = await dbconn.getDBConnection();
     openshift({
       Batch_ID: runno,
       Lineitmseq: 0,
@@ -163,6 +197,17 @@ const Home = () => {
     }).then(async result => {
       var hasil = result.data;
       console.log('hasil get variant: ', hasil);
+      await dbconn.ShiftDetail_savedata(
+        db,
+        'ShiftDetail',
+        runno,
+        formattedDate,
+        openamount,
+        formattedtime,
+        storeid[0].value,
+      );
+      let datashift = await dbconn.ShiftDetail_getdata(db, 'ShiftDetail');
+      console.log('data shift: ', datashift);
       setOpenShift(false);
     });
   };

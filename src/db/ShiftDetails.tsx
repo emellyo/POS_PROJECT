@@ -152,15 +152,14 @@ export const ShiftDetail_getdataBillsCount = async (db: SQLiteDatabase, tableNam
 };
 
 export const ShiftDetail_savedata = async (db: SQLiteDatabase, tableName: string ,
-   docnumbr: string, date: string, lnitmseq: number, qty: number, notes: string, itemnmbr: string, itemname: string, itemprice: number,
-   itemcost: number, variantname: string, Store_ID: string) => {
+   Batch_ID: string, date: string, openamount: number ,time: string, Store_ID: string) => {
   const insertQuery =
     `INSERT INTO ${tableName}`+
-    `(DOCNUMBER, DOCTYPE, DOCDATE, Lineitmseq, Item_Number, Item_Description, Quantity, UofM,`+
-    `Item_Price, Item_Cost, Store_ID, Site_ID, SalesType_ID, Discount_ID, Discount_Amount, Notes, POS_Device_ID, POS_Version, variant_Name)`+
+    `(Batch_ID, LastEdit_Date, LastEdit_time, Store_ID, POS_Device_ID, Opening_Date, Opening_time, Closing_Date, Closing_time,`+
+    `Sum_Amount_Opening, Sum_Amount_Closing, Sum_Invoice_Posted, Sum_Tendered, Sum_Changes, Sum_Amount_Discount, Sum_Amount_Tax, Sum_Invoice_Refund_Posted, Sum_Amount_PayOut, Sum_Amount_PayIn, Count_Customers, Status_Batch)`+
     ` values ` +
- `('${docnumbr}', ${1}, '${date}', ${lnitmseq}, '${itemnmbr}','${itemname}', ${qty}, '${'PCS'}', ${itemprice}, ${itemcost}, '${Store_ID}', '${''}', '${''}',` + "\n" +
-  `'${''}', ${0}, '${notes}', '${''}', '${''}', '${variantname}')`;
+ `('${Batch_ID}', '${date}', '${time}', '${Store_ID}', '${''}', '${date}', '${time}', '${''}', '${''}', ${openamount}, ${0},` + "\n" +
+ `${0}, ${0}, ${0}, ${0}, ${0}, ${0}, ${0}, ${0}, ${0}, ${0})`;
   // join(',')
 
   return db.executeSql(insertQuery);
