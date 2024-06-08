@@ -1229,6 +1229,7 @@ export const globalStyles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#212121',
+    flex: 1,
   },
   InputVariant: {
     width: '100%',

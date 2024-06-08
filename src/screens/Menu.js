@@ -95,7 +95,7 @@ export default function Menu({navigation}) {
   const [salesid, setSalesID] = useState('');
   const [salesname, setSalesName] = useState('');
   const [amttendered, setAmtTender] = useState([]);
-  const [tottender, setTotTender] = useState('');
+  const [tottender, setTotTender] = useState(0);
   const [changes, setChanges] = useState(0);
   const [paymentID, setPaymentID] = useState('');
   const [paymentName, setPaymentName] = useState('');
@@ -163,7 +163,7 @@ export default function Menu({navigation}) {
       setModalVisible(false);
       setCount(1);
       setTotChanges('');
-      setTotTender('');
+      setTotTender(0);
     } catch (error) {
       console.error(error);
     }
@@ -582,7 +582,7 @@ export default function Menu({navigation}) {
 
   const GetBills = async () => {
     try {
-      setTotTender('');
+      setTotTender(0);
       setTotChanges('');
       console.log('modal bills');
       setMdlBills(true);
@@ -813,13 +813,17 @@ export default function Menu({navigation}) {
       let getbills = [];
       console.log('isi tot tender: ', tottender);
       if (tottender == 0) {
-        console.log('MASUK KONDISI VALIDASI');
+        console.log('MASUK KONDISI A');
         let msg = 'Nominal Pembayaran tidak sesuai, mohon diperiksa kembali';
         CallModalInfo(msg);
       } else if (tottender < 0) {
+        console.log('MASUK KONDISI B');
         let msg = 'Nominal Pembayaran tidak sesuai, mohon diperiksa kembali';
         CallModalInfo(msg);
       } else if (tottender < grandtotal) {
+        console.log('GRAND TOTAL: ', grandtotal);
+        console.log('TOTTENDER: ', tottender);
+        console.log('MASUK KONDISI C');
         let msg = 'Nominal Pembayaran tidak sesuai, mohon diperiksa kembali';
         CallModalInfo(msg);
       } else {
@@ -880,7 +884,7 @@ export default function Menu({navigation}) {
     try {
       let countdtl = [];
       console.log('masuk kondisi else');
-      setTotTender('');
+      setTotTender(0);
       //setTotChanges('');
       setGrandTotal('');
       setChanges('');
@@ -904,8 +908,11 @@ export default function Menu({navigation}) {
         runno,
       );
       //let countline = await dbconnTrx.querydynamic(db, querycount);
-      console.log('total detail count: ', countdtl);
-      setTotDetail(JSON.stringify(countdtl));
+      var totline = countdtl[0].TOTALDETAIL;
+      console.log('total detail count: ', totline);
+      setTotDetail(totline);
+      //var totline = JSON.parse(countdtl);
+      //console.log('total line: ', totline);
       let detail = await dbconnTrx.AddTrxDtl_getdataBillsDetails(
         db,
         `AddTrxDtl`,
@@ -921,7 +928,7 @@ export default function Menu({navigation}) {
         Site_ID: '',
         SalesType_ID: salesid,
         CustName: custname,
-        Total_Line_Item: totaldtl,
+        Total_Line_Item: totline,
         ORIGTOTAL: grandtotal,
         SUBTOTAL: total,
         Tax_Amount: tax,
@@ -939,10 +946,11 @@ export default function Menu({navigation}) {
         TrxDetailTYPE: detail,
       }).then(async result => {
         var hasil = result.data;
-        console.log('hasil syncup ', hasil[0].code);
-        if (hasil[0].code == 400) {
+        console.log('hasil syncup ', hasil.code);
+        if (hasil.code == 400) {
+          console.log('error 400');
           CallModalInfo(hasil.desc);
-        } else if (hasil[0].code == 200) {
+        } else if (hasil.code == 200) {
           PrintStruk();
 
           //handleBackButtonClick();

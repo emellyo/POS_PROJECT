@@ -131,9 +131,9 @@ const Home = () => {
     try {
       const db = await dbconn.getDBConnection();
       //await dbconnTrx.dropTbl(db, 'AddTrxDtl');
-      //await dbconn.dropTbl(db, 'Variant');
-      await dbconn.Variant_CreateTbl(db, 'ShiftDetail');
-      const storedTbl = await dbconn.Variant_getdata(db, 'ShiftDetail');
+      //await dbconn.dropTbl(db, 'ShiftDetail');
+      await dbconn.ShiftDetail_CreateTbl(db, 'ShiftDetail');
+      const storedTbl = await dbconn.ShiftDetail_getdata(db, 'ShiftDetail');
       if (storedTbl.length) {
         console.log('datastored:', storedTbl);
       } else {
