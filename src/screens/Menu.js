@@ -486,15 +486,19 @@ export default function Menu({navigation}) {
       let dtVariant = [];
       var hasil = result.data;
       console.log('hasil get variant: ', hasil);
-      const db = await dbconn.getDBConnection();
-      await dbconn.Variant_savedata(db, 'Variant', hasil);
-      dtVariant = await dbconn.Variant_getdata(db, 'Variant');
-      setAddTemp(dtVariant);
-      console.log('isi dtVariant: ', dtVariant);
-      setVariant(hasil);
-      setCount(1);
-      viewModalVariant();
-      //console.log('HASIL GET VARIANT', hasil);
+      if (hasil.length == 0) {
+        viewModalVariant();
+      } else {
+        const db = await dbconn.getDBConnection();
+        await dbconn.Variant_savedata(db, 'Variant', hasil);
+        dtVariant = await dbconn.Variant_getdata(db, 'Variant');
+        setAddTemp(dtVariant);
+        console.log('isi dtVariant: ', dtVariant);
+        setVariant(hasil);
+        setCount(1);
+        viewModalVariant();
+        //console.log('HASIL GET VARIANT', hasil);
+      }
     });
   };
 
@@ -820,7 +824,7 @@ export default function Menu({navigation}) {
         console.log('MASUK KONDISI B');
         let msg = 'Nominal Pembayaran tidak sesuai, mohon diperiksa kembali';
         CallModalInfo(msg);
-      } else if (tottender < grandtotal) {
+      } else if (Number(tottender) < grandtotal) {
         console.log('GRAND TOTAL: ', grandtotal);
         console.log('TOTTENDER: ', tottender);
         console.log('MASUK KONDISI C');
