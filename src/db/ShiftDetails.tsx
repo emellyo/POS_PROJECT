@@ -135,10 +135,10 @@ export const ShiftDetail_getdataBillsDetails = async (db: SQLiteDatabase, tableN
   }
 };
 
-export const ShiftDetail_getdataBillsCount = async (db: SQLiteDatabase, tableName: string, docnumbr: string): Promise<ShiftDetail[]> => {
+export const ShiftDetail_getdataBillsCount = async (db: SQLiteDatabase, tableName: string, Batch_ID: string, date: string): Promise<ShiftDetail[]> => {
   try {
     const Lists: ShiftDetail[] = [];
-    const results = await db.executeSql(`SELECT COUNT(*) AS TOTALDETAIL FROM ${tableName} WHERE DOCNUMBER = '${docnumbr}' `);
+    const results = await db.executeSql(`SELECT COUNT(*) AS TOTALSHIFT FROM ${tableName} WHERE Batch_ID = '${Batch_ID}' AND Opening_Date = '${date}' `);
     results.forEach(result => {
       for (let index = 0; index < result.rows.length; index++) {
         Lists.push(result.rows.item(index))

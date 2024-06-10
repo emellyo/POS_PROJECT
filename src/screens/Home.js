@@ -96,13 +96,14 @@ const Home = () => {
 
   useEffect(() => {
     const today = new Date();
-    if (lastSeenDate === null || lastSeenDate.getDate() !== today.getDate()) {
-      // Modal shows up if it's a new day
-      setOpenShift(true);
-      GetRunno();
-      AsyncStorage.setItem('lastSeenDate', today.toString()); // Save current date
-      setLastSeenDate(today);
-    }
+    // if (lastSeenDate === null || lastSeenDate.getDate() !== today.getDate()) {
+    //   // Modal shows up if it's a new day
+    //   setOpenShift(true);
+    //   GetRunno();
+    //   AsyncStorage.setItem('lastSeenDate', today.toString()); // Save current date
+    //   setLastSeenDate(today);
+    // }
+    OpenShiftWindow();
     GetSalesType();
     GetUserData();
     LOADTBLADDSHIFT();
@@ -132,6 +133,7 @@ const Home = () => {
       const db = await dbconn.getDBConnection();
       //await dbconnTrx.dropTbl(db, 'AddTrxDtl');
       //await dbconn.dropTbl(db, 'ShiftDetail');
+      //await dbconn.deletedataAllTbl(db, 'ShiftDetail');
       await dbconn.ShiftDetail_CreateTbl(db, 'ShiftDetail');
       const storedTbl = await dbconn.ShiftDetail_getdata(db, 'ShiftDetail');
       if (storedTbl.length) {
@@ -167,6 +169,29 @@ const Home = () => {
     } catch (error) {
       let msg = error.message;
       CallModalInfo(msg);
+    }
+  };
+
+  const OpenShiftWindow = async () => {
+    const db = await dbconn.getDBConnection();
+    let countdtl = [];
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1;
+    const day = today.getDate();
+    const formattedDate = `${month}/${day}/${year}`;
+    countdtl = await dbconn.ShiftDetail_getdataBillsCount(
+      db,
+      'ShiftDetail',
+      runno,
+      formattedDate,
+    );
+    var totline = countdtl[0].TOTALSHIFT;
+    console.log('total SHIFT count: ', totline);
+    if (totline == 0) {
+      setOpenShift(true);
+    } else {
+      setOpenShift(false);
     }
   };
 

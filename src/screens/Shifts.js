@@ -247,6 +247,7 @@ export default function Discount({navigation}) {
                       ]}
                       maxLength={100}
                       keyboardType="numeric"
+                      editable={false}
                       //value={password}
                       //onChangeText={text => setPassword(text)}
                     />
