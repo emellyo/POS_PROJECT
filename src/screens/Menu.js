@@ -68,6 +68,7 @@ export default function Menu({navigation}) {
   const [mdlConfirmCust, setMdlConfirmCust] = useState(false);
   const [mdlPayment, setMdlPayment] = useState(false);
   const [mdlVariant, setMdlVariant] = useState(false);
+  const [mdlnonVariant, setMdlNonVariant] = useState(false);
   const [mdlEditVariant, setMdlEditVariant] = useState(false);
   const [mdlBills, setMdlBills] = useState(false);
   const [modalCustVisible, setModalCustVisible] = useState(false);
@@ -571,6 +572,72 @@ export default function Menu({navigation}) {
         dtVariant[0].item_Price,
         dtVariant[0].item_Cost,
         dtVariant[0].variant_Name,
+        storeid[0].value,
+      );
+      let dataDetail = await dbconnTrx.AddTrxDtl_getdata(db, 'AddTrxDtl');
+      console.log('data detail: ', dataDetail);
+      setMdlVariant(false);
+    } catch (error) {
+      console.log(error);
+      let msg = 'Terjadi kesalahan, silahkan input ulang kembali';
+      msg = error.message;
+      CallModalInfo(msg);
+    }
+  };
+
+  const AddItemTempNonvar = async () => {
+    try {
+      const today = new Date();
+      // Get various parts of the date
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1; // Months are zero-indexed
+      const day = today.getDate();
+      const formattedDate = `${month}/${day}/${year}`;
+      console.log('TODAY DATE: ', formattedDate);
+      let datauser = await AsyncStorage.getItem('@dtUser');
+      datauser = JSON.parse(datauser);
+      var storeid = datauser[0].store_ID;
+      const db = await dbconnTrx.getDBConnection();
+      let dtVariant = await dbconn.Variant_getdataChoose(db, 'Variant');
+      let noitem = 0;
+
+      console.log('HASIL VARIANT YANG DIPILIH: ', dtVariant);
+
+      if (dtVariant.length == 0) {
+        console.log('masuk if length');
+        noitem = noitem + 1;
+      } else {
+        console.log('masuk else if length');
+        let datamax = await dbconnTrx.queryselectTrx(
+          db,
+          `select * from AddTrxDtl order by Lineitmseq desc;`,
+        );
+        console.log('isi data max dari table detail: ', datamax);
+        let len = datamax.length < 1 ? 0 : datamax.length;
+        noitem = len + 1;
+        console.log('total noitem: ', noitem);
+      }
+      console.log('kelar ngitung sequence');
+      console.log('ISI DETAIL VARIANT: ', dtVariant[0].item_Price);
+      console.log('ISI STORE ID: ', storeid[0].value);
+      console.log('RUNNING NUMBER: ', runno);
+      console.log('DATE: ', formattedDate);
+      console.log('SEQUENCE: ', noitem);
+      console.log('QTY ORDER: ', count);
+      console.log('ISI NOTES: ', notes);
+      await dbconnTrx.AddTrxDtl_savedata(
+        db,
+        'AddTrxDtl',
+        runno,
+        formattedDate,
+        noitem,
+        count,
+        notes,
+        dtVariant[0].item_Number,
+        dtVariant[0].item_Name,
+        dtVariant[0].item_Price,
+        dtVariant[0].item_Cost,
+        '',
         storeid[0].value,
       );
       let dataDetail = await dbconnTrx.AddTrxDtl_getdata(db, 'AddTrxDtl');
@@ -1799,6 +1866,73 @@ export default function Menu({navigation}) {
           </View>
         </Modal>
         {/* //* MODAL EDIT VARIANT */}
+        {/* //* MODAL NON VARIANT */}
+        <Modal animationType="fade" transparent={true} visible={mdlnonVariant}>
+          <View style={globalStyles.centeredViewPayment}>
+            <View style={globalStyles.modalViewPayment}>
+              <View style={globalStyles.modalheader}>
+                <Text style={globalStyles.modalText}>{itemdescvar}</Text>
+              </View>
+              <Text style={globalStyles.TextHeaderVariant}>{itemdescvar}</Text>
+              <View style={[globalStyles.InputTotalanVariant]}>
+                <SafeAreaView style={[invrecStyles.inputanvariant]}>
+                  <View style={globalStyles.inputtotalan}>
+                    <TextInput
+                      style={[
+                        globalStyles.textinputcomment,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}
+                      maxLength={100}
+                      placeholder={'Comment'}
+                      placeholderTextColor={colors.text}
+                      value={notes}
+                      onChangeText={text => setNotes(text)}
+                    />
+                  </View>
+                </SafeAreaView>
+                <SafeAreaView style={[invrecStyles.inputanqty]}>
+                  <TouchableOpacity
+                    style={[globalStyles.buttonQTYMinus]}
+                    onPress={handleDecrement}>
+                    <Text style={globalStyles.textNo}> - </Text>
+                  </TouchableOpacity>
+                  <TextInput
+                    style={[
+                      globalStyles.textinputqty,
+                      {backgroundColor: colors.card, color: colors.text},
+                    ]}
+                    value={count.toString()}
+                    editable={false}
+                    maxLength={100}
+                    keyboardType="numeric"
+                  />
+                  <TouchableOpacity
+                    style={[globalStyles.buttonQTYPlus]}
+                    onPress={handleIncrement}>
+                    <Text style={globalStyles.textNo}> + </Text>
+                  </TouchableOpacity>
+                </SafeAreaView>
+              </View>
+              <View style={globalStyles.ButtonPayment}>
+                <SafeAreaView style={[invrecStyles.buttontotalan]}>
+                  <TouchableOpacity
+                    style={[globalStyles.buttonNoPayment]}
+                    onPress={() => setMdlNonVariant(!mdlnonVariant)}>
+                    <Text style={globalStyles.textNo}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[globalStyles.buttonYesPayment]}
+                    onPress={() => {
+                      AddItemTempNonvar();
+                    }}>
+                    <Text style={globalStyles.textStyle}>Add Item</Text>
+                  </TouchableOpacity>
+                </SafeAreaView>
+              </View>
+            </View>
+          </View>
+        </Modal>
+        {/* //* MODAL NON VARIANT */}
         {/* //* MODAL BILLS */}
         <Modal animationType="fade" transparent={true} visible={mdlBills}>
           <View style={globalStyles.centeredViewPayment}>
