@@ -35,7 +35,7 @@ import {getcategories} from '../api/getcategories';
 import {getitem} from '../api/getitem';
 import {Item} from 'react-navigation-header-buttons';
 import {getvariant} from '../api/getvariant';
-import {getrunno} from '../api/getrunningnumber';
+import {getrunno} from '../api/generatenumberperday';
 import {getrunnobatch} from '../api/getrunnobatch';
 import {getdiscount} from '../api/getdiscount';
 import {getpayment} from '../api/getpaymentype';
@@ -70,6 +70,7 @@ export default function Menu({navigation}) {
   const [mdlVariant, setMdlVariant] = useState(false);
   const [mdlnonVariant, setMdlNonVariant] = useState(false);
   const [mdlEditVariant, setMdlEditVariant] = useState(false);
+  const [mdlEditNonVariant, setMdlEditNonVariant] = useState(false);
   const [mdlBills, setMdlBills] = useState(false);
   const [modalCustVisible, setModalCustVisible] = useState(false);
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
@@ -174,7 +175,7 @@ export default function Menu({navigation}) {
     try {
       const db = await dbconn.getDBConnection();
       const dbtrx = await dbconnTrx.getDBConnection();
-      //await dbconnTrx.dropTbl(db, 'AddTrxDtl');
+      await dbconnTrx.dropTbl(db, 'AddTrxDtl');
       //await dbconn.dropTbl(db, 'Variant');
       await dbconn.Variant_CreateTbl(db, 'Variant');
       await dbconnTrx.AddTrxDtl_CreateTbl(dbtrx, 'AddTrxDtl');
@@ -391,18 +392,39 @@ export default function Menu({navigation}) {
       });
   };
 
+  // const GetRunno = async () => {
+  //   getrunno({
+  //     TABLE: 'POS_TrxHeader_POST',
+  //     FIELD: 'DOCNUMBER',
+  //     DOCID: 'INV',
+  //     NEWNUMBER: '',
+  //   })
+  //     .then(async result => {
+  //       if (result.status == 200) {
+  //         var hasil = result.data;
+  //         console.log('hasil getrunno: ', hasil);
+  //         var number = hasil[0].output;
+  //         setRunno(number);
+  //         console.log('INI ISI RUNNO: ', runno);
+  //       }
+  //     })
+  //     .catch(async err => {
+  //       console.log('respon: ' + err.message);
+  //       let msg = 'Servers is not available.';
+  //       msg = err.message;
+  //       CallModalInfo(msg);
+  //     });
+  // };
+
   const GetRunno = async () => {
     getrunno({
-      TABLE: 'POS_TrxHeader_POST',
-      FIELD: 'DOCNUMBER',
       DOCID: 'INV',
-      NEWNUMBER: '',
     })
       .then(async result => {
         if (result.status == 200) {
           var hasil = result.data;
           console.log('hasil getrunno: ', hasil);
-          var number = hasil[0].output;
+          var number = hasil[0].gennumber;
           setRunno(number);
           console.log('INI ISI RUNNO: ', runno);
         }
@@ -573,6 +595,7 @@ export default function Menu({navigation}) {
         dtVariant[0].item_Cost,
         dtVariant[0].variant_Name,
         storeid[0].value,
+        1,
       );
       let dataDetail = await dbconnTrx.AddTrxDtl_getdata(db, 'AddTrxDtl');
       console.log('data detail: ', dataDetail);
@@ -639,6 +662,7 @@ export default function Menu({navigation}) {
         dtVariant[0].item_Cost,
         '',
         storeid[0].value,
+        0,
       );
       let dataDetail = await dbconnTrx.AddTrxDtl_getdata(db, 'AddTrxDtl');
       console.log('data detail: ', dataDetail);
@@ -687,6 +711,27 @@ export default function Menu({navigation}) {
       let detailUpdate = await dbconnTrx.AddTrxDtl_getdata(db, 'AddTrxDtl');
       setBills(detailUpdate);
       setMdlEditVariant(false);
+      CalculateTotal();
+    } catch (error) {
+      let msg = error.message;
+      CallModalInfo(msg);
+    }
+  };
+
+  const UpdateItemNonvar = async () => {
+    try {
+      console.log('isi sequence: ', seqTemp);
+      const db = await dbconnTrx.getDBConnection();
+      let dtVariant = await dbconn.Variant_getdataChoose(db, 'Variant');
+      let variantedit = dtVariant[0].variant_Name;
+      console.log('isi variant choose: ', variantedit);
+      let updatedetail = await dbconnTrx.queryselectTrx(
+        db,
+        `UPDATE AddTrxDtl SET Quantity = ${count} WHERE Lineitmseq = ${seqTemp}`,
+      );
+      let detailUpdate = await dbconnTrx.AddTrxDtl_getdata(db, 'AddTrxDtl');
+      setBills(detailUpdate);
+      setMdlEditNonVariant(false);
       CalculateTotal();
     } catch (error) {
       let msg = error.message;
@@ -1326,10 +1371,25 @@ export default function Menu({navigation}) {
     setMdlVariant(true);
   };
 
-  const viewModalEditVariant = async Lineitmseq => {
+  const viewModalnonVariant = async () => {
+    setMdlNonVariant(true);
+  };
+
+  const viewModalEditNonVariant = async Lineitmseq => {
     setSeqTemp(Lineitmseq);
     console.log('SEQUENCE: ', seqTemp);
-    setMdlEditVariant(true);
+    setMdlEditNonVariant(true);
+  };
+
+  const viewModalEditVariant = async (Lineitmseq, isVarian) => {
+    if (isVarian == 0) {
+      setSeqTemp(Lineitmseq);
+      viewModalnonVariant();
+    } else {
+      setSeqTemp(Lineitmseq);
+      console.log('SEQUENCE: ', seqTemp);
+      setMdlEditVariant(true);
+    }
   };
 
   const viewModalBills = async () => {
@@ -1933,6 +1993,75 @@ export default function Menu({navigation}) {
           </View>
         </Modal>
         {/* //* MODAL NON VARIANT */}
+        {/* //* MODAL EDIT NON VARIANT */}
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={mdlEditNonVariant}>
+          <View style={globalStyles.centeredViewPayment}>
+            <View style={globalStyles.modalViewPayment}>
+              <View style={globalStyles.modalheader}>
+                <Text style={globalStyles.modalText}>{itemdescvar}</Text>
+              </View>
+              <Text style={globalStyles.TextHeaderVariant}>{itemdescvar}</Text>
+              <View style={[globalStyles.InputTotalanVariant]}>
+                <SafeAreaView style={[invrecStyles.inputanvariant]}>
+                  <View style={globalStyles.inputtotalan}>
+                    <TextInput
+                      style={[
+                        globalStyles.textinputcomment,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}
+                      maxLength={100}
+                      placeholder={'Comment'}
+                      placeholderTextColor={colors.text}
+                      value={notes}
+                    />
+                  </View>
+                </SafeAreaView>
+                <SafeAreaView style={[invrecStyles.inputanqty]}>
+                  <TouchableOpacity
+                    style={[globalStyles.buttonQTYMinus]}
+                    onPress={handleDecrement}>
+                    <Text style={globalStyles.textNo}> - </Text>
+                  </TouchableOpacity>
+                  <TextInput
+                    style={[
+                      globalStyles.textinputqty,
+                      {backgroundColor: colors.card, color: colors.text},
+                    ]}
+                    value={count.toString()}
+                    editable={false}
+                    maxLength={100}
+                    keyboardType="numeric"
+                  />
+                  <TouchableOpacity
+                    style={[globalStyles.buttonQTYPlus]}
+                    onPress={handleIncrement}>
+                    <Text style={globalStyles.textNo}> + </Text>
+                  </TouchableOpacity>
+                </SafeAreaView>
+              </View>
+              <View style={globalStyles.ButtonPayment}>
+                <SafeAreaView style={[invrecStyles.buttontotalan]}>
+                  <TouchableOpacity
+                    style={[globalStyles.buttonNoPayment]}
+                    onPress={() => setMdlEditNonVariant(!mdlEditNonVariant)}>
+                    <Text style={globalStyles.textNo}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[globalStyles.buttonYesPayment]}
+                    onPress={() => {
+                      UpdateItemNonvar(variant.Lineitmseq);
+                    }}>
+                    <Text style={globalStyles.textStyle}>Edit Item</Text>
+                  </TouchableOpacity>
+                </SafeAreaView>
+              </View>
+            </View>
+          </View>
+        </Modal>
+        {/* //* MODAL EDIT NON VARIANT */}
         {/* //* MODAL BILLS */}
         <Modal animationType="fade" transparent={true} visible={mdlBills}>
           <View style={globalStyles.centeredViewPayment}>
@@ -1955,7 +2084,10 @@ export default function Menu({navigation}) {
                           <View style={globalStyles.itemqty}>
                             <TouchableOpacity
                               onPress={() => {
-                                viewModalEditVariant(bills.Lineitmseq);
+                                viewModalEditVariant(
+                                  bills.Lineitmseq,
+                                  bills.isVarian,
+                                );
                               }}>
                               <Text
                                 style={[

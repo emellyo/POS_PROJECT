@@ -60,7 +60,8 @@ export const AddTrxDtl_CreateTbl = async (db: SQLiteDatabase, tableName: string)
         Notes TEXT NULL,
         POS_Device_ID TEXT NULL,
         POS_Version TEXT NULL,
-        variant_Name TEXT NULL
+        variant_Name TEXT NULL,
+        isVarian INT NOT NULL
     );`;
 
   await db.executeSql(query);
@@ -195,14 +196,14 @@ export const AddTrxDtl_getdataBillsCount = async (db: SQLiteDatabase, tableName:
 
 export const AddTrxDtl_savedata = async (db: SQLiteDatabase, tableName: string ,
    docnumbr: string, date: string, lnitmseq: number, qty: number, notes: string, itemnmbr: string, itemname: string, itemprice: number,
-   itemcost: number, variantname: string, Store_ID: string) => {
+   itemcost: number, variantname: string, Store_ID: string, isVarian: number) => {
   const insertQuery =
     `INSERT INTO ${tableName}`+
     `(DOCNUMBER, DOCTYPE, DOCDATE, Lineitmseq, Item_Number, Item_Description, Quantity, UofM,`+
-    `Item_Price, Item_Cost, Store_ID, Site_ID, SalesType_ID, Discount_ID, Discount_Amount, Notes, POS_Device_ID, POS_Version, variant_Name)`+
+    `Item_Price, Item_Cost, Store_ID, Site_ID, SalesType_ID, Discount_ID, Discount_Amount, Notes, POS_Device_ID, POS_Version, variant_Name, isVarian)`+
     ` values ` +
  `('${docnumbr}', ${1}, '${date}', ${lnitmseq}, '${itemnmbr}','${itemname}', ${qty}, '${'PCS'}', ${itemprice}, ${itemcost}, '${Store_ID}', '${''}', '${''}',` + "\n" +
-  `'${''}', ${0}, '${notes}', '${''}', '${''}', '${variantname}')`;
+  `'${''}', ${0}, '${notes}', '${''}', '${''}', '${variantname}', ${isVarian})`;
   // join(',')
 
   return db.executeSql(insertQuery);
