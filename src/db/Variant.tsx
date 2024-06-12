@@ -67,6 +67,22 @@ export const Variant_getdataChoose = async (db: SQLiteDatabase, tableName: strin
   }
 };
 
+export const Variant_getdataChooseNonVar = async (db: SQLiteDatabase, tableName: string): Promise<Variant[]> => {
+  try {
+    const Lists: Variant[] = [];
+    const results = await db.executeSql(`SELECT * FROM ${tableName} WHERE FLAG = 1`);
+    results.forEach(result => {
+      for (let index = 0; index < result.rows.length; index++) {
+        Lists.push(result.rows.item(index))
+      }
+    });
+    return Lists;
+  } catch (error) {
+    console.error(error);
+    throw Error('Failed to get Add Item !!!');
+  }
+};
+
 
 export const Variant_savedata = async (db: SQLiteDatabase, tableName: string, lists: Variant[]) => {
   const insertQuery =
@@ -78,6 +94,20 @@ export const Variant_savedata = async (db: SQLiteDatabase, tableName: string, li
         i => `('${''}', '${i.item_Number}', '${i.item_Name}', ${i.lineItem_Option}, ${i.cB_Available}, '${i.option_ID}', '${i.option_Name}', ${i.lineItem_Variant}, '${i.variant_Name}',`+
         `${i.item_Price}, ${i.item_Cost}, ${i.inStock}, ${i.lowStock}, ${i.optimalStock},  '${i.item_SKU}', '${i.item_Barcode}', ${0}, ${i.flag})`
     ).join(',');
+  return db.executeSql(insertQuery);
+};
+
+export const Variant_savedataNonVariant = async (db: SQLiteDatabase, tableName: string, DOCID: string, 
+  item_Number: string, item_Name: string, lineItem_Option: number, cB_Available: number, option_ID: string, 
+  option_Name: string, lineItem_Variant: number, variant_Name: string, item_Price: number, item_Cost: number, inStock: number, 
+  lowStock: number, optimalStock: number, item_SKU: string, item_Barcode: string, QTY_ORDER: number, flag: number) => {
+  const insertQuery =
+    `INSERT OR REPLACE INTO ${tableName}`+
+    `(DOCID, item_Number, item_Name, lineItem_Option, cB_Available, option_ID, option_Name, lineItem_Variant,`+
+    `variant_Name, item_Price, item_Cost, inStock, lowStock, optimalStock, item_SKU, item_Barcode, QTY_ORDER, flag)`+
+    ` values ` +
+    `('${''}', '${item_Number}',` + "\n" +
+ `${0}, ${0}, ${0}, ${0}, ${0}, ${0}, ${0}, ${0}, ${0}, ${0})`;
   return db.executeSql(insertQuery);
 };
 

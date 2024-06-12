@@ -498,6 +498,8 @@ export default function Menu({navigation}) {
     var itmno = variant.item_Number;
     var cat = variant.category_ID;
     var itmdesc = variant.item_Name;
+    var isVarian = variant.isVariant;
+    var price = variant.item_Price;
     setItemDescvar(itmdesc);
     console.log('category: ', variant);
     getvariant({
@@ -510,7 +512,12 @@ export default function Menu({navigation}) {
       var hasil = result.data;
       console.log('hasil get variant: ', hasil);
       if (hasil.length == 0) {
-        viewModalVariant();
+        const db = await dbconn.getDBConnection();
+        await dbconn.Variant_savedataNonVariant(db, 'Variant', itmno, itmdesc);
+        dtVariant = await dbconn.Variant_getdata(db, 'Variant');
+        setAddTemp(dtVariant);
+        setCount(1);
+        viewModalVariant(isVarian, price);
       } else {
         const db = await dbconn.getDBConnection();
         await dbconn.Variant_savedata(db, 'Variant', hasil);
@@ -519,7 +526,7 @@ export default function Menu({navigation}) {
         console.log('isi dtVariant: ', dtVariant);
         setVariant(hasil);
         setCount(1);
-        viewModalVariant();
+        viewModalVariant(isVarian, price);
         //console.log('HASIL GET VARIANT', hasil);
       }
     });
@@ -1367,11 +1374,16 @@ export default function Menu({navigation}) {
 
   //#region //* EVENT
 
-  const viewModalVariant = async () => {
-    setMdlVariant(true);
+  const viewModalVariant = async (isVarian, price) => {
+    if (isVarian == 0) {
+      console.log('masuk view non variant');
+      viewModalnonVariant(isVarian, price);
+    } else {
+      setMdlVariant(true);
+    }
   };
 
-  const viewModalnonVariant = async () => {
+  const viewModalnonVariant = async (isVarian, price) => {
     setMdlNonVariant(true);
   };
 
