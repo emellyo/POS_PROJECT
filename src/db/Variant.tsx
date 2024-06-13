@@ -97,17 +97,16 @@ export const Variant_savedata = async (db: SQLiteDatabase, tableName: string, li
   return db.executeSql(insertQuery);
 };
 
-export const Variant_savedataNonVariant = async (db: SQLiteDatabase, tableName: string, DOCID: string, 
-  item_Number: string, item_Name: string, lineItem_Option: number, cB_Available: number, option_ID: string, 
-  option_Name: string, lineItem_Variant: number, variant_Name: string, item_Price: number, item_Cost: number, inStock: number, 
-  lowStock: number, optimalStock: number, item_SKU: string, item_Barcode: string, QTY_ORDER: number, flag: number) => {
+export const Variant_savedataNonVariant = async (db: SQLiteDatabase, tableName: string, 
+  item_Number: string, item_Name: string, item_Price: number, item_Cost: number, inStock: number, 
+  lowStock: number) => {
   const insertQuery =
     `INSERT OR REPLACE INTO ${tableName}`+
     `(DOCID, item_Number, item_Name, lineItem_Option, cB_Available, option_ID, option_Name, lineItem_Variant,`+
     `variant_Name, item_Price, item_Cost, inStock, lowStock, optimalStock, item_SKU, item_Barcode, QTY_ORDER, flag)`+
     ` values ` +
-    `('${''}', '${item_Number}',` + "\n" +
- `${0}, ${0}, ${0}, ${0}, ${0}, ${0}, ${0}, ${0}, ${0}, ${0})`;
+    `('${''}', '${item_Number}', '${item_Name}', ${0}, ${0}, '${''}', '${''}', ${0}, '${''}'` + "\n" +
+ `${item_Price}, ${item_Cost}, ${inStock}, ${lowStock}, ${0}, ${0}, ${0}, ${0}, ${0})`;
   return db.executeSql(insertQuery);
 };
 
