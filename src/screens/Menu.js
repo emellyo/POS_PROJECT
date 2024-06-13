@@ -513,7 +513,16 @@ export default function Menu({navigation}) {
       console.log('hasil get variant: ', hasil);
       if (hasil.length == 0) {
         const db = await dbconn.getDBConnection();
-        await dbconn.Variant_savedataNonVariant(db, 'Variant', itmno, itmdesc);
+        await dbconn.Variant_savedataNonVariant(
+          db,
+          'Variant',
+          itmno,
+          itmdesc,
+          price,
+          variant.item_Cost,
+          variant.inStock,
+          variant.lowStock,
+        );
         dtVariant = await dbconn.Variant_getdata(db, 'Variant');
         setAddTemp(dtVariant);
         setCount(1);
