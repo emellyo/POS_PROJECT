@@ -1954,7 +1954,7 @@ export default function Menu({navigation}) {
               <View style={globalStyles.modalheader}>
                 <Text style={globalStyles.modalText}>{itemdescvar}</Text>
               </View>
-              <Text style={globalStyles.TextHeaderVariant}>{itemdescvar}</Text>
+              <Text style={globalStyles.TextHeaderVariant}></Text>
               <View style={[globalStyles.InputTotalanVariant]}>
                 <SafeAreaView style={[invrecStyles.inputanvariant]}>
                   <View style={globalStyles.inputtotalan}>
@@ -2024,7 +2024,7 @@ export default function Menu({navigation}) {
               <View style={globalStyles.modalheader}>
                 <Text style={globalStyles.modalText}>{itemdescvar}</Text>
               </View>
-              <Text style={globalStyles.TextHeaderVariant}>{itemdescvar}</Text>
+              <Text style={globalStyles.TextHeaderVariant}></Text>
               <View style={[globalStyles.InputTotalanVariant]}>
                 <SafeAreaView style={[invrecStyles.inputanvariant]}>
                   <View style={globalStyles.inputtotalan}>
