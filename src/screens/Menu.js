@@ -637,7 +637,7 @@ export default function Menu({navigation}) {
       datauser = JSON.parse(datauser);
       var storeid = datauser[0].store_ID;
       const db = await dbconnTrx.getDBConnection();
-      let dtVariant = await dbconn.Variant_getdataChoose(db, 'Variant');
+      let dtVariant = await dbconn.Variant_getdataChooseNonVar(db, 'Variant');
       let noitem = 0;
 
       console.log('HASIL VARIANT YANG DIPILIH: ', dtVariant);
@@ -682,7 +682,7 @@ export default function Menu({navigation}) {
       );
       let dataDetail = await dbconnTrx.AddTrxDtl_getdata(db, 'AddTrxDtl');
       console.log('data detail: ', dataDetail);
-      setMdlVariant(false);
+      setMdlNonVariant(false);
     } catch (error) {
       console.log(error);
       let msg = 'Terjadi kesalahan, silahkan input ulang kembali';

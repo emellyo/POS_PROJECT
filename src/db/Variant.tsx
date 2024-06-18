@@ -54,7 +54,7 @@ export const Variant_getdata = async (db: SQLiteDatabase, tableName: string): Pr
 export const Variant_getdataChoose = async (db: SQLiteDatabase, tableName: string): Promise<Variant[]> => {
   try {
     const Lists: Variant[] = [];
-    const results = await db.executeSql(`SELECT * FROM ${tableName} WHERE FLAG = 1`);
+    const results = await db.executeSql(`SELECT * FROM ${tableName} WHERE FLAG = 1 AND lineItem_Variant = 0`);
     results.forEach(result => {
       for (let index = 0; index < result.rows.length; index++) {
         Lists.push(result.rows.item(index))
@@ -70,7 +70,7 @@ export const Variant_getdataChoose = async (db: SQLiteDatabase, tableName: strin
 export const Variant_getdataChooseNonVar = async (db: SQLiteDatabase, tableName: string): Promise<Variant[]> => {
   try {
     const Lists: Variant[] = [];
-    const results = await db.executeSql(`SELECT * FROM ${tableName} WHERE FLAG = 1`);
+    const results = await db.executeSql(`SELECT * FROM ${tableName} WHERE FLAG = 0 `);
     results.forEach(result => {
       for (let index = 0; index < result.rows.length; index++) {
         Lists.push(result.rows.item(index))
@@ -105,7 +105,7 @@ export const Variant_savedataNonVariant = async (db: SQLiteDatabase, tableName: 
     `(DOCID, item_Number, item_Name, lineItem_Option, cB_Available, option_ID, option_Name, lineItem_Variant,`+
     `variant_Name, item_Price, item_Cost, inStock, lowStock, optimalStock, item_SKU, item_Barcode, QTY_ORDER, flag)`+
     ` values ` +
-    `('${''}', '${item_Number}', '${item_Name}', ${0}, ${0}, '${''}', '${''}', ${0}, '${''}'` + "\n" +
+    `('${''}', '${item_Number}', '${item_Name}', ${0}, ${0}, '${''}', '${''}', ${0}, '${''}', ` + "\n" +
  `${item_Price}, ${item_Cost}, ${inStock}, ${lowStock}, ${0}, ${0}, ${0}, ${0}, ${0})`;
   return db.executeSql(insertQuery);
 };
