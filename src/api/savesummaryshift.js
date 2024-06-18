@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import ApiManager from './ApiManager';
 import RNFetchBlob from 'rn-fetch-blob';
 
-export const getsummaryshift = async data => {
+export const savesummaryshift = async data => {
   try {
     const urlapi = 'Service/SaveSummaryShift';
     console.log('data: ', data);

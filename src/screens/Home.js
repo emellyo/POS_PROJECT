@@ -29,6 +29,7 @@ import {HeaderButtons, Item} from 'react-navigation-header-buttons';
 import HeaderButton from '../screens/HeaderButton';
 import {getrunnobatch} from '../api/getrunnobatch';
 import {openshift} from '../api/openshift';
+import {savesummaryshift} from '../api/savesummaryshift';
 import {getBrand} from 'react-native-device-info';
 import {getsalestype} from '../api/getsalestype';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -99,7 +100,7 @@ const Home = () => {
     // if (lastSeenDate === null || lastSeenDate.getDate() !== today.getDate()) {
     //   // Modal shows up if it's a new day
     //   setOpenShift(true);
-    //   GetRunno();
+    GetRunno();
     //   AsyncStorage.setItem('lastSeenDate', today.toString()); // Save current date
     //   setLastSeenDate(today);
     // }
@@ -133,7 +134,7 @@ const Home = () => {
       const db = await dbconn.getDBConnection();
       //await dbconnTrx.dropTbl(db, 'AddTrxDtl');
       //await dbconn.dropTbl(db, 'ShiftDetail');
-      //await dbconn.deletedataAllTbl(db, 'ShiftDetail');
+      await dbconn.deletedataAllTbl(db, 'ShiftDetail');
       await dbconn.ShiftDetail_CreateTbl(db, 'ShiftDetail');
       const storedTbl = await dbconn.ShiftDetail_getdata(db, 'ShiftDetail');
       if (storedTbl.length) {
@@ -150,7 +151,7 @@ const Home = () => {
 
   const CallModalInfo = async info => {
     // console.info('hasil message : ',info);
-    setLoad(false);
+    // setLoad(false);
     setInformation(info);
     setModalVisible(true);
   };
@@ -196,45 +197,110 @@ const Home = () => {
   };
 
   const PostOpenShift = async openamount => {
-    console.log('nilai Amount_Opening', openamount);
-    let datauser = await AsyncStorage.getItem('@dtUser');
-    datauser = JSON.parse(datauser);
-    var storeid = datauser[0].store_ID;
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth() + 1;
-    const day = today.getDate();
-    const hours = today.getHours();
-    const minutes = today.getMinutes();
-    const seconds = today.getSeconds();
-    const formattedDate = `${month}/${day}/${year}`;
-    const formattedtime = `${hours}:${minutes}/${seconds}`;
-    console.log('TODAY DATE: ', formattedDate);
-    console.log('CURRENT TIME: ', formattedtime);
-    const db = await dbconn.getDBConnection();
-    openshift({
-      Batch_ID: runno,
-      Lineitmseq: 0,
-      Payment_ID: '',
-      Payment_Type: '',
-      Amount_Opening: openamount,
-      UserID: '',
-    }).then(async result => {
-      var hasil = result.data;
-      console.log('hasil get variant: ', hasil);
-      await dbconn.ShiftDetail_savedata(
+    try {
+      console.log('nilai Amount_Opening', openamount);
+      let datauser = await AsyncStorage.getItem('@dtUser');
+      datauser = JSON.parse(datauser);
+      var storeid = datauser[0].store_ID;
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1;
+      const day = today.getDate();
+      const hours = today.getHours();
+      const minutes = today.getMinutes();
+      const seconds = today.getSeconds();
+      const formattedDate = `${month}/${day}/${year}`;
+      const formattedtime = `${hours}:${minutes}`;
+      console.log('TODAY DATE: ', formattedDate);
+      console.log('CURRENT TIME: ', formattedtime);
+      const db = await dbconn.getDBConnection();
+      openshift({
+        Batch_ID: runno,
+        Lineitmseq: 0,
+        Payment_ID: '',
+        Payment_Type: '',
+        Amount_Opening: openamount,
+        UserID: '',
+      }).then(async result => {
+        var hasil = result.data;
+        console.log('hasil return post openshift: ', hasil);
+        await dbconn.ShiftDetail_savedata(
+          db,
+          'ShiftDetail',
+          runno,
+          formattedDate,
+          openamount,
+          formattedtime,
+          storeid[0].value,
+        );
+        setOpenShift(false);
+        PostSummaryShift(openamount);
+      });
+    } catch (error) {
+      let msg = error;
+      CallModalInfo(msg);
+    }
+  };
+
+  const PostSummaryShift = async openamount => {
+    try {
+      console.log('MASUK SUMMARY SHIFT POST');
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1;
+      const day = today.getDate();
+      const hours = today.getHours();
+      const minutes = today.getMinutes();
+      const formattedDate = `${month}/${day}/${year}`;
+      const formattedtime = `${hours}:${minutes}`;
+      console.log('TODAY DATE: ', formattedDate);
+      console.log('CURRENT TIME: ', formattedtime);
+      console.log('nilai Amount_Opening', openamount);
+      let datauser = await AsyncStorage.getItem('@dtUser');
+      datauser = JSON.parse(datauser);
+      var storeid = datauser[0].store_ID;
+      const db = await dbconn.getDBConnection();
+      let datashift = await dbconn.ShiftDetail_getdata(
         db,
         'ShiftDetail',
         runno,
-        formattedDate,
-        openamount,
-        formattedtime,
-        storeid[0].value,
+        0,
       );
-      let datashift = await dbconn.ShiftDetail_getdata(db, 'ShiftDetail');
       console.log('data shift: ', datashift);
-      setOpenShift(false);
-    });
+      let Opening_Date = datashift[0].Opening_Date;
+      console.log('opening date: ', Opening_Date);
+      savesummaryshift({
+        Batch_ID: runno,
+        LastEdit_Date: datashift[0].LastEdit_Date,
+        LastEdit_time: datashift[0].LastEdit_time,
+        Store_ID: storeid[0].value,
+        POS_Device_ID: '',
+        Opening_Date: datashift[0].Opening_Date,
+        Opening_time: datashift[0].Opening_time,
+        Closing_Date: '1900-01-01 00:00:00.000',
+        Closing_time: '1900-01-01 00:00:00.000',
+        Sum_Amount_Opening: openamount,
+        Sum_Amount_Closing: 0,
+        Sum_Invoice_Posted: 0,
+        Sum_Tendered: 0,
+        Sum_Changes: 0,
+        Sum_Amount_Discount: 0,
+        Sum_Amount_Tax: 0,
+        Sum_Invoice_Refund_Posted: 0,
+        Sum_Amount_PayOut: 0,
+        Sum_Amount_PayIn: 0,
+        Count_Customers: 0,
+        Status_Batch: 0,
+        UserID: '',
+      }).then(async result => {
+        var hasil = result.data;
+        console.log('hasil return save shift: ', hasil);
+        setOpenShift(false);
+      });
+    } catch (error) {
+      let msg = error;
+      CallModalInfo(msg);
+    }
   };
 
   function emptyStr(str) {
@@ -455,6 +521,7 @@ const Home = () => {
       setINTERID(param_interid);
       var param_username = dataall.username;
       setUsername(param_username);
+      console.log('userid: ', userid);
     } catch (err) {
       console.log(err);
       setLoad(false);

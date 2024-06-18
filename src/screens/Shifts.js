@@ -19,12 +19,15 @@ import {
 import {globalStyles, invrecStyles} from '../css/global';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {useRoute, useTheme} from '@react-navigation/native';
+import {getsummaryshift} from '../api/getshiftsummary';
 import {SearchBar} from '@rneui/themed';
 import CheckBox from '@react-native-community/checkbox';
 import * as Utils from '../Helpers/Utils';
 //import {loadingartha, wmsclear} from '../images/images';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as dbconn from '../db/ShiftDetails';
+import moment from 'moment';
 
 export default function Discount({navigation}) {
   LogBox.ignoreLogs([
@@ -39,9 +42,38 @@ export default function Discount({navigation}) {
   const [mdlCloseShift, setMdlCloseShift] = useState(false);
   const [mdlCashMan, setMdlCashMan] = useState(false);
   const [search, setSearch] = useState('');
+  const [information, setInformation] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const [expamount, setexpected_AMOUNT] = useState(0);
+  const [batchid, setbatchID] = useState('');
+  const [lastEdit_Date, setlastEdit_Date] = useState('');
+  const [lastEdit_time, setlastEdit_time] = useState('');
+  const [store_ID, setstore_ID] = useState('');
+  const [poS_Device_ID, setpoS_Device_ID] = useState('');
+  const [opening_Date, setopening_Date] = useState('');
+  const [opening_time, setopening_time] = useState('');
+  const [closing_Date, setclosing_Date] = useState('');
+  const [closing_time, setclosing_time] = useState('');
+  const [sum_Amount_Opening, setsum_Amount_Opening] = useState(0);
+  const [sum_Amount_Closing, setsum_Amount_Closing] = useState(0);
+  const [sum_Invoice_Posted, setsum_Invoice_Posted] = useState(0);
+  const [sum_Tendered, setsum_Tendered] = useState(0);
+  const [sum_Changes, setsum_Changes] = useState(0);
+  const [sum_Amount_Discount, setsum_Amount_Discount] = useState(0);
+  const [sum_Amount_Tax, setsum_Amount_Tax] = useState(0);
+  const [sum_Invoice_Refund_Posted, setsum_Invoice_Refund_Posted] = useState(0);
+  const [sum_Amount_PayOut, setsum_Amount_PayOut] = useState(0);
+  const [sum_Amount_PayIn, setsum_Amount_PayIn] = useState(0);
+  const [count_Customers, setcount_Customers] = useState(0);
+  const [status_Batch, setstatus_Batch] = useState(0);
+  const [created_User, setcreated_User] = useState('');
+  const [created_Date, setcreated_Date] = useState('');
+  const [created_time, setcreated_time] = useState('');
 
   useEffect(() => {
     setMdlDiscount(true);
+    ShowWarning();
     BackHandler.addEventListener(
       'hardwareBackPress',
       handleBackButtonClick,
@@ -57,9 +89,110 @@ export default function Discount({navigation}) {
     };
   }, []);
 
+  const ShowWarning = async () => {
+    try {
+      const db = await dbconn.getDBConnection();
+      let countdtl = [];
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1;
+      const day = today.getDate();
+      const formattedDate = `${month}/${day}/${year}`;
+      countdtl = await dbconn.ShiftDetail_getdataBillsCountSumm(
+        db,
+        'ShiftDetail',
+        formattedDate,
+        0,
+      );
+      var totline = countdtl[0].TOTALSHIFT;
+      console.log('total SHIFT count: ', totline);
+      if (totline == 1) {
+        GetSummayShift();
+      } else {
+        let msg = 'Mohon opening shift terlebih dahulu, sebelum ke halaman ini';
+        CallModalInfo(msg);
+      }
+    } catch (error) {
+      console.error(error);
+      CallModalInfo(error);
+    }
+  };
+
+  const BackDash = async () => {
+    setModalVisible(false);
+    navigation.replace('Home');
+  };
+
+  const CallModalInfo = async info => {
+    //setLoad(false);
+    setInformation(info);
+    setModalVisible(true);
+    // Alert.alert("Information", info);
+  };
+
+  const GetSummayShift = async () => {
+    try {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1;
+      const day = today.getDate();
+      const formattedDate = `${month}/${day}/${year}`;
+      const db = await dbconn.getDBConnection();
+      let datashift = await dbconn.ShiftDetail_getdataSum(
+        db,
+        'ShiftDetail',
+        formattedDate,
+        0,
+      );
+      getsummaryshift({
+        Batch_ID: datashift[0].Batch_ID,
+      }).then(async result => {
+        if (result.status == 200) {
+          var hasil = result.data;
+          console.log('hasil get summary shift: ', hasil);
+          console.log('hasil batch id summary shift: ', hasil[0].batch_ID);
+          const formattedDateOpening = moment(hasil[0].opening_Date).format(
+            'YYYY-MM-DD',
+          );
+          const formattedTimeOpening = moment(hasil[0].opening_time).format(
+            'h:mm',
+          );
+          setexpected_AMOUNT(hasil[0].expecteD_AMOUNT);
+          setbatchID(hasil[0].batch_ID);
+          setlastEdit_Date(hasil[0].lastEdit_Date);
+          setlastEdit_time(hasil[0].lastEdit_Date);
+          setopening_Date(formattedDateOpening);
+          setopening_time(formattedTimeOpening);
+          setclosing_Date(hasil[0].closing_Date);
+          setclosing_time(hasil[0].closing_time);
+          setsum_Amount_Opening(hasil[0].sum_Amount_Opening);
+          setsum_Amount_Closing(hasil[0].sum_Amount_Closing);
+          setsum_Invoice_Posted(hasil[0].sum_Invoice_Posted);
+          setsum_Tendered(hasil[0].sum_Tendered);
+          setsum_Changes(hasil[0].sum_Changes);
+          setsum_Amount_Discount(hasil[0].sum_Amount_Discount);
+          setsum_Amount_Tax(hasil[0].sum_Amount_Tax);
+          setsum_Invoice_Refund_Posted(hasil[0].sum_Invoice_Refund_Posted);
+          setsum_Amount_PayOut(hasil[0].sum_Amount_PayOut);
+          setsum_Amount_PayIn(hasil[0].sum_Amount_PayIn);
+          setcount_Customers(hasil[0].count_Customers);
+          setstatus_Batch(hasil[0].status_Batch);
+          setcreated_User(hasil[0].created_User);
+          setcreated_Date(hasil[0].created_Date);
+          setcreated_time(hasil[0].created_time);
+          setstore_ID(hasil[0].store_ID);
+        }
+      });
+    } catch (error) {
+      let msg = error;
+      CallModalInfo(msg);
+    }
+  };
+
   const updateSearch = search => {
     setSearch(search);
   };
+
   const viewModalCloseShift = async () => {
     setMdlCloseShift(true);
   };
@@ -82,6 +215,28 @@ export default function Discount({navigation}) {
       <StatusBar
         backgroundColor={'#0096FF'}
         barStyle="light-content"></StatusBar>
+
+      {/* //* INFORMATION */}
+      <Modal animationType="fade" transparent={true} visible={modalVisible}>
+        <View style={globalStyles.centeredView}>
+          <View style={globalStyles.modalView}>
+            <View style={globalStyles.modalheader}>
+              <Text style={globalStyles.modalText}>Information</Text>
+            </View>
+            <View style={{margin: 20, marginBottom: 0}}>
+              <Text style={globalStyles.textinformation}>{information}</Text>
+            </View>
+            <TouchableOpacity
+              style={[globalStyles.button, globalStyles.buttonClose]}
+              onPress={() => {
+                BackDash();
+                //RELOADPAGE();
+              }}>
+              <Text style={globalStyles.textStyle}>Ok</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       {/* //* MODAL CLOSE SHIFT */}
       <Modal animationType="fade" transparent={true} visible={mdlCloseShift}>
@@ -248,7 +403,7 @@ export default function Discount({navigation}) {
                       maxLength={100}
                       keyboardType="numeric"
                       editable={false}
-                      //value={password}
+                      value={expamount.toString()}
                       //onChangeText={text => setPassword(text)}
                     />
                   </View>
@@ -351,7 +506,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshift,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                17-08-2023
+                {opening_Date}
               </Text>
             </View>
           </SafeAreaView>
@@ -373,7 +528,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshift,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                13:37
+                {opening_time}
               </Text>
             </View>
           </SafeAreaView>
@@ -394,9 +549,7 @@ export default function Discount({navigation}) {
                 style={[
                   invrecStyles.labelinputshift,
                   {backgroundColor: colors.card, color: colors.text},
-                ]}>
-                ST0001
-              </Text>
+                ]}></Text>
             </View>
           </SafeAreaView>
           <SafeAreaView style={invrecStyles.form}>
@@ -417,7 +570,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshift,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                Owner
+                {store_ID}
               </Text>
             </View>
           </SafeAreaView>
@@ -454,7 +607,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshift,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                Rp 100.000
+                Rp. {Intl.NumberFormat('id-ID').format(sum_Amount_Opening)}
               </Text>
             </View>
           </SafeAreaView>
@@ -476,7 +629,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshift,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                Rp 50.000
+                Rp 0
               </Text>
             </View>
           </SafeAreaView>
@@ -520,7 +673,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshift,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                Rp 0
+                Rp {sum_Amount_PayIn}
               </Text>
             </View>
           </SafeAreaView>
@@ -542,7 +695,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshift,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                Rp 0
+                Rp {sum_Amount_PayOut}
               </Text>
             </View>
           </SafeAreaView>
@@ -564,7 +717,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshifthdr,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                Rp 150.000
+                Rp 0
               </Text>
             </View>
           </SafeAreaView>
@@ -645,7 +798,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshift,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                Rp 0
+                Rp {sum_Amount_Discount}
               </Text>
             </View>
           </SafeAreaView>
@@ -683,7 +836,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshift,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                Rp 150.000
+                Rp 0
               </Text>
             </View>
           </SafeAreaView>
@@ -705,7 +858,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshift,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                Rp 75.000
+                Rp 0
               </Text>
             </View>
           </SafeAreaView>
@@ -729,7 +882,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshift,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                Rp 22.500
+                Rp {sum_Amount_Tax}
               </Text>
             </View>
           </SafeAreaView>

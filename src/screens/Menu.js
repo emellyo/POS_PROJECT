@@ -1418,7 +1418,7 @@ export default function Menu({navigation}) {
   };
 
   function handleBackButtonClick() {
-    navigation.goBack();
+    navigation.replace('Home');
     return true;
   }
 
