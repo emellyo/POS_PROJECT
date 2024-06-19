@@ -43,6 +43,7 @@ import {syncup} from '../api/syncuptrx';
 import {hsdLogo} from './dummy-logo';
 import * as dbconn from '../db/Variant';
 import * as dbconnTrx from '../db/AddTrx';
+import * as dbshift from '../db/ShiftDetails';
 import {run} from 'jest';
 
 export default function Menu({navigation}) {
@@ -177,6 +178,7 @@ export default function Menu({navigation}) {
       const dbtrx = await dbconnTrx.getDBConnection();
       await dbconnTrx.dropTbl(db, 'AddTrxDtl');
       //await dbconn.dropTbl(db, 'Variant');
+      await dbconnTrx.AddTrxHdr_CreateTbl(dbtrx, 'AddTrxHdr');
       await dbconn.Variant_CreateTbl(db, 'Variant');
       await dbconnTrx.AddTrxDtl_CreateTbl(dbtrx, 'AddTrxDtl');
       await dbconn.deletedataAllTbl(db, 'Variant');
@@ -940,8 +942,9 @@ export default function Menu({navigation}) {
     setActivePaymentID(paymentID);
   };
 
-  const SyncPayment = async () => {
+  const SyncPayment = async payment_Name => {
     try {
+      console.log('payment name: ', payment_Name);
       let getbills = [];
       console.log('isi tot tender: ', tottender);
       if (tottender == 0) {
@@ -968,7 +971,7 @@ export default function Menu({navigation}) {
         console.log('DATA YANG MAU DI PRINT: ', getbills);
         setDataPrint(getbills);
         console.log('ISI DATA PRINT: ', dataprint);
-        SyncUpFinal();
+        SyncUpFinal(payment_Name);
       }
     } catch (error) {
       let msg = error.message;
@@ -1012,7 +1015,7 @@ export default function Menu({navigation}) {
     return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
   };
 
-  const SyncUpFinal = async () => {
+  const SyncUpFinal = async payment_Name => {
     try {
       let countdtl = [];
       console.log('masuk kondisi else');
@@ -1033,6 +1036,7 @@ export default function Menu({navigation}) {
       var storeid = datauser[0].store_ID;
       console.log('STORE ID: ', storeid[0].value);
       const db = await dbconnTrx.getDBConnection();
+      const dbshiftdtl = await dbshift.getDBConnection();
       //let querycount = `SELECT COUNT(*) as totaldetail FROM AddTrxDtl where DOCNUMBER = '${runno}' `;
       countdtl = await dbconnTrx.AddTrxDtl_getdataBillsCount(
         db,
@@ -1045,12 +1049,37 @@ export default function Menu({navigation}) {
       setTotDetail(totline);
       //var totline = JSON.parse(countdtl);
       //console.log('total line: ', totline);
+      let shiftdtl = await dbshift.ShiftDetail_getdataSum(
+        dbshift,
+        'ShiftDetail',
+        formattedDate,
+        0,
+      );
       let detail = await dbconnTrx.AddTrxDtl_getdataBillsDetails(
         db,
         `AddTrxDtl`,
         runno,
       );
       console.log('total detail : ', detail);
+      await dbconnTrx.AddTrxHdr_savedata(
+        db,
+        'AddTrxHdr',
+        userid,
+        runno,
+        formattedDate,
+        storeid[0].value,
+        salesid,
+        custname,
+        totline,
+        grandtotal,
+        total,
+        tax,
+        tottender,
+        changes,
+        shiftdtl[0].Batch_ID,
+        paymentID,
+        payment_Name,
+      );
       syncup({
         UserID: userid,
         DOCNUMBER: runno,
@@ -1721,7 +1750,7 @@ export default function Menu({navigation}) {
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[globalStyles.buttonYesPayment]}
-                    onPress={() => SyncPayment()}>
+                    onPress={() => SyncPayment(paymentName)}>
                     <Text style={globalStyles.textStyle}>Payment</Text>
                   </TouchableOpacity>
                 </SafeAreaView>
