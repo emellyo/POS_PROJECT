@@ -29,6 +29,7 @@ import * as Utils from '../Helpers/Utils';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as dbconn from '../db/ShiftDetails';
+import * as dbconnTrx from '../db/AddTrx';
 import moment from 'moment';
 
 export default function Discount({navigation}) {
@@ -164,12 +165,8 @@ export default function Discount({navigation}) {
       }).then(async result => {
         var hasil = result.data;
         console.log('hasil return post openshift: ', hasil);
-        await dbconn.ShiftDetail_UpdateData(
-          db,
-          'ShiftDetail',
-          payin,
-          formattedDate,
-        );
+        let query = `UPDATE ShiftDetail SET Sum_Amount_PayIn = ${payin} WHERE Opening_Date = '${formattedDate}' AND Batch_ID = '${datashift[0].Batch_ID}' AND Status_Batch = 0;`;
+        await dbconn.querydynamic(db, query);
         setMdlCashMan(false);
         PostSummaryShift(payin);
       });
@@ -207,17 +204,10 @@ export default function Discount({navigation}) {
       }).then(async result => {
         var hasil = result.data;
         console.log('hasil return post openshift: ', hasil);
-        let query = `UPDATE ShiftDetail SET Sum_Amount_PayIn = ${amount} WHERE Opening_Date = '${formattedDate}' AND Batch_ID = '${datashift[0].Batch_ID}' AND Status_Batch = 0;`;
+        let query = `UPDATE ShiftDetail SET Sum_Amount_PayOut = ${payin} WHERE Opening_Date = '${formattedDate}' AND Batch_ID = '${datashift[0].Batch_ID}' AND Status_Batch = 0;`;
         await dbconn.querydynamic(db, query);
-        // await dbconn.ShiftDetail_UpdateData(
-        //   db,
-        //   'ShiftDetail',
-        //   formattedDate,
-        //   payin,
-        //   datashift[0].Batch_ID,
-        // );
-        mdlCashMan(false);
-        PostSummaryShift(payin);
+        setMdlCashMan(false);
+        PostSummaryShiftOut(payin);
       });
     } catch (error) {
       let msg = error;
@@ -286,6 +276,67 @@ export default function Discount({navigation}) {
       CallModalInfo(msg);
     }
   };
+  const PostSummaryShiftOut = async payin => {
+    try {
+      console.log('MASUK SUMMARY SHIFT POST');
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1;
+      const day = today.getDate();
+      const hours = today.getHours();
+      const minutes = today.getMinutes();
+      const formattedDate = `${month}/${day}/${year}`;
+      const formattedtime = `${hours}:${minutes}`;
+      console.log('TODAY DATE: ', formattedDate);
+      console.log('CURRENT TIME: ', formattedtime);
+      console.log('nilai pay in', payin);
+      let datauser = await AsyncStorage.getItem('@dtUser');
+      datauser = JSON.parse(datauser);
+      var userid = datauser[0].userid;
+      var storeid = datauser[0].store_ID;
+      const db = await dbconn.getDBConnection();
+      let datashift = await dbconn.ShiftDetail_getdataSum(
+        db,
+        'ShiftDetail',
+        formattedDate,
+        0,
+      );
+      console.log('data shift: ', datashift);
+      let Opening_Date = datashift[0].Opening_Date;
+      console.log('opening date: ', Opening_Date);
+      savesummaryshift({
+        Batch_ID: datashift[0].Batch_ID,
+        LastEdit_Date: formattedDate,
+        LastEdit_time: formattedtime,
+        Store_ID: storeid[0].value,
+        POS_Device_ID: '',
+        Opening_Date: datashift[0].Opening_Date,
+        Opening_time: datashift[0].Opening_time,
+        Closing_Date: '1900-01-01 00:00:00.000',
+        Closing_time: '1900-01-01 00:00:00.000',
+        Sum_Amount_Opening: datashift[0].Sum_Amount_Opening,
+        Sum_Amount_Closing: 0,
+        Sum_Invoice_Posted: 0,
+        Sum_Tendered: 0,
+        Sum_Changes: 0,
+        Sum_Amount_Discount: 0,
+        Sum_Amount_Tax: 0,
+        Sum_Invoice_Refund_Posted: 0,
+        Sum_Amount_PayOut: payin,
+        Sum_Amount_PayIn: 0,
+        Count_Customers: 0,
+        Status_Batch: 0,
+        UserID: userid,
+      }).then(async result => {
+        var hasil = result.data;
+        console.log('hasil return save shift: ', hasil);
+        GetSummayShift();
+      });
+    } catch (error) {
+      let msg = error;
+      CallModalInfo(msg);
+    }
+  };
 
   const GetSummayShift = async () => {
     try {
@@ -314,6 +365,7 @@ export default function Discount({navigation}) {
           const formattedTimeOpening = moment(hasil[0].opening_time).format(
             'h:mm',
           );
+
           setexpected_AMOUNT(hasil[0].expecteD_AMOUNT);
           setbatchID(hasil[0].batch_ID);
           setlastEdit_Date(hasil[0].lastEdit_Date);
@@ -852,7 +904,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshift,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                Rp {sum_Amount_PayOut}
+                Rp {Intl.NumberFormat('id-ID').format(sum_Amount_PayOut)}
               </Text>
             </View>
           </SafeAreaView>
