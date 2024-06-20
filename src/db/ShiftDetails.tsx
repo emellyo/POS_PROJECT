@@ -197,6 +197,25 @@ export const ShiftDetail_savedata = async (db: SQLiteDatabase, tableName: string
   return db.executeSql(insertQuery);
 };
 
+
+export const ShiftDetail_UpdateData = async (db: SQLiteDatabase, tableName: string,  date: string, amount: number, Batch_ID: string): Promise<ShiftDetail[]> => {
+  try {
+    const Lists: ShiftDetail[] = [];
+    const results = await db.executeSql(`UPDATE ${tableName} SET Sum_Amount_PayIn = ${amount} WHERE Opening_Date = '${date}' AND Batch_ID = '${Batch_ID}' AND Status_Batch = 0 `);
+    results.forEach(result => {
+      for (let index = 0; index < result.rows.length; index++) {
+        Lists.push(result.rows.item(index))
+      }
+    });
+    return Lists;
+  } catch (error) {
+    console.error(error);
+    throw Error('Failed to get Add Item !!!');
+  }
+};
+
+
+
 export const queryselecShiftDetail = async (db: SQLiteDatabase, query: string) => {
   console.log('querydyn:', query);
   const Lists: ShiftDetail[] = [];

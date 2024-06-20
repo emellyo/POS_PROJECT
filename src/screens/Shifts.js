@@ -20,6 +20,8 @@ import {globalStyles, invrecStyles} from '../css/global';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {useRoute, useTheme} from '@react-navigation/native';
 import {getsummaryshift} from '../api/getshiftsummary';
+import {savesummaryshift} from '../api/savesummaryshift';
+import {savecashmanagement} from '../api/savecashmanagement';
 import {SearchBar} from '@rneui/themed';
 import CheckBox from '@react-native-community/checkbox';
 import * as Utils from '../Helpers/Utils';
@@ -70,6 +72,8 @@ export default function Discount({navigation}) {
   const [created_User, setcreated_User] = useState('');
   const [created_Date, setcreated_Date] = useState('');
   const [created_time, setcreated_time] = useState('');
+  const [notes, setNotes] = useState('');
+  const [payin, setPayIn] = useState(0);
 
   useEffect(() => {
     setMdlDiscount(true);
@@ -128,6 +132,159 @@ export default function Discount({navigation}) {
     setInformation(info);
     setModalVisible(true);
     // Alert.alert("Information", info);
+  };
+
+  const PostPayIn = async payin => {
+    try {
+      console.log('masuk pay in');
+      let datauser = await AsyncStorage.getItem('@dtUser');
+      datauser = JSON.parse(datauser);
+      var userid = datauser[0].userid;
+      var storeid = datauser[0].store_ID;
+      const today = new Date();
+      // Get various parts of the date
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1; // Months are zero-indexed
+      const day = today.getDate();
+      const formattedDate = `${month}/${day}/${year}`;
+      const db = await dbconn.getDBConnection();
+      let datashift = await dbconn.ShiftDetail_getdataSum(
+        db,
+        'ShiftDetail',
+        formattedDate,
+        0,
+      );
+      savecashmanagement({
+        Batch_ID: datashift[0].Batch_ID,
+        Type_CashManagement: '1',
+        Amount: payin,
+        Notes: notes,
+        POS_ID: '',
+        UserID: userid,
+      }).then(async result => {
+        var hasil = result.data;
+        console.log('hasil return post openshift: ', hasil);
+        await dbconn.ShiftDetail_UpdateData(
+          db,
+          'ShiftDetail',
+          payin,
+          formattedDate,
+        );
+        setMdlCashMan(false);
+        PostSummaryShift(payin);
+      });
+    } catch (error) {
+      let msg = error;
+      CallModalInfo(msg);
+    }
+  };
+
+  const PostPayOut = async payin => {
+    try {
+      let datauser = await AsyncStorage.getItem('@dtUser');
+      datauser = JSON.parse(datauser);
+      var userid = datauser[0].userid;
+      const today = new Date();
+      // Get various parts of the date
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1; // Months are zero-indexed
+      const day = today.getDate();
+      const formattedDate = `${month}/${day}/${year}`;
+      const db = await dbconn.getDBConnection();
+      let datashift = await dbconn.ShiftDetail_getdataSum(
+        db,
+        'ShiftDetail',
+        formattedDate,
+        0,
+      );
+      savecashmanagement({
+        Batch_ID: datashift[0].Batch_ID,
+        Type_CashManagement: '2',
+        Amount: payin,
+        Notes: notes,
+        POS_ID: '',
+        UserID: userid,
+      }).then(async result => {
+        var hasil = result.data;
+        console.log('hasil return post openshift: ', hasil);
+        let query = `UPDATE ShiftDetail SET Sum_Amount_PayIn = ${amount} WHERE Opening_Date = '${formattedDate}' AND Batch_ID = '${datashift[0].Batch_ID}' AND Status_Batch = 0;`;
+        await dbconn.querydynamic(db, query);
+        // await dbconn.ShiftDetail_UpdateData(
+        //   db,
+        //   'ShiftDetail',
+        //   formattedDate,
+        //   payin,
+        //   datashift[0].Batch_ID,
+        // );
+        mdlCashMan(false);
+        PostSummaryShift(payin);
+      });
+    } catch (error) {
+      let msg = error;
+      CallModalInfo(msg);
+    }
+  };
+
+  const PostSummaryShift = async payin => {
+    try {
+      console.log('MASUK SUMMARY SHIFT POST');
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1;
+      const day = today.getDate();
+      const hours = today.getHours();
+      const minutes = today.getMinutes();
+      const formattedDate = `${month}/${day}/${year}`;
+      const formattedtime = `${hours}:${minutes}`;
+      console.log('TODAY DATE: ', formattedDate);
+      console.log('CURRENT TIME: ', formattedtime);
+      console.log('nilai pay in', payin);
+      let datauser = await AsyncStorage.getItem('@dtUser');
+      datauser = JSON.parse(datauser);
+      var userid = datauser[0].userid;
+      var storeid = datauser[0].store_ID;
+      const db = await dbconn.getDBConnection();
+      let datashift = await dbconn.ShiftDetail_getdataSum(
+        db,
+        'ShiftDetail',
+        formattedDate,
+        0,
+      );
+      console.log('data shift: ', datashift);
+      let Opening_Date = datashift[0].Opening_Date;
+      console.log('opening date: ', Opening_Date);
+      savesummaryshift({
+        Batch_ID: datashift[0].Batch_ID,
+        LastEdit_Date: formattedDate,
+        LastEdit_time: formattedtime,
+        Store_ID: storeid[0].value,
+        POS_Device_ID: '',
+        Opening_Date: datashift[0].Opening_Date,
+        Opening_time: datashift[0].Opening_time,
+        Closing_Date: '1900-01-01 00:00:00.000',
+        Closing_time: '1900-01-01 00:00:00.000',
+        Sum_Amount_Opening: datashift[0].Sum_Amount_Opening,
+        Sum_Amount_Closing: 0,
+        Sum_Invoice_Posted: 0,
+        Sum_Tendered: 0,
+        Sum_Changes: 0,
+        Sum_Amount_Discount: 0,
+        Sum_Amount_Tax: 0,
+        Sum_Invoice_Refund_Posted: 0,
+        Sum_Amount_PayOut: 0,
+        Sum_Amount_PayIn: payin,
+        Count_Customers: 0,
+        Status_Batch: 0,
+        UserID: userid,
+      }).then(async result => {
+        var hasil = result.data;
+        console.log('hasil return save shift: ', hasil);
+        GetSummayShift();
+      });
+    } catch (error) {
+      let msg = error;
+      CallModalInfo(msg);
+    }
   };
 
   const GetSummayShift = async () => {
@@ -197,6 +354,8 @@ export default function Discount({navigation}) {
     setMdlCloseShift(true);
   };
   const viewModalCashMan = async () => {
+    setPayIn(0);
+    setNotes('');
     setMdlCashMan(true);
   };
   function handleBackButtonClick() {
@@ -383,16 +542,9 @@ export default function Discount({navigation}) {
                           invrecStyles.labelinputbills,
                           {backgroundColor: colors.card, color: colors.text},
                         ]}>
-                        Expected
+                        Amount
                       </Text>
                     </View>
-                    <Text
-                      style={[
-                        invrecStyles.labelinputbills,
-                        {backgroundColor: colors.card, color: colors.text},
-                      ]}>
-                      Cash Amount
-                    </Text>
                   </View>
                   <View style={globalStyles.kanan}>
                     <TextInput
@@ -402,9 +554,19 @@ export default function Discount({navigation}) {
                       ]}
                       maxLength={100}
                       keyboardType="numeric"
-                      editable={false}
-                      value={expamount.toString()}
-                      //onChangeText={text => setPassword(text)}
+                      editable={true}
+                      value={payin.toLocaleString()}
+                      onChangeText={text => {
+                        const cleanedValue = text.replace(/[^0-9]/g, '');
+                        const numericValue = parseFloat(cleanedValue);
+                        if (!isNaN(numericValue)) {
+                          // Update the state with the formatted value
+                          setPayIn(numericValue);
+                        } else {
+                          // Handle invalid input, for example, setting an empty string
+                          setPayIn('');
+                        }
+                      }}
                     />
                   </View>
                 </View>
@@ -418,16 +580,9 @@ export default function Discount({navigation}) {
                           invrecStyles.labelinputbills,
                           {backgroundColor: colors.card, color: colors.text},
                         ]}>
-                        Actual
+                        Notes
                       </Text>
                     </View>
-                    <Text
-                      style={[
-                        invrecStyles.labelinputbills,
-                        {backgroundColor: colors.card, color: colors.text},
-                      ]}>
-                      Cash Amount
-                    </Text>
                   </View>
                   <View style={globalStyles.kanan}>
                     <TextInput
@@ -436,9 +591,9 @@ export default function Discount({navigation}) {
                         {backgroundColor: colors.card, color: colors.text},
                       ]}
                       maxLength={100}
-                      keyboardType="numeric"
-                      //value={password}
-                      //onChangeText={text => setPassword(text)}
+                      value={notes}
+                      placeholderTextColor={colors.text}
+                      onChangeText={text => setNotes(text)}
                     />
                   </View>
                 </View>
@@ -447,10 +602,12 @@ export default function Discount({navigation}) {
                 <SafeAreaView style={[invrecStyles.buttontotalanclose]}>
                   <TouchableOpacity
                     style={[globalStyles.buttonclose]}
-                    onPress={() => setMdlCashMan(!mdlCashMan)}>
+                    onPress={() => PostPayIn(payin)}>
                     <Text style={globalStyles.textCloseShift}>PAY IN</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[globalStyles.buttonpayout]}>
+                  <TouchableOpacity
+                    style={[globalStyles.buttonpayout]}
+                    onPress={() => PostPayOut(payin)}>
                     <Text style={globalStyles.textpayout}>PAY OUT</Text>
                   </TouchableOpacity>
                 </SafeAreaView>
@@ -673,7 +830,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshift,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                Rp {sum_Amount_PayIn}
+                Rp {Intl.NumberFormat('id-ID').format(sum_Amount_PayIn)}
               </Text>
             </View>
           </SafeAreaView>
