@@ -22,6 +22,7 @@ import {useRoute, useTheme} from '@react-navigation/native';
 import {getsummaryshift} from '../api/getshiftsummary';
 import {savesummaryshift} from '../api/savesummaryshift';
 import {savecashmanagement} from '../api/savecashmanagement';
+import {closeshift} from '../api/closeshift';
 import {SearchBar} from '@rneui/themed';
 import CheckBox from '@react-native-community/checkbox';
 import * as Utils from '../Helpers/Utils';
@@ -75,6 +76,8 @@ export default function Discount({navigation}) {
   const [created_time, setcreated_time] = useState('');
   const [notes, setNotes] = useState('');
   const [payin, setPayIn] = useState(0);
+  const [closeamount, setCloseAmount] = useState(0);
+  const [payment, setPayment] = useState([]);
 
   useEffect(() => {
     setMdlDiscount(true);
@@ -133,6 +136,75 @@ export default function Discount({navigation}) {
     setInformation(info);
     setModalVisible(true);
     // Alert.alert("Information", info);
+  };
+
+  const OpenShiftWindow = async () => {
+    const db = await dbconn.getDBConnection();
+    let countdtl = [];
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1;
+    const day = today.getDate();
+    const formattedDate = `${month}/${day}/${year}`;
+    countdtl = await dbconn.ShiftDetail_getdataBillsCount(
+      db,
+      'ShiftDetail',
+      runno,
+      formattedDate,
+    );
+    var totline = countdtl[0].TOTALSHIFT;
+    console.log('total SHIFT count: ', totline);
+    if (totline == 0) {
+      setOpenShift(true);
+    } else {
+      setOpenShift(false);
+    }
+  };
+
+  const PostCloseShift = async closeamount => {
+    try {
+      console.log('nilai Amount_Closing', closeamount);
+      let datauser = await AsyncStorage.getItem('@dtUser');
+      datauser = JSON.parse(datauser);
+      var userid = datauser[0].userid;
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1;
+      const day = today.getDate();
+      const hours = today.getHours();
+      const minutes = today.getMinutes();
+      const seconds = today.getSeconds();
+      const formattedDate = `${month}/${day}/${year}`;
+      const formattedtime = `${hours}:${minutes}`;
+      console.log('TODAY DATE: ', formattedDate);
+      console.log('CURRENT TIME: ', formattedtime);
+      const db = await dbconn.getDBConnection();
+      let datashift = await dbconn.ShiftDetail_getdataSum(
+        db,
+        'ShiftDetail',
+        formattedDate,
+        0,
+      );
+      closeshift({
+        Batch_ID: datashift[0].Batch_ID,
+        Lineitmseq: 0,
+        Payment_ID: '',
+        Payment_Type: '',
+        Amount_Opening: closeamount,
+        UserID: userid,
+      }).then(async result => {
+        var hasil = result.data;
+        console.log('hasil return post openshift: ', hasil);
+        let query = `UPDATE ShiftDetail SET Sum_Amount_Closing = ${closeamount}, Status_Batch = 1, Sum_Invoice_Posted, 
+        WHERE Opening_Date = '${formattedDate}' AND Batch_ID = '${datashift[0].Batch_ID}' AND Status_Batch = 0;`;
+        await dbconn.querydynamic(db, query);
+        setMdlCloseShift(false);
+        PostSummaryShiftClosing(closeamount);
+      });
+    } catch (error) {
+      let msg = error;
+      CallModalInfo(msg);
+    }
   };
 
   const PostPayIn = async payin => {
@@ -337,6 +409,67 @@ export default function Discount({navigation}) {
       CallModalInfo(msg);
     }
   };
+  const PostSummaryShiftClosing = async closeamount => {
+    try {
+      console.log('MASUK SUMMARY SHIFT POST');
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1;
+      const day = today.getDate();
+      const hours = today.getHours();
+      const minutes = today.getMinutes();
+      const formattedDate = `${month}/${day}/${year}`;
+      const formattedtime = `${hours}:${minutes}`;
+      console.log('TODAY DATE: ', formattedDate);
+      console.log('CURRENT TIME: ', formattedtime);
+      console.log('nilai pay in', payin);
+      let datauser = await AsyncStorage.getItem('@dtUser');
+      datauser = JSON.parse(datauser);
+      var userid = datauser[0].userid;
+      var storeid = datauser[0].store_ID;
+      const db = await dbconn.getDBConnection();
+      let datashift = await dbconn.ShiftDetail_getdataSum(
+        db,
+        'ShiftDetail',
+        formattedDate,
+        0,
+      );
+      console.log('data shift: ', datashift);
+      let Opening_Date = datashift[0].Opening_Date;
+      console.log('opening date: ', Opening_Date);
+      savesummaryshift({
+        Batch_ID: datashift[0].Batch_ID,
+        LastEdit_Date: formattedDate,
+        LastEdit_time: formattedtime,
+        Store_ID: storeid[0].value,
+        POS_Device_ID: '',
+        Opening_Date: datashift[0].Opening_Date,
+        Opening_time: datashift[0].Opening_time,
+        Closing_Date: formattedDate,
+        Closing_time: formattedtime,
+        Sum_Amount_Opening: datashift[0].Sum_Amount_Opening,
+        Sum_Amount_Closing: closeamount,
+        Sum_Invoice_Posted: 0,
+        Sum_Tendered: 0,
+        Sum_Changes: 0,
+        Sum_Amount_Discount: 0,
+        Sum_Amount_Tax: 0,
+        Sum_Invoice_Refund_Posted: 0,
+        Sum_Amount_PayOut: payin,
+        Sum_Amount_PayIn: 0,
+        Count_Customers: 0,
+        Status_Batch: 0,
+        UserID: userid,
+      }).then(async result => {
+        var hasil = result.data;
+        console.log('hasil return save shift: ', hasil);
+        GetSummayShift();
+      });
+    } catch (error) {
+      let msg = error;
+      CallModalInfo(msg);
+    }
+  };
 
   const GetSummayShift = async () => {
     try {
@@ -346,12 +479,19 @@ export default function Discount({navigation}) {
       const day = today.getDate();
       const formattedDate = `${month}/${day}/${year}`;
       const db = await dbconn.getDBConnection();
+      const dbtrx = await dbconnTrx.getDBConnection();
       let datashift = await dbconn.ShiftDetail_getdataSum(
         db,
         'ShiftDetail',
         formattedDate,
         0,
       );
+      let datatrx = await dbconnTrx.AddTrxHdr_getdatashift(
+        dbtrx,
+        'AddTrxHdr',
+        datashift[0].Batch_ID,
+      );
+      setPayment(datatrx);
       getsummaryshift({
         Batch_ID: datashift[0].Batch_ID,
       }).then(async result => {
@@ -486,7 +626,7 @@ export default function Discount({navigation}) {
                       ]}
                       maxLength={100}
                       keyboardType="numeric"
-                      //value={password}
+                      value={expamount.toLocaleString()}
                       //onChangeText={text => setPassword(text)}
                     />
                   </View>
@@ -1057,7 +1197,51 @@ export default function Discount({navigation}) {
                     invrecStyles.labelinputshift,
                     {backgroundColor: colors.card, color: colors.text},
                   ]}>
-                  BCA
+                  DEBIT BCA
+                </Text>
+              </View>
+            </View>
+            <View style={globalStyles.kanan}>
+              <Text
+                style={[
+                  invrecStyles.labelinputshift,
+                  {backgroundColor: colors.card, color: colors.text},
+                ]}>
+                Rp 0
+              </Text>
+            </View>
+          </SafeAreaView>
+          <SafeAreaView style={invrecStyles.form}>
+            <View style={globalStyles.kiri}>
+              <View style={globalStyles.textshift}>
+                <Text
+                  style={[
+                    invrecStyles.labelinputshift,
+                    {backgroundColor: colors.card, color: colors.text},
+                  ]}>
+                  DEBIT MANDIRI
+                </Text>
+              </View>
+            </View>
+            <View style={globalStyles.kanan}>
+              <Text
+                style={[
+                  invrecStyles.labelinputshift,
+                  {backgroundColor: colors.card, color: colors.text},
+                ]}>
+                Rp 0
+              </Text>
+            </View>
+          </SafeAreaView>
+          <SafeAreaView style={invrecStyles.form}>
+            <View style={globalStyles.kiri}>
+              <View style={globalStyles.textshift}>
+                <Text
+                  style={[
+                    invrecStyles.labelinputshift,
+                    {backgroundColor: colors.card, color: colors.text},
+                  ]}>
+                  GOPAY
                 </Text>
               </View>
             </View>

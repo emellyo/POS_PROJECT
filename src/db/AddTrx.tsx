@@ -209,6 +209,39 @@ export const AddTrxDtl_savedata = async (db: SQLiteDatabase, tableName: string ,
   return db.executeSql(insertQuery);
 };
 
+export const AddTrxHdr_getdataHDR = async (db: SQLiteDatabase, tableName: string, Batch_ID: string): Promise<AddTrxDtl[]> => {
+  try {
+    const Lists: AddTrxDtl[] = [];
+    const results = await db.executeSql(`SELECT * FROM ${tableName} where Batch_ID = '${Batch_ID}'`);
+    results.forEach(result => {
+      for (let index = 0; index < result.rows.length; index++) {
+        Lists.push(result.rows.item(index))
+      }
+    });
+    return Lists;
+  } catch (error) {
+    console.error(error);
+    throw Error('Failed to get Add Item !!!');
+  }
+};
+
+export const AddTrxHdr_getdatashift = async (db: SQLiteDatabase, tableName: string, Batch_ID: string): Promise<AddTrxDtl[]> => {
+  try {
+    const Lists: AddTrxDtl[] = [];
+    const results = await db.executeSql(`SELECT COUNT(*) as InvoicePosted, SUM(Amount_Tendered) AS setsum_Tendered, SUM(Change_Amount) AS setsum_Changes, SUM(Discount_Amount) AS setsum_Amount_Discount, 
+    SUM(Tax_Amount) AS setsum_Amount_Tax, SUM(ORIGTOTAL) AS ORIGTOTL, SUM(SUBTOTAL) AS SUBTOTAL FROM ${tableName} where Batch_ID = '${Batch_ID}'`);
+    results.forEach(result => {
+      for (let index = 0; index < result.rows.length; index++) {
+        Lists.push(result.rows.item(index))
+      }
+    });
+    return Lists;
+  } catch (error) {
+    console.error(error);
+    throw Error('Failed to get Add Item !!!');
+  }
+};
+
 export const AddTrxHdr_savedata = async (db: SQLiteDatabase, tableName: string ,
    UserID: string, DOCNUMBER: string, DOCDATE: string, Store_ID: string, SalesType_ID: string, 
   CustName: string, Total_Line_Item: number, ORIGTOTAL: number, SUBTOTAL: number, Tax_Amount: number, 

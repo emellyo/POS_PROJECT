@@ -202,6 +202,7 @@ const Home = () => {
       let datauser = await AsyncStorage.getItem('@dtUser');
       datauser = JSON.parse(datauser);
       var storeid = datauser[0].store_ID;
+      var userid = datauser[0].userid;
       const today = new Date();
       const year = today.getFullYear();
       const month = today.getMonth() + 1;
@@ -220,7 +221,7 @@ const Home = () => {
         Payment_ID: '',
         Payment_Type: '',
         Amount_Opening: openamount,
-        UserID: '',
+        UserID: userid,
       }).then(async result => {
         var hasil = result.data;
         console.log('hasil return post openshift: ', hasil);
