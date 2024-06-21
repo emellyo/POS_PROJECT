@@ -34,6 +34,7 @@ import {getBrand} from 'react-native-device-info';
 import {getsalestype} from '../api/getsalestype';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as dbconn from '../db/ShiftDetails';
+import * as dbtrx from '../db/AddTrx';
 // import {
 //   loadingartha,
 //   invenreceiving,
@@ -132,10 +133,12 @@ const Home = () => {
   const LOADTBLADDSHIFT = async () => {
     try {
       const db = await dbconn.getDBConnection();
+      const dbhdr = await dbtrx.getDBConnection();
       //await dbconnTrx.dropTbl(db, 'AddTrxDtl');
       //await dbconn.dropTbl(db, 'ShiftDetail');
       await dbconn.deletedataAllTbl(db, 'ShiftDetail');
       await dbconn.ShiftDetail_CreateTbl(db, 'ShiftDetail');
+      await dbtrx.AddTrxHdr_CreateTbl(dbhdr, 'AddTrxHdr');
       const storedTbl = await dbconn.ShiftDetail_getdata(db, 'ShiftDetail');
       if (storedTbl.length) {
         console.log('datastored:', storedTbl);
