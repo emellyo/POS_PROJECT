@@ -78,6 +78,7 @@ export default function Discount({navigation}) {
   const [payin, setPayIn] = useState(0);
   const [closeamount, setCloseAmount] = useState(0);
   const [payment, setPayment] = useState([]);
+  const [setcash, setCash] = useState(0);
 
   useEffect(() => {
     setMdlDiscount(true);
@@ -491,6 +492,12 @@ export default function Discount({navigation}) {
         'AddTrxHdr',
         datashift[0].Batch_ID,
       );
+      let datacash = await dbconnTrx.AddTrxHdr_getdatacash(
+        dbtrx,
+        'AddTrxHdr',
+        datashift[0].Batch_ID,
+      );
+      setCash(datacash[0].TOTALCASH);
       setPayment(datatrx);
       getsummaryshift({
         Batch_ID: datashift[0].Batch_ID,
@@ -505,7 +512,6 @@ export default function Discount({navigation}) {
           const formattedTimeOpening = moment(hasil[0].opening_time).format(
             'h:mm',
           );
-
           setexpected_AMOUNT(hasil[0].expecteD_AMOUNT);
           setbatchID(hasil[0].batch_ID);
           setlastEdit_Date(hasil[0].lastEdit_Date);

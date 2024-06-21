@@ -242,6 +242,22 @@ export const AddTrxHdr_getdatashift = async (db: SQLiteDatabase, tableName: stri
   }
 };
 
+export const AddTrxHdr_getdatacash = async (db: SQLiteDatabase, tableName: string, Batch_ID: string): Promise<AddTrxDtl[]> => {
+  try {
+    const Lists: AddTrxDtl[] = [];
+    const results = await db.executeSql(`SELECT SUM(Amount_Tendered) as TOTALCASH FROM ${tableName} where Batch_ID = '${Batch_ID}' AND Payment_ID = 'PAY0001'`);
+    results.forEach(result => {
+      for (let index = 0; index < result.rows.length; index++) {
+        Lists.push(result.rows.item(index))
+      }
+    });
+    return Lists;
+  } catch (error) {
+    console.error(error);
+    throw Error('Failed to get Add Item !!!');
+  }
+};
+
 export const AddTrxHdr_savedata = async (db: SQLiteDatabase, tableName: string ,
    UserID: string, DOCNUMBER: string, DOCDATE: string, Store_ID: string, SalesType_ID: string, 
   CustName: string, Total_Line_Item: number, ORIGTOTAL: number, SUBTOTAL: number, Tax_Amount: number, 
