@@ -86,10 +86,42 @@ export const ShiftDetail_getdata = async (db: SQLiteDatabase, tableName: string,
   }
 };
 
+export const ShiftDetail_getdataAll = async (db: SQLiteDatabase, tableName: string, Batch_ID: string): Promise<ShiftDetail[]> => {
+  try {
+    const Lists: ShiftDetail[] = [];
+    const results = await db.executeSql(`SELECT * FROM ${tableName}`);
+    results.forEach(result => {
+      for (let index = 0; index < result.rows.length; index++) {
+        Lists.push(result.rows.item(index))
+      }
+    });
+    return Lists;
+  } catch (error) {
+    console.error(error);
+    throw Error('Failed to get Add Item !!!');
+  }
+};
+
 export const ShiftDetail_getdataSum = async (db: SQLiteDatabase, tableName: string, date: string): Promise<ShiftDetail[]> => {
   try {
     const Lists: ShiftDetail[] = [];
     const results = await db.executeSql(`SELECT * FROM ${tableName} where Opening_Date = '${date}' and Status_Batch = 0`);
+    results.forEach(result => {
+      for (let index = 0; index < result.rows.length; index++) {
+        Lists.push(result.rows.item(index))
+      }
+    });
+    return Lists;
+  } catch (error) {
+    console.error(error);
+    throw Error('Failed to get Add Item !!!');
+  }
+};
+
+export const ShiftDetail_getdataSumClose = async (db: SQLiteDatabase, tableName: string, date: string): Promise<ShiftDetail[]> => {
+  try {
+    const Lists: ShiftDetail[] = [];
+    const results = await db.executeSql(`SELECT * FROM ${tableName} where Opening_Date = '${date}' and Status_Batch = 1`);
     results.forEach(result => {
       for (let index = 0; index < result.rows.length; index++) {
         Lists.push(result.rows.item(index))
@@ -151,10 +183,10 @@ export const ShiftDetail_getdataBillsDetails = async (db: SQLiteDatabase, tableN
   }
 };
 
-export const ShiftDetail_getdataBillsCount = async (db: SQLiteDatabase, tableName: string, Batch_ID: string, date: string): Promise<ShiftDetail[]> => {
+export const ShiftDetail_getdataBillsCount = async (db: SQLiteDatabase, tableName: string, date: string): Promise<ShiftDetail[]> => {
   try {
     const Lists: ShiftDetail[] = [];
-    const results = await db.executeSql(`SELECT COUNT(*) AS TOTALSHIFT FROM ${tableName} WHERE Batch_ID = '${Batch_ID}' AND Opening_Date = '${date}' `);
+    const results = await db.executeSql(`SELECT COUNT(*) AS TOTALSHIFT FROM ${tableName} WHERE Opening_Date = '${date}' and Status_Batch = 0 `);
     results.forEach(result => {
       for (let index = 0; index < result.rows.length; index++) {
         Lists.push(result.rows.item(index))

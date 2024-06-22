@@ -1,5 +1,5 @@
 import {SQLiteDatabase, enablePromise, openDatabase} from 'react-native-sqlite-storage';
-import { AddTrxHdr, AddTrxDtl, Variant } from '../models';
+import { AddTrxHdr, AddTrxDtl} from '../models';
 
 export const getDBConnection = async () => {
    return openDatabase(
@@ -194,20 +194,6 @@ export const AddTrxDtl_getdataBillsCount = async (db: SQLiteDatabase, tableName:
   }
 };
 
-export const AddTrxDtl_savedata = async (db: SQLiteDatabase, tableName: string ,
-   docnumbr: string, date: string, lnitmseq: number, qty: number, notes: string, itemnmbr: string, itemname: string, itemprice: number,
-   itemcost: number, variantname: string, Store_ID: string, isVarian: number) => {
-  const insertQuery =
-    `INSERT INTO ${tableName}`+
-    `(DOCNUMBER, DOCTYPE, DOCDATE, Lineitmseq, Item_Number, Item_Description, Quantity, UofM,`+
-    `Item_Price, Item_Cost, Store_ID, Site_ID, SalesType_ID, Discount_ID, Discount_Amount, Notes, POS_Device_ID, POS_Version, variant_Name, isVarian)`+
-    ` values ` +
- `('${docnumbr}', ${1}, '${date}', ${lnitmseq}, '${itemnmbr}','${itemname}', ${qty}, '${'PCS'}', ${itemprice}, ${itemcost}, '${Store_ID}', '${''}', '${''}',` + "\n" +
-  `'${''}', ${0}, '${notes}', '${''}', '${''}', '${variantname}', ${isVarian})`;
-  // join(',')
-
-  return db.executeSql(insertQuery);
-};
 
 export const AddTrxHdr_getdataHDR = async (db: SQLiteDatabase, tableName: string, Batch_ID: string): Promise<AddTrxDtl[]> => {
   try {
@@ -256,6 +242,21 @@ export const AddTrxHdr_getdatacash = async (db: SQLiteDatabase, tableName: strin
     console.error(error);
     throw Error('Failed to get Add Item !!!');
   }
+};
+
+export const AddTrxDtl_savedata = async (db: SQLiteDatabase, tableName: string ,
+   docnumbr: string, date: string, lnitmseq: number, qty: number, notes: string, itemnmbr: string, itemname: string, itemprice: number,
+   itemcost: number, variantname: string, Store_ID: string, isVarian: number) => {
+  const insertQuery =
+    `INSERT INTO ${tableName}`+
+    `(DOCNUMBER, DOCTYPE, DOCDATE, Lineitmseq, Item_Number, Item_Description, Quantity, UofM,`+
+    `Item_Price, Item_Cost, Store_ID, Site_ID, SalesType_ID, Discount_ID, Discount_Amount, Notes, POS_Device_ID, POS_Version, variant_Name, isVarian)`+
+    ` values ` +
+ `('${docnumbr}', ${1}, '${date}', ${lnitmseq}, '${itemnmbr}','${itemname}', ${qty}, '${'PCS'}', ${itemprice}, ${itemcost}, '${Store_ID}', '${''}', '${''}',` + "\n" +
+  `'${''}', ${0}, '${notes}', '${''}', '${''}', '${variantname}', ${isVarian})`;
+  // join(',')
+
+  return db.executeSql(insertQuery);
 };
 
 export const AddTrxHdr_savedata = async (db: SQLiteDatabase, tableName: string ,

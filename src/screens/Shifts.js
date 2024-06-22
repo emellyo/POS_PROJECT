@@ -30,7 +30,7 @@ import * as Utils from '../Helpers/Utils';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as dbconn from '../db/ShiftDetails';
-import * as dbconnTrx from '../db/AddTrx';
+import * as dbconnTrx from '../db/AddTrxHdr';
 import moment from 'moment';
 
 export default function Discount({navigation}) {
@@ -78,8 +78,15 @@ export default function Discount({navigation}) {
   const [payin, setPayIn] = useState(0);
   const [closeamount, setCloseAmount] = useState(0);
   const [payment, setPayment] = useState([]);
-  const [setcash, setCash] = useState(0);
-
+  const [cash, setCash] = useState(0);
+  const [gross, setGross] = useState(0);
+  const [netsales, setNetSales] = useState(0);
+  const [totinv, setTotInv] = useState(0);
+  const [tax, setTax] = useState(0);
+  const [bca, setBca] = useState(0);
+  const [mandiri, setMandiri] = useState(0);
+  const [gopay, setGopay] = useState(0);
+  const [differenamt, setDifferentAmt] = useState(0);
   useEffect(() => {
     setMdlDiscount(true);
     ShowWarning();
@@ -164,6 +171,7 @@ export default function Discount({navigation}) {
 
   const PostCloseShift = async closeamount => {
     try {
+      setMdlCloseShift(false);
       console.log('nilai Amount_Closing', closeamount);
       let datauser = await AsyncStorage.getItem('@dtUser');
       datauser = JSON.parse(datauser);
@@ -180,11 +188,17 @@ export default function Discount({navigation}) {
       console.log('TODAY DATE: ', formattedDate);
       console.log('CURRENT TIME: ', formattedtime);
       const db = await dbconn.getDBConnection();
+      const dbtrx = await dbconnTrx.getDBConnection();
       let datashift = await dbconn.ShiftDetail_getdataSum(
         db,
         'ShiftDetail',
         formattedDate,
         0,
+      );
+      let datatrx = await dbconnTrx.AddTrxHdr_getdatashift(
+        dbtrx,
+        'AddTrxHdr',
+        datashift[0].Batch_ID,
       );
       closeshift({
         Batch_ID: datashift[0].Batch_ID,
@@ -196,7 +210,7 @@ export default function Discount({navigation}) {
       }).then(async result => {
         var hasil = result.data;
         console.log('hasil return post openshift: ', hasil);
-        let query = `UPDATE ShiftDetail SET Sum_Amount_Closing = ${closeamount}, Status_Batch = 1, Sum_Invoice_Posted, 
+        let query = `UPDATE ShiftDetail SET Sum_Amount_Closing = ${closeamount}, Status_Batch = 1, Sum_Invoice_Posted = ${datatrx[0].InvoicePosted}
         WHERE Opening_Date = '${formattedDate}' AND Batch_ID = '${datashift[0].Batch_ID}' AND Status_Batch = 0;`;
         await dbconn.querydynamic(db, query);
         setMdlCloseShift(false);
@@ -429,11 +443,10 @@ export default function Discount({navigation}) {
       var userid = datauser[0].userid;
       var storeid = datauser[0].store_ID;
       const db = await dbconn.getDBConnection();
-      let datashift = await dbconn.ShiftDetail_getdataSum(
+      let datashift = await dbconn.ShiftDetail_getdataSumClose(
         db,
         'ShiftDetail',
         formattedDate,
-        0,
       );
       console.log('data shift: ', datashift);
       let Opening_Date = datashift[0].Opening_Date;
@@ -464,7 +477,7 @@ export default function Discount({navigation}) {
       }).then(async result => {
         var hasil = result.data;
         console.log('hasil return save shift: ', hasil);
-        GetSummayShift();
+        navigation.replace('Home');
       });
     } catch (error) {
       let msg = error;
@@ -497,6 +510,34 @@ export default function Discount({navigation}) {
         'AddTrxHdr',
         datashift[0].Batch_ID,
       );
+      let databca = await dbconnTrx.AddTrxHdr_getdatabca(
+        dbtrx,
+        'AddTrxHdr',
+        datashift[0].Batch_ID,
+      );
+      let datamandiri = await dbconnTrx.AddTrxHdr_getdatamandiri(
+        dbtrx,
+        'AddTrxHdr',
+        datashift[0].Batch_ID,
+      );
+      let datagopay = await dbconnTrx.AddTrxHdr_getdatagopay(
+        dbtrx,
+        'AddTrxHdr',
+        datashift[0].Batch_ID,
+      );
+      let totbca = databca[0].TOTALCASH;
+      let totmandiri = databca[0].TOTALCASH;
+      let totgopay = datagopay[0].TOTALCASH;
+      let grosssales = datatrx[0].ORIGTOTL;
+      let netsales = datatrx[0].ORIGTOTL - datatrx[0].setsum_Amount_Tax;
+      let tax = datatrx[0].setsum_Amount_Tax;
+      setTax(tax);
+      setMandiri(totmandiri);
+      setGopay(totgopay);
+      setBca(totbca);
+      setNetSales(netsales);
+      setTotInv(datatrx[0].InvoicePosted);
+      setGross(grosssales);
       setCash(datacash[0].TOTALCASH);
       setPayment(datatrx);
       getsummaryshift({
@@ -540,6 +581,18 @@ export default function Discount({navigation}) {
       });
     } catch (error) {
       let msg = error;
+      CallModalInfo(msg);
+    }
+  };
+
+  const DifferentAmount = async closeamount => {
+    try {
+      let changes = expamount - closeamount;
+      console.log('hasil changes: ', changes);
+      setDifferentAmt(changes);
+    } catch (error) {
+      let msg = error.message;
+      console.log(error);
       CallModalInfo(msg);
     }
   };
@@ -631,8 +684,9 @@ export default function Discount({navigation}) {
                         {backgroundColor: colors.card, color: colors.text},
                       ]}
                       maxLength={100}
-                      keyboardType="numeric"
+                      keyboardType="string"
                       value={expamount.toLocaleString()}
+                      editable={false}
                       //onChangeText={text => setPassword(text)}
                     />
                   </View>
@@ -666,8 +720,21 @@ export default function Discount({navigation}) {
                       ]}
                       maxLength={100}
                       keyboardType="numeric"
-                      //value={password}
-                      //onChangeText={text => setPassword(text)}
+                      value={closeamount.toLocaleString()}
+                      onChangeText={text => {
+                        const cleanedValue = text.replace(/[^0-9]/g, '');
+                        const numericValue = parseFloat(cleanedValue);
+                        if (!isNaN(numericValue)) {
+                          // Update the state with the formatted value
+                          setCloseAmount(numericValue);
+                        } else {
+                          // Handle invalid input, for example, setting an empty string
+                          setCloseAmount('');
+                        }
+                      }}
+                      onBlur={() => {
+                        DifferentAmount(closeamount);
+                      }}
                     />
                   </View>
                 </View>
@@ -696,8 +763,7 @@ export default function Discount({navigation}) {
                       ]}
                       maxLength={100}
                       keyboardType="numeric"
-                      //value={password}
-                      //onChangeText={text => setPassword(text)}
+                      value={differenamt.toLocaleString()}
                     />
                   </View>
                 </View>
@@ -707,7 +773,7 @@ export default function Discount({navigation}) {
               <SafeAreaView style={[invrecStyles.buttontotalanclose]}>
                 <TouchableOpacity
                   style={[globalStyles.buttonclose]}
-                  onPress={() => setMdlCloseShift(!mdlCloseShift)}>
+                  onPress={() => PostCloseShift(closeamount)}>
                   <Text style={globalStyles.textCloseShift}>CLOSE SHIFT</Text>
                 </TouchableOpacity>
               </SafeAreaView>
@@ -984,7 +1050,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshift,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                Rp 0
+                Rp {Intl.NumberFormat('id-ID').format(cash)}
               </Text>
             </View>
           </SafeAreaView>
@@ -1109,7 +1175,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshift,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                Rp 225.000
+                Rp {Intl.NumberFormat('id-ID').format(gross)}
               </Text>
             </View>
           </SafeAreaView>
@@ -1172,6 +1238,15 @@ export default function Discount({navigation}) {
                 </Text>
               </View>
             </View>
+            <View style={globalStyles.kanan}>
+              <Text
+                style={[
+                  invrecStyles.labelinputshift,
+                  {backgroundColor: colors.card, color: colors.text},
+                ]}>
+                Rp {Intl.NumberFormat('id-ID').format(netsales)}
+              </Text>
+            </View>
           </SafeAreaView>
           <SafeAreaView style={invrecStyles.form}>
             <View style={globalStyles.kiri}>
@@ -1191,7 +1266,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshift,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                Rp 0
+                Rp {Intl.NumberFormat('id-ID').format(cash)}
               </Text>
             </View>
           </SafeAreaView>
@@ -1213,7 +1288,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshift,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                Rp 0
+                Rp {Intl.NumberFormat('id-ID').format(bca)}
               </Text>
             </View>
           </SafeAreaView>
@@ -1235,7 +1310,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshift,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                Rp 0
+                Rp {Intl.NumberFormat('id-ID').format(mandiri)}
               </Text>
             </View>
           </SafeAreaView>
@@ -1257,7 +1332,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshift,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                Rp 0
+                Rp {Intl.NumberFormat('id-ID').format(gopay)}
               </Text>
             </View>
           </SafeAreaView>
@@ -1281,7 +1356,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshift,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                Rp {sum_Amount_Tax}
+                Rp {Intl.NumberFormat('id-ID').format(tax)}
               </Text>
             </View>
           </SafeAreaView>

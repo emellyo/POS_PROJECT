@@ -101,7 +101,6 @@ const Home = () => {
     // if (lastSeenDate === null || lastSeenDate.getDate() !== today.getDate()) {
     //   // Modal shows up if it's a new day
     //   setOpenShift(true);
-    GetRunno();
     //   AsyncStorage.setItem('lastSeenDate', today.toString()); // Save current date
     //   setLastSeenDate(today);
     // }
@@ -136,7 +135,7 @@ const Home = () => {
       const dbhdr = await dbtrx.getDBConnection();
       //await dbconnTrx.dropTbl(db, 'AddTrxDtl');
       //await dbconn.dropTbl(db, 'ShiftDetail');
-      await dbconn.deletedataAllTbl(db, 'ShiftDetail');
+      //await dbconn.deletedataAllTbl(db, 'ShiftDetail');
       await dbconn.ShiftDetail_CreateTbl(db, 'ShiftDetail');
       await dbtrx.AddTrxHdr_CreateTbl(dbhdr, 'AddTrxHdr');
       const storedTbl = await dbconn.ShiftDetail_getdata(db, 'ShiftDetail');
@@ -187,12 +186,14 @@ const Home = () => {
     countdtl = await dbconn.ShiftDetail_getdataBillsCount(
       db,
       'ShiftDetail',
-      runno,
       formattedDate,
     );
+    let datashift = await dbconn.ShiftDetail_getdataAll(db, 'ShiftDetail');
     var totline = countdtl[0].TOTALSHIFT;
+    console.log('data shift abcd: ', datashift);
     console.log('total SHIFT count: ', totline);
     if (totline == 0) {
+      GetRunno();
       setOpenShift(true);
     } else {
       setOpenShift(false);
@@ -556,18 +557,35 @@ const Home = () => {
   const handleWalkInandOnline = async (tipesales, salesid) => {
     try {
       console.log('tipesales: ', tipesales);
-      var datasalestipe = [];
-      var dataparams = {
-        tipesales: tipesales,
-        salesid: salesid,
-      };
-      datasalestipe.push(dataparams);
-      console.log('isi dataparams: ', dataparams);
+      const db = await dbconn.getDBConnection();
+      let countdtl = [];
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1;
+      const day = today.getDate();
+      const formattedDate = `${month}/${day}/${year}`;
+      countdtl = await dbconn.ShiftDetail_getdataBillsCount(
+        db,
+        'ShiftDetail',
+        formattedDate,
+      );
+      var totline = countdtl[0].TOTALSHIFT;
+      if (totline == 1) {
+        var datasalestipe = [];
+        var dataparams = {
+          tipesales: tipesales,
+          salesid: salesid,
+        };
+        datasalestipe.push(dataparams);
+        console.log('isi dataparams: ', dataparams);
 
-      AsyncStorage.setItem('@datasalestype', JSON.stringify(datasalestipe));
-      navigation.navigate('Menu', {
-        datasalestipe,
-      });
+        AsyncStorage.setItem('@datasalestype', JSON.stringify(datasalestipe));
+        navigation.navigate('Menu', {
+          datasalestipe,
+        });
+      } else {
+        CallModalInfo('Silahkan logout dan Mohon isi opening terlebih dahulu');
+      }
     } catch (err) {
       console.log(err);
     }

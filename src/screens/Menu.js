@@ -43,6 +43,7 @@ import {syncup} from '../api/syncuptrx';
 import {hsdLogo} from './dummy-logo';
 import * as dbconn from '../db/Variant';
 import * as dbconnTrx from '../db/AddTrx';
+import * as dbhdr from '../db/AddTrxHdr';
 import * as dbshift from '../db/ShiftDetails';
 import {run} from 'jest';
 
@@ -140,7 +141,6 @@ export default function Menu({navigation}) {
     LOADTBLADDITEM();
     GetDiscount();
     GetSalesType();
-    GetRunnoBatch();
     GetStorename();
     getCurrentTime();
     console.log('Current time:', getCurrentTime());
@@ -176,13 +176,14 @@ export default function Menu({navigation}) {
     try {
       const db = await dbconn.getDBConnection();
       const dbtrx = await dbconnTrx.getDBConnection();
-      await dbconnTrx.dropTbl(db, 'AddTrxDtl');
+      const dbtrxhdr = await dbhdr.getDBConnection();
+      //await dbconnTrx.dropTbl(db, 'AddTrxHdr');
       //await dbconn.dropTbl(db, 'Variant');
-      await dbconnTrx.AddTrxHdr_CreateTbl(dbtrx, 'AddTrxHdr');
+      await dbconnTrx.deletedataAllTbl(dbtrx, 'AddTrxDtl');
+      await dbhdr.AddTrxHdr_CreateTbl(dbtrxhdr, 'AddTrxHdr');
       await dbconn.Variant_CreateTbl(db, 'Variant');
       await dbconnTrx.AddTrxDtl_CreateTbl(dbtrx, 'AddTrxDtl');
       await dbconn.deletedataAllTbl(db, 'Variant');
-      await dbconnTrx.deletedataAllTbl(dbtrx, 'AddTrxDtl');
       const storedTbl = await dbconn.Variant_getdata(db, 'Variant');
       if (storedTbl.length) {
         console.log('datastored:', storedTbl);
@@ -428,7 +429,6 @@ export default function Menu({navigation}) {
           console.log('hasil getrunno: ', hasil);
           var number = hasil[0].gennumber;
           setRunno(number);
-          console.log('INI ISI RUNNO: ', runno);
         }
       })
       .catch(async err => {
@@ -436,25 +436,6 @@ export default function Menu({navigation}) {
         let msg = 'Servers is not available.';
         msg = err.message;
         CallModalInfo(msg);
-      });
-  };
-
-  const GetRunnoBatch = async () => {
-    getrunnobatch({
-      DOCID: 'BATC',
-    })
-      .then(async result => {
-        if (result.status == 200) {
-          var hasil = result.data;
-          console.log('hasil getrunno: ', hasil);
-          var number = hasil[0].gennumber;
-          setRunnoBatch(number);
-        }
-      })
-      .catch(async err => {
-        console.log('respon: ' + err.message);
-        let msg = 'Servers is not available.';
-        msg = err.message;
       });
   };
 
@@ -559,7 +540,7 @@ export default function Menu({navigation}) {
     }
   };
 
-  const AddItemTemp = async () => {
+  const AddItemTemp = async variant => {
     try {
       const today = new Date();
       // Get various parts of the date
@@ -573,9 +554,8 @@ export default function Menu({navigation}) {
       var storeid = datauser[0].store_ID;
       const db = await dbconnTrx.getDBConnection();
       let dtVariant = await dbconn.Variant_getdataChoose(db, 'Variant');
+      console.log('ISI DTVARIANT: ', dtVariant);
       let noitem = 0;
-
-      console.log('HASIL VARIANT YANG DIPILIH: ', dtVariant);
 
       if (dtVariant.length == 0) {
         console.log('masuk if length');
@@ -592,7 +572,7 @@ export default function Menu({navigation}) {
         console.log('total noitem: ', noitem);
       }
       console.log('kelar ngitung sequence');
-      console.log('ISI DETAIL VARIANT: ', dtVariant[0].item_Price);
+      //console.log('ISI DETAIL VARIANT: ', dtVariant[0].item_Price);
       console.log('ISI STORE ID: ', storeid[0].value);
       console.log('RUNNING NUMBER: ', runno);
       console.log('DATE: ', formattedDate);
@@ -1018,12 +998,14 @@ export default function Menu({navigation}) {
   const SyncUpFinal = async payment_Name => {
     try {
       let countdtl = [];
+      const db = await dbconnTrx.getDBConnection();
+      const dbshiftdtl = await dbshift.getDBConnection();
+      const dbtrxhdr = await dbhdr.getDBConnection();
       console.log('masuk kondisi else');
       setTotTender(0);
       //setTotChanges('');
       setGrandTotal('');
       setChanges('');
-      setMdlPayment(false);
       const today = new Date();
       // Get various parts of the date
       const year = today.getFullYear();
@@ -1035,34 +1017,29 @@ export default function Menu({navigation}) {
       var userid = datauser[0].userid;
       var storeid = datauser[0].store_ID;
       console.log('STORE ID: ', storeid[0].value);
-      const db = await dbconnTrx.getDBConnection();
-      const dbshiftdtl = await dbshift.getDBConnection();
-      //let querycount = `SELECT COUNT(*) as totaldetail FROM AddTrxDtl where DOCNUMBER = '${runno}' `;
       countdtl = await dbconnTrx.AddTrxDtl_getdataBillsCount(
         db,
         'AddTrxDtl',
         runno,
       );
-      //let countline = await dbconnTrx.querydynamic(db, querycount);
       var totline = countdtl[0].TOTALDETAIL;
       console.log('total detail count: ', totline);
       setTotDetail(totline);
-      //var totline = JSON.parse(countdtl);
-      //console.log('total line: ', totline);
-      let shiftdtl = await dbshift.ShiftDetail_getdataSum(
-        dbshift,
-        'ShiftDetail',
-        formattedDate,
-        0,
-      );
       let detail = await dbconnTrx.AddTrxDtl_getdataBillsDetails(
         db,
         `AddTrxDtl`,
         runno,
       );
+      let shiftdtl = await dbshift.ShiftDetail_getdataSum(
+        dbshiftdtl,
+        'ShiftDetail',
+        formattedDate,
+        0,
+      );
       console.log('total detail : ', detail);
-      await dbconnTrx.AddTrxHdr_savedata(
-        db,
+      console.log('batch id: ', shiftdtl[0].Batch_ID);
+      await dbhdr.AddTrxHdr_savedata(
+        dbtrxhdr,
         'AddTrxHdr',
         userid,
         runno,
@@ -1080,6 +1057,8 @@ export default function Menu({navigation}) {
         paymentID,
         payment_Name,
       );
+      let gethdr = await dbhdr.AddTrxHdr_getdata(dbtrxhdr, 'AddTrxHdr');
+      console.log('HASIL GET HDR: ', gethdr);
       syncup({
         UserID: userid,
         DOCNUMBER: runno,
@@ -1097,7 +1076,7 @@ export default function Menu({navigation}) {
         Discount_Amount: 0,
         Amount_Tendered: tottender,
         Change_Amount: changes,
-        Batch_ID: runnobatch,
+        Batch_ID: shiftdtl[0].Batch_ID,
         POS_Device_ID: '',
         POS_Version: '',
         SyncStatus: 0,
@@ -1107,18 +1086,23 @@ export default function Menu({navigation}) {
         TrxDetailTYPE: detail,
       }).then(async result => {
         var hasil = result.data;
-        console.log('hasil syncup ', hasil.code);
-        if (hasil.code == 400) {
+        console.log('hasil syncup ', hasil[0].code);
+        if (hasil[0].code == 400) {
           console.log('error 400');
+          setMdlPayment(false);
           CallModalInfo(hasil.desc);
-        } else if (hasil.code == 200) {
+        } else if (hasil[0].code == 200) {
+          setMdlPayment(false);
           PrintStruk();
-
           //handleBackButtonClick();
         }
         //console.log('HASIL GET VARIANT', hasil);
       });
-    } catch (error) {}
+    } catch (error) {
+      let msg = error.message;
+      console.log(error);
+      CallModalInfo(msg);
+    }
   };
 
   const PrintStruk = async () => {
@@ -1858,7 +1842,7 @@ export default function Menu({navigation}) {
                   <TouchableOpacity
                     style={[globalStyles.buttonYesPayment]}
                     onPress={() => {
-                      AddItemTemp();
+                      AddItemTemp(variant);
                     }}>
                     <Text style={globalStyles.textStyle}>Add Item</Text>
                   </TouchableOpacity>
@@ -2398,11 +2382,12 @@ export default function Menu({navigation}) {
           <ScrollView nestedScrollEnabled={true}>
             <View
               style={{
-                flex: 3,
+                flex: 1,
                 display: 'flex',
                 flexDirection: 'row',
                 flexWrap: 'wrap',
                 gap: 5,
+                height: '100%',
               }}>
               {/* //! MENU ITEM */}
               {item.map((item, index) => {
