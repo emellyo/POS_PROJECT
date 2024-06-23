@@ -38,9 +38,8 @@ export default function Discount({navigation}) {
     'Non-serializable values were found in the navigation state',
   ]);
   const colors = useTheme().colors;
-  const route = useRoute();
   const increment = useRef(null);
-  //const navigation = useNavigation();
+  // const navigation = useNavigation();
 
   const [mdlDiscount, setMdlDiscount] = useState(false);
   const [mdlCloseShift, setMdlCloseShift] = useState(false);

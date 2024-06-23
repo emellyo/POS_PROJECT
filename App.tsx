@@ -24,6 +24,7 @@ import ShiftsScreen from './src/screens/Shifts';
 import Sidebar from './src/screens/SideBar';
 import SidebarContent from './src/screens/SideBarContent';
 import PrintBluetooth from './src/screens/printBluetooth';
+import Receipts from './src/screens/ReceiptDetails';
 // import InvRecScreen from './src/screens/InvReceiving';
 // import InvOutScreen from './src/screens/InvOut';
 // import BarcodeScan from './src/screens/BarcodeScanner';
@@ -77,6 +78,10 @@ return (
         name="Print" 
         component={PrintBluetooth}
         options={{ title: 'Print Bluetooth Page'}} />
+        <Stack.Screen 
+        name="Receipt" 
+        component={Receipts}
+        options={{ title: 'Receipt Page'}} />
       </Stack.Navigator>
     </NavigationContainer>
   // <NavigationContainer>

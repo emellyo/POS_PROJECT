@@ -52,7 +52,7 @@ const SidebarContent = props => {
           </Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigateToScreen('Home')}>
+      <TouchableOpacity onPress={() => navigateToScreen('Receipt')}>
         <View
           style={{
             flexDirection: 'row',

@@ -15,6 +15,7 @@
     "@react-native-async-storage/async-storage": "^1.19.3",
     "@react-native-community/checkbox": "^0.5.16",
     "@react-native-community/netinfo": "^9.4.1",
+    "@react-native-picker/picker": "^2.7.7",
     "@react-navigation/drawer": "^6.6.4",
     "@react-navigation/native": "^6.1.8",
     "@react-navigation/native-stack": "^6.9.13",
