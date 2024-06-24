@@ -8,18 +8,22 @@ import {
   StyleSheet,
   BackHandler,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 
 import {useTheme, useRoute, useNavigation} from '@react-navigation/native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {Picker} from '@react-native-picker/picker';
+import {getsalestype} from '../api/getsalestype';
+
 const Receipts = () => {
   const increment = useRef(null);
   const navigation = useNavigation();
   const [mdlDiscount, setMdlDiscount] = useState(false);
   const [dateFrom, setDateFrom] = useState('17-08-2023');
   const [dateTo, setDateTo] = useState('17-08-2023');
-  const [salesType, setSalesType] = useState([]);
+  const [salesType, setSalesType] = useState('');
+  const [salesTypes, setSalesTypes] = useState([]);
   const [open, setOpen] = useState(false);
   const [domain, setDomain] = useState('');
   const [receipts, setReceipts] = useState([
@@ -82,6 +86,23 @@ const Receipts = () => {
     };
   }, []);
 
+  const GetSalesType = async () => {
+    try {
+      getsalestype({
+        interid: '',
+        ID: '',
+      }).then(async result => {
+        var hasil = result.data;
+        console.log('return sales type: ', hasil);
+        setSalesTypes(hasil);
+        setSalesType(hasil?.value || '');
+      });
+    } catch (error) {
+      let msg = error.message;
+      CallModalInfo(msg);
+    }
+  };
+
   function handleBackButtonClick() {
     navigation.replace('Home');
     return true;
@@ -105,14 +126,22 @@ const Receipts = () => {
           value={dateTo}
           onChangeText={setDateTo}
         />
-        <Picker
-          selectedValue={salesType}
-          style={styles.picker}
-          onValueChange={itemValue => setSalesType(itemValue)}>
-          <Picker.Item label="Walk In" value="Walk In" />
-          <Picker.Item label="Online" value="Online" />
-          <Picker.Item label="Phone" value="Phone" />
-        </Picker>
+        {salesTypes.length > 0 ? (
+          <Picker
+            selectedValue={salesType}
+            style={styles.picker}
+            onValueChange={itemValue => setSalesType(itemValue)}>
+            {salesTypes.map(type => (
+              <Picker.Item
+                key={type.salesType_ID}
+                label={type.salesType_Name}
+                value={type.salesType_ID}
+              />
+            ))}
+          </Picker>
+        ) : (
+          <ActivityIndicator size="large" color="#0000ff" />
+        )}
       </View>
       <Button title="Load Receipts" onPress={() => {}} />
       <FlatList
