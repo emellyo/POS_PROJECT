@@ -1476,6 +1476,15 @@ export const invrecStyles = StyleSheet.create({
     // alignItems: 'center',
     padding: 10,
   },
+  bannermenureceipt: {
+    //flexDirection: 'column',
+    //backgroundColor: '#FFFF',
+    //height: '20%',
+    alignContent: 'center',
+    justifyContent: 'center',
+    // alignItems: 'center',
+    padding: 10,
+  },
   bannermenuprint: {
     //flexDirection: 'column',
     backgroundColor: '#0096FF',
@@ -1500,6 +1509,13 @@ export const invrecStyles = StyleSheet.create({
     //alignItems: 'flex-start',
     position: 'absolute',
     left: 20,
+  },
+  bannerpanahbackreceipt: {
+    //paddingLeft: 10,
+    //paddingTop: 10,
+    //alignItems: 'flex-start',
+    position: 'absolute',
+    left: 5,
   },
   bannerpanahbackcashman: {
     position: 'flex-start',

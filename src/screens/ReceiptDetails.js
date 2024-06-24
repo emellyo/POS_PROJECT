@@ -15,13 +15,20 @@ import {useTheme, useRoute, useNavigation} from '@react-navigation/native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {Picker} from '@react-native-picker/picker';
 import {getsalestype} from '../api/getsalestype';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import {globalStyles, invrecStyles} from '../css/global';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 const Receipts = () => {
   const increment = useRef(null);
   const navigation = useNavigation();
+  const [dateFrom, setDateFrom] = useState(new Date('2023-08-17'));
+  const [dateTo, setDateTo] = useState(new Date('2023-08-17'));
+  const [isDateFromPickerVisible, setDateFromPickerVisibility] =
+    useState(false);
+  const [isDateToPickerVisible, setDateToPickerVisibility] = useState(false);
   const [mdlDiscount, setMdlDiscount] = useState(false);
-  const [dateFrom, setDateFrom] = useState('17-08-2023');
-  const [dateTo, setDateTo] = useState('17-08-2023');
   const [salesType, setSalesType] = useState('');
   const [salesTypes, setSalesTypes] = useState([]);
   const [open, setOpen] = useState(false);
@@ -77,6 +84,7 @@ const Receipts = () => {
 
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+    GetSalesType();
     return () => {
       clearInterval(increment.current);
       BackHandler.removeEventListener(
@@ -95,7 +103,7 @@ const Receipts = () => {
         var hasil = result.data;
         console.log('return sales type: ', hasil);
         setSalesTypes(hasil);
-        setSalesType(hasil?.value || '');
+        setSalesType(hasil[0]?.salesType_ID || '');
       });
     } catch (error) {
       let msg = error.message;
@@ -112,20 +120,67 @@ const Receipts = () => {
     setMdlDiscount(false);
   }
 
+  const showDateFromPicker = () => {
+    setDateFromPickerVisibility(true);
+  };
+
+  const hideDateFromPicker = () => {
+    setDateFromPickerVisibility(false);
+  };
+
+  const handleDateFromConfirm = date => {
+    setDateFrom(date);
+    hideDateFromPicker();
+  };
+
+  const showDateToPicker = () => {
+    setDateToPickerVisibility(true);
+  };
+
+  const hideDateToPicker = () => {
+    setDateToPickerVisibility(false);
+  };
+
+  const handleDateToConfirm = date => {
+    setDateTo(date);
+    hideDateToPicker();
+  };
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      {/* //* BANNER */}
+      <SafeAreaView style={invrecStyles.bannermenureceipt}>
+        <TouchableOpacity
+          style={invrecStyles.bannerpanahbackreceipt}
+          // onPress={() => navigation.replace('Home')}
+          onPress={handleBackButtonClick}>
+          <Icon name={'arrow-left'} size={20} color="#0096FF" />
+        </TouchableOpacity>
+        <View
+          style={{
+            display: 'flex',
+            justifyContent: 'space-around',
+            width: '100%',
+            flexDirection: 'row',
+          }}></View>
+      </SafeAreaView>
+      {/* //* BANNER */}
       <Text style={styles.title}>Receipts</Text>
       <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          value={dateFrom}
-          onChangeText={setDateFrom}
-        />
-        <TextInput
-          style={styles.input}
-          value={dateTo}
-          onChangeText={setDateTo}
-        />
+        <TouchableOpacity style={styles.input} onPress={showDateFromPicker}>
+          <TextInput
+            value={dateFrom.toLocaleDateString()}
+            editable={false}
+            placeholder="Date From"
+          />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.input} onPress={showDateToPicker}>
+          <TextInput
+            value={dateTo.toLocaleDateString()}
+            editable={false}
+            placeholder="Date To"
+          />
+        </TouchableOpacity>
         {salesTypes.length > 0 ? (
           <Picker
             selectedValue={salesType}
@@ -167,7 +222,19 @@ const Receipts = () => {
           </View>
         )}
       />
-    </View>
+      <DateTimePickerModal
+        isVisible={isDateFromPickerVisible}
+        mode="date"
+        onConfirm={handleDateFromConfirm}
+        onCancel={hideDateFromPicker}
+      />
+      <DateTimePickerModal
+        isVisible={isDateToPickerVisible}
+        mode="date"
+        onConfirm={handleDateToConfirm}
+        onCancel={hideDateToPicker}
+      />
+    </SafeAreaView>
   );
 };
 
@@ -186,6 +253,9 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+    alignContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
   },
   inputContainer: {
     flexDirection: 'row',
