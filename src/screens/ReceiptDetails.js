@@ -9,6 +9,7 @@ import {
   BackHandler,
   TouchableOpacity,
   ActivityIndicator,
+  Modal,
 } from 'react-native';
 
 import {useTheme, useRoute, useNavigation} from '@react-navigation/native';
@@ -19,6 +20,47 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {globalStyles, invrecStyles} from '../css/global';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+
+const ReceiptModal = ({visible, onClose, receipt}) => {
+  if (!receipt) return null;
+
+  return (
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={visible}
+      onRequestClose={onClose}>
+      <View style={styles.modalContainer}>
+        <View style={styles.modalContent}>
+          <View style={styles.header}>
+            <TouchableOpacity onPress={onClose}>
+              <Icon name={'arrow-left'} size={24} color="white" />
+            </TouchableOpacity>
+            <Text style={styles.headerText}>Receipt Details</Text>
+          </View>
+          <View style={styles.body}>
+            <Text style={styles.invoice}>{receipt.invoice}</Text>
+            <Text style={styles.amount}>Rp. {receipt.amount}</Text>
+            <Text style={styles.total}>Total</Text>
+            <Text style={styles.employee}>Employee: {receipt.employee}</Text>
+            <Text style={styles.pos}>POS: {receipt.pos}</Text>
+            <Text style={styles.type}>{receipt.type}</Text>
+            <Text style={styles.item}>{receipt.item}</Text>
+            <Text style={styles.discount}>Discount: {receipt.discount}</Text>
+            <Text style={styles.total}>Total: Rp. {receipt.total}</Text>
+            <Text style={styles.ppn}>PPN 11%: Rp. {receipt.ppn}</Text>
+            <Text style={styles.payment}>BCA: Rp. {receipt.bca}</Text>
+            <Text style={styles.date}>{receipt.date}</Text>
+            <Text style={styles.time}>{receipt.time}</Text>
+            <TouchableOpacity style={styles.reprintButton} onPress={() => {}}>
+              <Text style={styles.reprintText}>REPRINT</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+};
 
 const Receipts = () => {
   const increment = useRef(null);
@@ -146,6 +188,16 @@ const Receipts = () => {
     hideDateToPicker();
   };
 
+  const openModal = receipt => {
+    setSelectedReceipt(receipt);
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+    setSelectedReceipt(null);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {/* //* BANNER */}
@@ -208,7 +260,8 @@ const Receipts = () => {
             {item.data.map(receipt => (
               <TouchableOpacity
                 key={receipt.id}
-                style={styles.receiptContainer}>
+                style={styles.receiptContainer}
+                onPress={() => openModal(receipt)}>
                 <Text style={styles.invoice}>{receipt.invoice}</Text>
                 <Text style={styles.type}>
                   {receipt.type} - {receipt.time}
@@ -234,6 +287,11 @@ const Receipts = () => {
         onConfirm={handleDateToConfirm}
         onCancel={hideDateToPicker}
       />
+      <ReceiptModal
+        visible={isModalVisible}
+        onClose={closeModal}
+        receipt={selectedReceipt}
+      />
     </SafeAreaView>
   );
 };
@@ -243,19 +301,10 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
-  picker: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#cecece',
-    padding: 10,
-  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    alignContent: 'center',
-    alignItems: 'center',
-    textAlign: 'center',
   },
   inputContainer: {
     flexDirection: 'row',
@@ -268,6 +317,11 @@ const styles = StyleSheet.create({
     padding: 10,
     flex: 1,
     marginRight: 10,
+  },
+  picker: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#ccc',
   },
   date: {
     fontSize: 18,
@@ -294,6 +348,92 @@ const styles = StyleSheet.create({
   refund: {
     fontSize: 14,
     color: 'red',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: '80%',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+    backgroundColor: '#007bff',
+    padding: 10,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
+  headerText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 18,
+    marginLeft: 10,
+  },
+  body: {
+    alignItems: 'center',
+  },
+  amount: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginVertical: 10,
+  },
+  total: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginVertical: 10,
+  },
+  employee: {
+    fontSize: 16,
+    marginVertical: 5,
+  },
+  pos: {
+    fontSize: 16,
+    marginVertical: 5,
+  },
+  type: {
+    fontSize: 16,
+    marginVertical: 5,
+  },
+  item: {
+    fontSize: 16,
+    marginVertical: 5,
+  },
+  discount: {
+    fontSize: 16,
+    marginVertical: 5,
+  },
+  ppn: {
+    fontSize: 16,
+    marginVertical: 5,
+  },
+  payment: {
+    fontSize: 16,
+    marginVertical: 5,
+  },
+  date: {
+    fontSize: 16,
+    marginVertical: 5,
+  },
+  time: {
+    fontSize: 16,
+    marginVertical: 5,
+  },
+  reprintButton: {
+    backgroundColor: '#007bff',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 20,
+  },
+  reprintText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
 
