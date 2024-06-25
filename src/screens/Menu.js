@@ -1086,8 +1086,8 @@ export default function Menu({navigation}) {
         TrxDetailTYPE: detail,
       }).then(async result => {
         var hasil = result.data;
-        console.log('hasil syncup ', hasil[0].code);
-        if (hasil[0].code == 400) {
+        console.log('hasil syncup ', hasil.code);
+        if (hasil.code == 400) {
           console.log('error 400');
           setMdlPayment(false);
           CallModalInfo(hasil.desc);

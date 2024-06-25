@@ -103,3 +103,12 @@ export type ShiftDetail ={
     Count_Customers: number,
     Status_Batch: number
 }
+export type PayInPayOut ={
+    Batch_ID: string,
+    Type_CashManagement: number,
+    Amount: number,
+    Sequence: number,
+    Notes: string,
+    POS_ID: string,
+    UserID: string
+}

@@ -20,6 +20,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {globalStyles, invrecStyles} from '../css/global';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import {gettrxhist} from '../api/gettrxhist';
 
 const ReceiptModal = ({visible, onClose, receipt}) => {
   if (!receipt) return null;
@@ -75,55 +76,9 @@ const Receipts = () => {
   const [salesTypes, setSalesTypes] = useState([]);
   const [open, setOpen] = useState(false);
   const [domain, setDomain] = useState('');
-  const [receipts, setReceipts] = useState([
-    {
-      date: 'Thursday, 17 August 2023',
-      data: [
-        {
-          id: '1',
-          invoice: 'INV202308170003',
-          type: 'Walk In',
-          time: '16:21',
-          payment: 'BCA - Rp. 75.000',
-        },
-        {
-          id: '2',
-          invoice: 'INV202308170002',
-          type: 'Walk In',
-          time: '13:18',
-          payment: 'CASH - Rp. 25.000',
-          refund: 'Refund #1-1001',
-        },
-        {
-          id: '3',
-          invoice: 'INV202308170001',
-          type: 'Walk In',
-          time: '10:34',
-          payment: 'CASH - Rp. 25.000',
-        },
-      ],
-    },
-    {
-      date: 'Wednesday, 16 August 2023',
-      data: [
-        {
-          id: '4',
-          invoice: 'INV202308160002',
-          type: 'Walk In',
-          time: '13:18',
-          payment: 'CASH - Rp. 25.000',
-        },
-        {
-          id: '5',
-          invoice: 'INV202308160001',
-          type: 'Walk In',
-          time: '10:34',
-          payment: 'CASH - Rp. 25.000',
-        },
-      ],
-    },
-  ]);
-
+  const [receipts, setReceipts] = useState([]);
+  const [selectedReceipt, setSelectedReceipt] = useState(null);
+  const [isModalVisible, setModalVisible] = useState(false);
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     GetSalesType();
@@ -146,6 +101,25 @@ const Receipts = () => {
         console.log('return sales type: ', hasil);
         setSalesTypes(hasil);
         setSalesType(hasil[0]?.salesType_ID || '');
+      });
+    } catch (error) {
+      let msg = error.message;
+      CallModalInfo(msg);
+    }
+  };
+
+  const GetHistoryTrxHDR = async () => {
+    try {
+      gettrxhist({
+        DOCNUMBER: '',
+        DateFrom: dateFrom,
+        DateTo: dateTo,
+        SalesType_ID: setSalesType,
+        Search: '',
+      }).then(async result => {
+        var hasil = result.data;
+        console.log('return history tax: ', hasil);
+        setReceipts(hasil);
       });
     } catch (error) {
       let msg = error.message;
@@ -339,8 +313,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   type: {
-    fontSize: 14,
-    color: 'gray',
+    fontSize: 1,
+    color: '#000',
+    fontWeight: '900',
   },
   payment: {
     fontSize: 14,
@@ -400,6 +375,7 @@ const styles = StyleSheet.create({
   type: {
     fontSize: 16,
     marginVertical: 5,
+    fontWeight: 'bold',
   },
   item: {
     fontSize: 16,

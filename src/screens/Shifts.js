@@ -31,6 +31,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as dbconn from '../db/ShiftDetails';
 import * as dbconnTrx from '../db/AddTrxHdr';
+import * as dbconnMng from '../db/PayInPayOut';
 import moment from 'moment';
 
 export default function Discount({navigation}) {
@@ -234,7 +235,9 @@ export default function Discount({navigation}) {
       const month = today.getMonth() + 1; // Months are zero-indexed
       const day = today.getDate();
       const formattedDate = `${month}/${day}/${year}`;
+      let noitem = 0;
       const db = await dbconn.getDBConnection();
+      const pipo = await dbconnMng.getDBConnection();
       let datashift = await dbconn.ShiftDetail_getdataSum(
         db,
         'ShiftDetail',
@@ -253,6 +256,22 @@ export default function Discount({navigation}) {
         console.log('hasil return post openshift: ', hasil);
         let query = `UPDATE ShiftDetail SET Sum_Amount_PayIn = ${payin} WHERE Opening_Date = '${formattedDate}' AND Batch_ID = '${datashift[0].Batch_ID}' AND Status_Batch = 0;`;
         await dbconn.querydynamic(db, query);
+        let datamax = await dbconnMng.queryselecPayInPayOut(
+          pipo,
+          `select * from PayInPayOut order by Sequence desc;`,
+        );
+        let len = datamax.length < 1 ? 0 : datamax.length;
+        noitem = len + 1;
+        await dbconnMng.PayInPayOut_savedata(
+          pipo,
+          'PayInPayOut',
+          datashift[0].Batch_ID,
+          1,
+          payin,
+          noitem,
+          notes,
+          userid,
+        );
         setMdlCashMan(false);
         PostSummaryShift(payin);
       });
@@ -969,7 +988,9 @@ export default function Discount({navigation}) {
                 style={[
                   invrecStyles.labelinputshift,
                   {backgroundColor: colors.card, color: colors.text},
-                ]}></Text>
+                ]}>
+                {batchid}
+              </Text>
             </View>
           </SafeAreaView>
           <SafeAreaView style={invrecStyles.form}>
@@ -1127,7 +1148,7 @@ export default function Discount({navigation}) {
                     invrecStyles.labelinputshifthdr,
                     {backgroundColor: colors.card, color: colors.text},
                   ]}>
-                  Expected Cash Amount Refunds
+                  Expected Cash Amount
                 </Text>
               </View>
             </View>
