@@ -37,8 +37,15 @@ export const globalStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     marginTop: 10,
+    width: 750,
   },
-
+  transactionItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: 'gray',
+  },
   refund: {
     fontSize: 14,
     color: 'red',

@@ -110,5 +110,7 @@ export type PayInPayOut ={
     Sequence: number,
     Notes: string,
     POS_ID: string,
-    UserID: string
+    UserID: string,
+    Date: string,
+    Time: string
 }

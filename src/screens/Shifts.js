@@ -80,6 +80,7 @@ export default function Discount({navigation}) {
   const [payin, setPayIn] = useState(0);
   const [closeamount, setCloseAmount] = useState(0);
   const [payment, setPayment] = useState([]);
+  const [pipo, setPipo] = useState([]);
   const [cash, setCash] = useState(0);
   const [gross, setGross] = useState(0);
   const [netsales, setNetSales] = useState(0);
@@ -95,8 +96,6 @@ export default function Discount({navigation}) {
   useEffect(() => {
     setMdlDiscount(true);
     ShowWarning();
-    LOADTBLPIPO();
-    GetCashManagement();
     BackHandler.addEventListener(
       'hardwareBackPress',
       handleBackButtonClick,
@@ -115,6 +114,8 @@ export default function Discount({navigation}) {
   const LOADTBLPIPO = async () => {
     try {
       const pipo = await dbconnMng.getDBConnection();
+
+      //await dbconnMng.dropTbl(pipo, 'PayInPayOut');
       await dbconnMng.PayInPayOut_CreateTbl(pipo, 'PayInPayOut');
     } catch (error) {
       console.error(error);
@@ -140,6 +141,9 @@ export default function Discount({navigation}) {
       console.log('total SHIFT count: ', totline);
       if (totline == 1) {
         GetSummayShift();
+        GetCashManagement();
+        GetCashManagementOut();
+        LOADTBLPIPO();
       } else {
         let msg = 'Mohon opening shift terlebih dahulu, sebelum ke halaman ini';
         CallModalInfo(msg);
@@ -250,7 +254,10 @@ export default function Discount({navigation}) {
       const year = today.getFullYear();
       const month = today.getMonth() + 1; // Months are zero-indexed
       const day = today.getDate();
+      const hours = today.getHours();
+      const minutes = today.getMinutes();
       const formattedDate = `${month}/${day}/${year}`;
+      const formattedtime = `${hours}:${minutes}`;
       let noitem = 0;
       const db = await dbconn.getDBConnection();
       const pipo = await dbconnMng.getDBConnection();
@@ -287,9 +294,12 @@ export default function Discount({navigation}) {
           noitem,
           notes,
           userid,
+          formattedDate,
+          formattedtime,
         );
         setMdlCashMan(false);
-        PostSummaryShift(payin);
+        GetCashManagement(payin);
+        //PostSummaryShift(payin);
       });
     } catch (error) {
       let msg = error;
@@ -328,7 +338,8 @@ export default function Discount({navigation}) {
         let query = `UPDATE ShiftDetail SET Sum_Amount_PayOut = ${payin} WHERE Opening_Date = '${formattedDate}' AND Batch_ID = '${datashift[0].Batch_ID}' AND Status_Batch = 0;`;
         await dbconn.querydynamic(db, query);
         setMdlCashMan(false);
-        PostSummaryShiftOut(payin);
+        GetCashManagementOut();
+        //PostSummaryShiftOut(payin);
       });
     } catch (error) {
       let msg = error;
@@ -528,20 +539,55 @@ export default function Discount({navigation}) {
       const minutes = today.getMinutes();
       const formattedDate = `${month}/${day}/${year}`;
       const formattedtime = `${hours}:${minutes}`;
-      console.log('TODAY DATE: ', formattedDate);
-      console.log('CURRENT TIME: ', formattedtime);
-      console.log('nilai pay in', payin);
+      console.log('nilai pay in manage', payin);
       const db = await dbconn.getDBConnection();
-      let datashift = await dbconn.ShiftDetail_getdataSumClose(
+      let datashift = await dbconn.ShiftDetail_getdataSum(
         db,
         'ShiftDetail',
         formattedDate,
       );
+      console.log('BATCH ID MANAGE: ', datashift[0].Batch_ID);
       getcashmanagement(datashift[0].Batch_ID).then(async result => {
         var hasil = result.data;
         console.log('hasil return get cash mng: ', hasil);
+        setAmtIn(hasil[0].amounT_IN);
+        setAmtOut(hasil[0].amounT_OUT);
+        PostSummaryShift(hasil[0].amounT_IN);
       });
-    } catch (error) {}
+    } catch (error) {
+      let msg = error;
+      CallModalInfo(msg);
+    }
+  };
+  const GetCashManagementOut = async () => {
+    try {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1;
+      const day = today.getDate();
+      const hours = today.getHours();
+      const minutes = today.getMinutes();
+      const formattedDate = `${month}/${day}/${year}`;
+      const formattedtime = `${hours}:${minutes}`;
+      console.log('nilai pay in manage', payin);
+      const db = await dbconn.getDBConnection();
+      let datashift = await dbconn.ShiftDetail_getdataSum(
+        db,
+        'ShiftDetail',
+        formattedDate,
+      );
+      console.log('BATCH ID MANAGE: ', datashift[0].Batch_ID);
+      getcashmanagement(datashift[0].Batch_ID).then(async result => {
+        var hasil = result.data;
+        console.log('hasil return get cash mng: ', hasil);
+        setAmtIn(hasil[0].amounT_IN);
+        setAmtOut(hasil[0].amounT_OUT);
+        PostSummaryShiftOut(hasil[0].amounT_OUT);
+      });
+    } catch (error) {
+      let msg = error;
+      CallModalInfo(msg);
+    }
   };
   const GetSummayShift = async () => {
     try {
@@ -552,6 +598,7 @@ export default function Discount({navigation}) {
       const formattedDate = `${month}/${day}/${year}`;
       const db = await dbconn.getDBConnection();
       const dbtrx = await dbconnTrx.getDBConnection();
+      const pipo = await dbconnMng.getDBConnection();
       let datashift = await dbconn.ShiftDetail_getdataSum(
         db,
         'ShiftDetail',
@@ -583,8 +630,14 @@ export default function Discount({navigation}) {
         'AddTrxHdr',
         datashift[0].Batch_ID,
       );
+      let getpipo = await dbconnMng.PayInPayOut_getdataHDR(
+        pipo,
+        'PayInPayOut',
+        datashift[0].Batch_ID,
+      );
+      setPipo(getpipo);
       let totbca = databca[0].TOTALCASH;
-      let totmandiri = databca[0].TOTALCASH;
+      let totmandiri = datamandiri[0].TOTALCASH;
       let totgopay = datagopay[0].TOTALCASH;
       let grosssales = datatrx[0].ORIGTOTL;
       let netsales = datatrx[0].ORIGTOTL - datatrx[0].setsum_Amount_Tax;
@@ -609,7 +662,7 @@ export default function Discount({navigation}) {
             'YYYY-MM-DD',
           );
           const formattedTimeOpening = moment(hasil[0].opening_time).format(
-            'h:mm',
+            'HH:mm',
           );
           setexpected_AMOUNT(hasil[0].expecteD_AMOUNT);
           setbatchID(hasil[0].batch_ID);
@@ -939,32 +992,19 @@ export default function Discount({navigation}) {
             {/* <ScrollView style={globalStyles.InputBills2}>
               <Text style={globalStyles.Payinout}>Pay In/Pay Out</Text>
             </ScrollView> */}
+            <Text style={globalStyles.Payinout}>Pay In/Pay Out</Text>
             <FlatList
-              data={receipts}
-              keyExtractor={item => item.date}
+              data={pipo}
+              keyExtractor={item => item.Sequence}
               renderItem={({item}) => (
-                <View>
-                  {item.data.map(receipt => (
-                    <TouchableOpacity
-                      key={receipt.id}
-                      style={globalStyles.receiptContainer}
-                      onPress={() => openModal(receipt)}>
-                      <Text style={globalStyles.invoice}>
-                        {receipt.invoice}
-                      </Text>
-                      <Text style={globalStyles.type}>
-                        {receipt.type} - {receipt.time}
-                      </Text>
-                      <Text style={globalStyles.payment}>
-                        {receipt.payment}
-                      </Text>
-                      {receipt.refund && (
-                        <Text style={globalStyles.refund}>
-                          {receipt.refund}
-                        </Text>
-                      )}
-                    </TouchableOpacity>
-                  ))}
+                <View style={globalStyles.receiptContainer}>
+                  <Text style={globalStyles.invoice}>
+                    {item.Date} {item.Time}
+                  </Text>
+                  <Text style={globalStyles.invoice}>{item.Notes}</Text>
+                  <Text style={globalStyles.invoice}>
+                    Rp. {Intl.NumberFormat('id-ID').format(item.Amount)}
+                  </Text>
                 </View>
               )}
             />
@@ -1183,7 +1223,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshift,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                Rp {Intl.NumberFormat('id-ID').format(sum_Amount_PayIn)}
+                Rp {Intl.NumberFormat('id-ID').format(amtin)}
               </Text>
             </View>
           </SafeAreaView>
@@ -1205,7 +1245,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshift,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                Rp {Intl.NumberFormat('id-ID').format(sum_Amount_PayOut)}
+                Rp {Intl.NumberFormat('id-ID').format(amtout)}
               </Text>
             </View>
           </SafeAreaView>

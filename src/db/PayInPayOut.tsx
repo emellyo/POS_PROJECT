@@ -18,7 +18,9 @@ export const PayInPayOut_CreateTbl = async (db: SQLiteDatabase, tableName: strin
         Sequence INT PRIMARY KEY NOT NULL,
         Notes TEXT NULL,
         POS_ID TEXT NULL,
-        UserID TEXT NOT NULL
+        UserID TEXT NOT NULL,
+        Date TEXT NOT NULL,
+        Time TEXT NOT NULL
     );`;
 
   await db.executeSql(query);
@@ -60,12 +62,12 @@ export const PayInPayOut_getdataHDR = async (db: SQLiteDatabase, tableName: stri
 };
 
 export const PayInPayOut_savedata = async (db: SQLiteDatabase, tableName: string ,
-   Batch_ID: string, Type_CashManagement: number, Amount: number, Sequence: number, notes: string, userid: string) => {
+   Batch_ID: string, Type_CashManagement: number, Amount: number, Sequence: number, notes: string, userid: string, date: string, time: string) => {
   const insertQuery =
     `INSERT INTO ${tableName}`+
-    `(Batch_ID, Type_CashManagement, Amount, Sequence, Notes, POS_ID, UserID)`+
+    `(Batch_ID, Type_CashManagement, Amount, Sequence, Notes, POS_ID, UserID, Date, Time)`+
     ` values ` +
- `('${Batch_ID}', ${Type_CashManagement}, ${Amount}, ${Sequence}, '${notes}', '${userid}' )`;
+ `('${Batch_ID}', ${Type_CashManagement}, ${Amount}, ${Sequence}, '${notes}', '${''}', '${userid}', '${date}', '${time}' )`;
   // join(',')
 
   return db.executeSql(insertQuery);
