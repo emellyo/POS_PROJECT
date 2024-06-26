@@ -32,6 +32,33 @@ export const globalStyles = StyleSheet.create({
     marginBottom: 20,
   },
 
+  receiptContainer: {
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    marginTop: 10,
+  },
+
+  refund: {
+    fontSize: 14,
+    color: 'red',
+  },
+
+  invoice: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+
+  type: {
+    fontSize: 1,
+    color: '#000',
+    fontWeight: '900',
+  },
+
+  payment: {
+    fontSize: 14,
+  },
+
   bannermenu: {
     flexDirection: 'column',
     backgroundColor: '#021F61',

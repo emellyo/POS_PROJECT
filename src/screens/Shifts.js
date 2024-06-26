@@ -15,6 +15,7 @@ import {
   RefreshControl,
   Alert,
   LogBox,
+  FlatList,
 } from 'react-native';
 import {globalStyles, invrecStyles} from '../css/global';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -22,6 +23,7 @@ import {useRoute, useTheme} from '@react-navigation/native';
 import {getsummaryshift} from '../api/getshiftsummary';
 import {savesummaryshift} from '../api/savesummaryshift';
 import {savecashmanagement} from '../api/savecashmanagement';
+import {getcashmanagement} from '../api/getcashmanagement';
 import {closeshift} from '../api/closeshift';
 import {SearchBar} from '@rneui/themed';
 import CheckBox from '@react-native-community/checkbox';
@@ -87,9 +89,14 @@ export default function Discount({navigation}) {
   const [mandiri, setMandiri] = useState(0);
   const [gopay, setGopay] = useState(0);
   const [differenamt, setDifferentAmt] = useState(0);
+  const [amtin, setAmtIn] = useState(0);
+  const [amtout, setAmtOut] = useState(0);
+
   useEffect(() => {
     setMdlDiscount(true);
     ShowWarning();
+    LOADTBLPIPO();
+    GetCashManagement();
     BackHandler.addEventListener(
       'hardwareBackPress',
       handleBackButtonClick,
@@ -104,6 +111,15 @@ export default function Discount({navigation}) {
       );
     };
   }, []);
+
+  const LOADTBLPIPO = async () => {
+    try {
+      const pipo = await dbconnMng.getDBConnection();
+      await dbconnMng.PayInPayOut_CreateTbl(pipo, 'PayInPayOut');
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const ShowWarning = async () => {
     try {
@@ -502,7 +518,31 @@ export default function Discount({navigation}) {
       CallModalInfo(msg);
     }
   };
-
+  const GetCashManagement = async () => {
+    try {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1;
+      const day = today.getDate();
+      const hours = today.getHours();
+      const minutes = today.getMinutes();
+      const formattedDate = `${month}/${day}/${year}`;
+      const formattedtime = `${hours}:${minutes}`;
+      console.log('TODAY DATE: ', formattedDate);
+      console.log('CURRENT TIME: ', formattedtime);
+      console.log('nilai pay in', payin);
+      const db = await dbconn.getDBConnection();
+      let datashift = await dbconn.ShiftDetail_getdataSumClose(
+        db,
+        'ShiftDetail',
+        formattedDate,
+      );
+      getcashmanagement(datashift[0].Batch_ID).then(async result => {
+        var hasil = result.data;
+        console.log('hasil return get cash mng: ', hasil);
+      });
+    } catch (error) {}
+  };
   const GetSummayShift = async () => {
     try {
       const today = new Date();
@@ -896,9 +936,38 @@ export default function Discount({navigation}) {
               </View>
               {/* //* BILLS*/}
             </ScrollView>
-            <ScrollView style={globalStyles.InputBills2}>
+            {/* <ScrollView style={globalStyles.InputBills2}>
               <Text style={globalStyles.Payinout}>Pay In/Pay Out</Text>
-            </ScrollView>
+            </ScrollView> */}
+            <FlatList
+              data={receipts}
+              keyExtractor={item => item.date}
+              renderItem={({item}) => (
+                <View>
+                  {item.data.map(receipt => (
+                    <TouchableOpacity
+                      key={receipt.id}
+                      style={globalStyles.receiptContainer}
+                      onPress={() => openModal(receipt)}>
+                      <Text style={globalStyles.invoice}>
+                        {receipt.invoice}
+                      </Text>
+                      <Text style={globalStyles.type}>
+                        {receipt.type} - {receipt.time}
+                      </Text>
+                      <Text style={globalStyles.payment}>
+                        {receipt.payment}
+                      </Text>
+                      {receipt.refund && (
+                        <Text style={globalStyles.refund}>
+                          {receipt.refund}
+                        </Text>
+                      )}
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
+            />
           </View>
         </View>
       </Modal>
