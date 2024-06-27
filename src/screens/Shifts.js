@@ -92,6 +92,7 @@ export default function Discount({navigation}) {
   const [differenamt, setDifferentAmt] = useState(0);
   const [amtin, setAmtIn] = useState(0);
   const [amtout, setAmtOut] = useState(0);
+  const [expected, setExpected] = useState(0);
 
   useEffect(() => {
     setMdlDiscount(true);
@@ -713,6 +714,9 @@ export default function Discount({navigation}) {
   };
 
   const viewModalCloseShift = async () => {
+    var sumexpected = cash + amtin;
+    var totexpected = sumexpected - amtout;
+    setExpected(totexpected);
     setMdlCloseShift(true);
   };
   const viewModalCashMan = async () => {
@@ -796,7 +800,7 @@ export default function Discount({navigation}) {
                       ]}
                       maxLength={100}
                       keyboardType="string"
-                      value={expamount.toLocaleString()}
+                      value={expected.toLocaleString()}
                       editable={false}
                       //onChangeText={text => setPassword(text)}
                     />
