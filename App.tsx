@@ -25,6 +25,7 @@ import Sidebar from './src/screens/SideBar';
 import SidebarContent from './src/screens/SideBarContent';
 import PrintBluetooth from './src/screens/printBluetooth';
 import Receipts from './src/screens/ReceiptDetails';
+import CloseSummary from './src/screens/CloseShiftSummary'
 // import InvRecScreen from './src/screens/InvReceiving';
 // import InvOutScreen from './src/screens/InvOut';
 // import BarcodeScan from './src/screens/BarcodeScanner';
@@ -43,7 +44,7 @@ const Drawer = createDrawerNavigator();
 const App = () => {
 return (
     <NavigationContainer>
-    <Stack.Navigator initialRouteName="Login"
+    <Stack.Navigator initialRouteName="Close"
       screenOptions={{headerShown: false}}>
         {/* You can add a Login screen here */}
         <Stack.Screen 
@@ -82,6 +83,10 @@ return (
         name="Receipt" 
         component={Receipts}
         options={{ title: 'Receipt Page'}} />
+        <Stack.Screen 
+        name="Close" 
+        component={CloseSummary}
+        options={{ title: 'Close Summary Page'}} />
       </Stack.Navigator>
     </NavigationContainer>
   // <NavigationContainer>

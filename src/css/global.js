@@ -1033,7 +1033,7 @@ export const globalStyles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   buttonclose: {
-    width: '50%',
+    width: '100%',
     height: 40,
     borderWidth: 1,
     backgroundColor: '#FFFFFF',
@@ -1403,6 +1403,11 @@ export const globalStyles = StyleSheet.create({
     flexDirection: 'row',
   },
   kiri: {
+    display: 'flex',
+    width: '70%',
+    padding: 10,
+  },
+  tengah: {
     display: 'flex',
     width: '70%',
     padding: 10,

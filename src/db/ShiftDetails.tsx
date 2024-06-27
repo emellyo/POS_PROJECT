@@ -32,6 +32,7 @@ export const ShiftDetail_CreateTbl = async (db: SQLiteDatabase, tableName: strin
         Sum_Amount_PayOut REAL NOT NULL,
         Sum_Amount_PayIn REAL NOT NULL,
         Count_Customers INT NOT NULL,
+        Difference REAL NOT NULL
         Status_Batch INT NOT NULL
     );`;
 
@@ -220,10 +221,10 @@ export const ShiftDetail_savedata = async (db: SQLiteDatabase, tableName: string
   const insertQuery =
     `INSERT INTO ${tableName}`+
     `(Batch_ID, LastEdit_Date, LastEdit_time, Store_ID, POS_Device_ID, Opening_Date, Opening_time, Closing_Date, Closing_time,`+
-    `Sum_Amount_Opening, Sum_Amount_Closing, Sum_Invoice_Posted, Sum_Tendered, Sum_Changes, Sum_Amount_Discount, Sum_Amount_Tax, Sum_Invoice_Refund_Posted, Sum_Amount_PayOut, Sum_Amount_PayIn, Count_Customers, Status_Batch)`+
+    `Sum_Amount_Opening, Sum_Amount_Closing, Sum_Invoice_Posted, Sum_Tendered, Sum_Changes, Sum_Amount_Discount, Sum_Amount_Tax, Sum_Invoice_Refund_Posted, Sum_Amount_PayOut, Sum_Amount_PayIn, Count_Customers, Difference, Status_Batch)`+
     ` values ` +
  `('${Batch_ID}', '${date}', '${time}', '${Store_ID}', '${''}', '${date}', '${time}', '${''}', '${''}', ${openamount}, ${0},` + "\n" +
- `${0}, ${0}, ${0}, ${0}, ${0}, ${0}, ${0}, ${0}, ${0}, ${0})`;
+ `${0}, ${0}, ${0}, ${0}, ${0}, ${0}, ${0}, ${0}, ${0}, ${0}, ${0})`;
   // join(',')
 
   return db.executeSql(insertQuery);
