@@ -190,346 +190,6 @@ export default function Discount({navigation}) {
     }
   };
 
-  const PostCloseShift = async closeamount => {
-    try {
-      setMdlCloseShift(false);
-      console.log('nilai Amount_Closing', closeamount);
-      let datauser = await AsyncStorage.getItem('@dtUser');
-      datauser = JSON.parse(datauser);
-      var userid = datauser[0].userid;
-      const today = new Date();
-      const year = today.getFullYear();
-      const month = today.getMonth() + 1;
-      const day = today.getDate();
-      const hours = today.getHours();
-      const minutes = today.getMinutes();
-      const seconds = today.getSeconds();
-      const formattedDate = `${month}/${day}/${year}`;
-      const formattedtime = `${hours}:${minutes}`;
-      console.log('TODAY DATE: ', formattedDate);
-      console.log('CURRENT TIME: ', formattedtime);
-      const db = await dbconn.getDBConnection();
-      const dbtrx = await dbconnTrx.getDBConnection();
-      let datashift = await dbconn.ShiftDetail_getdataSum(
-        db,
-        'ShiftDetail',
-        formattedDate,
-        0,
-      );
-      let datatrx = await dbconnTrx.AddTrxHdr_getdatashift(
-        dbtrx,
-        'AddTrxHdr',
-        datashift[0].Batch_ID,
-      );
-      closeshift({
-        Batch_ID: datashift[0].Batch_ID,
-        Lineitmseq: 0,
-        Payment_ID: '',
-        Payment_Type: '',
-        Amount_Opening: closeamount,
-        UserID: userid,
-      }).then(async result => {
-        var hasil = result.data;
-        console.log('hasil return post openshift: ', hasil);
-        let query = `UPDATE ShiftDetail SET Sum_Amount_Closing = ${closeamount}, Status_Batch = 1, Sum_Invoice_Posted = ${datatrx[0].InvoicePosted}
-        WHERE Opening_Date = '${formattedDate}' AND Batch_ID = '${datashift[0].Batch_ID}' AND Status_Batch = 0;`;
-        await dbconn.querydynamic(db, query);
-        setMdlCloseShift(false);
-        PostSummaryShiftClosing(closeamount);
-      });
-    } catch (error) {
-      let msg = error;
-      CallModalInfo(msg);
-    }
-  };
-
-  const PostPayIn = async payin => {
-    try {
-      console.log('masuk pay in');
-      let datauser = await AsyncStorage.getItem('@dtUser');
-      datauser = JSON.parse(datauser);
-      var userid = datauser[0].userid;
-      var storeid = datauser[0].store_ID;
-      const today = new Date();
-      // Get various parts of the date
-      const year = today.getFullYear();
-      const month = today.getMonth() + 1; // Months are zero-indexed
-      const day = today.getDate();
-      const hours = today.getHours();
-      const minutes = today.getMinutes();
-      const formattedDate = `${month}/${day}/${year}`;
-      const formattedtime = `${hours}:${minutes}`;
-      let noitem = 0;
-      const db = await dbconn.getDBConnection();
-      const pipo = await dbconnMng.getDBConnection();
-      let datashift = await dbconn.ShiftDetail_getdataSum(
-        db,
-        'ShiftDetail',
-        formattedDate,
-        0,
-      );
-      savecashmanagement({
-        Batch_ID: datashift[0].Batch_ID,
-        Type_CashManagement: '1',
-        Amount: payin,
-        Notes: notes,
-        POS_ID: '',
-        UserID: userid,
-      }).then(async result => {
-        var hasil = result.data;
-        console.log('hasil return post openshift: ', hasil);
-        let query = `UPDATE ShiftDetail SET Sum_Amount_PayIn = ${payin} WHERE Opening_Date = '${formattedDate}' AND Batch_ID = '${datashift[0].Batch_ID}' AND Status_Batch = 0;`;
-        await dbconn.querydynamic(db, query);
-        let datamax = await dbconnMng.queryselecPayInPayOut(
-          pipo,
-          `select * from PayInPayOut order by Sequence desc;`,
-        );
-        let len = datamax.length < 1 ? 0 : datamax.length;
-        noitem = len + 1;
-        await dbconnMng.PayInPayOut_savedata(
-          pipo,
-          'PayInPayOut',
-          datashift[0].Batch_ID,
-          1,
-          payin,
-          noitem,
-          notes,
-          userid,
-          formattedDate,
-          formattedtime,
-        );
-        setMdlCashMan(false);
-        GetCashManagement(payin);
-        //PostSummaryShift(payin);
-      });
-    } catch (error) {
-      let msg = error;
-      CallModalInfo(msg);
-    }
-  };
-
-  const PostPayOut = async payin => {
-    try {
-      let datauser = await AsyncStorage.getItem('@dtUser');
-      datauser = JSON.parse(datauser);
-      var userid = datauser[0].userid;
-      const today = new Date();
-      // Get various parts of the date
-      const year = today.getFullYear();
-      const month = today.getMonth() + 1; // Months are zero-indexed
-      const day = today.getDate();
-      const formattedDate = `${month}/${day}/${year}`;
-      const db = await dbconn.getDBConnection();
-      let datashift = await dbconn.ShiftDetail_getdataSum(
-        db,
-        'ShiftDetail',
-        formattedDate,
-        0,
-      );
-      savecashmanagement({
-        Batch_ID: datashift[0].Batch_ID,
-        Type_CashManagement: '2',
-        Amount: payin,
-        Notes: notes,
-        POS_ID: '',
-        UserID: userid,
-      }).then(async result => {
-        var hasil = result.data;
-        console.log('hasil return post openshift: ', hasil);
-        let query = `UPDATE ShiftDetail SET Sum_Amount_PayOut = ${payin} WHERE Opening_Date = '${formattedDate}' AND Batch_ID = '${datashift[0].Batch_ID}' AND Status_Batch = 0;`;
-        await dbconn.querydynamic(db, query);
-        setMdlCashMan(false);
-        GetCashManagementOut();
-        //PostSummaryShiftOut(payin);
-      });
-    } catch (error) {
-      let msg = error;
-      CallModalInfo(msg);
-    }
-  };
-
-  const PostSummaryShift = async payin => {
-    try {
-      console.log('MASUK SUMMARY SHIFT POST');
-      const today = new Date();
-      const year = today.getFullYear();
-      const month = today.getMonth() + 1;
-      const day = today.getDate();
-      const hours = today.getHours();
-      const minutes = today.getMinutes();
-      const formattedDate = `${month}/${day}/${year}`;
-      const formattedtime = `${hours}:${minutes}`;
-      console.log('TODAY DATE: ', formattedDate);
-      console.log('CURRENT TIME: ', formattedtime);
-      console.log('nilai pay in', payin);
-      let datauser = await AsyncStorage.getItem('@dtUser');
-      datauser = JSON.parse(datauser);
-      var userid = datauser[0].userid;
-      var storeid = datauser[0].store_ID;
-      const db = await dbconn.getDBConnection();
-      let datashift = await dbconn.ShiftDetail_getdataSum(
-        db,
-        'ShiftDetail',
-        formattedDate,
-        0,
-      );
-      console.log('data shift: ', datashift);
-      let Opening_Date = datashift[0].Opening_Date;
-      console.log('opening date: ', Opening_Date);
-      savesummaryshift({
-        Batch_ID: datashift[0].Batch_ID,
-        LastEdit_Date: formattedDate,
-        LastEdit_time: formattedtime,
-        Store_ID: storeid[0].value,
-        POS_Device_ID: '',
-        Opening_Date: datashift[0].Opening_Date,
-        Opening_time: datashift[0].Opening_time,
-        Closing_Date: '1900-01-01 00:00:00.000',
-        Closing_time: '1900-01-01 00:00:00.000',
-        Sum_Amount_Opening: datashift[0].Sum_Amount_Opening,
-        Sum_Amount_Closing: 0,
-        Sum_Invoice_Posted: 0,
-        Sum_Tendered: 0,
-        Sum_Changes: 0,
-        Sum_Amount_Discount: 0,
-        Sum_Amount_Tax: 0,
-        Sum_Invoice_Refund_Posted: 0,
-        Sum_Amount_PayOut: 0,
-        Sum_Amount_PayIn: payin,
-        Count_Customers: 0,
-        Status_Batch: 0,
-        UserID: userid,
-      }).then(async result => {
-        var hasil = result.data;
-        console.log('hasil return save shift: ', hasil);
-        GetSummayShift();
-      });
-    } catch (error) {
-      let msg = error;
-      CallModalInfo(msg);
-    }
-  };
-  const PostSummaryShiftOut = async payin => {
-    try {
-      console.log('MASUK SUMMARY SHIFT POST');
-      const today = new Date();
-      const year = today.getFullYear();
-      const month = today.getMonth() + 1;
-      const day = today.getDate();
-      const hours = today.getHours();
-      const minutes = today.getMinutes();
-      const formattedDate = `${month}/${day}/${year}`;
-      const formattedtime = `${hours}:${minutes}`;
-      console.log('TODAY DATE: ', formattedDate);
-      console.log('CURRENT TIME: ', formattedtime);
-      console.log('nilai pay in', payin);
-      let datauser = await AsyncStorage.getItem('@dtUser');
-      datauser = JSON.parse(datauser);
-      var userid = datauser[0].userid;
-      var storeid = datauser[0].store_ID;
-      const db = await dbconn.getDBConnection();
-      let datashift = await dbconn.ShiftDetail_getdataSum(
-        db,
-        'ShiftDetail',
-        formattedDate,
-        0,
-      );
-      console.log('data shift: ', datashift);
-      let Opening_Date = datashift[0].Opening_Date;
-      console.log('opening date: ', Opening_Date);
-      savesummaryshift({
-        Batch_ID: datashift[0].Batch_ID,
-        LastEdit_Date: formattedDate,
-        LastEdit_time: formattedtime,
-        Store_ID: storeid[0].value,
-        POS_Device_ID: '',
-        Opening_Date: datashift[0].Opening_Date,
-        Opening_time: datashift[0].Opening_time,
-        Closing_Date: '1900-01-01 00:00:00.000',
-        Closing_time: '1900-01-01 00:00:00.000',
-        Sum_Amount_Opening: datashift[0].Sum_Amount_Opening,
-        Sum_Amount_Closing: 0,
-        Sum_Invoice_Posted: 0,
-        Sum_Tendered: 0,
-        Sum_Changes: 0,
-        Sum_Amount_Discount: 0,
-        Sum_Amount_Tax: 0,
-        Sum_Invoice_Refund_Posted: 0,
-        Sum_Amount_PayOut: payin,
-        Sum_Amount_PayIn: 0,
-        Count_Customers: 0,
-        Status_Batch: 0,
-        UserID: userid,
-      }).then(async result => {
-        var hasil = result.data;
-        console.log('hasil return save shift: ', hasil);
-        GetSummayShift();
-      });
-    } catch (error) {
-      let msg = error;
-      CallModalInfo(msg);
-    }
-  };
-  const PostSummaryShiftClosing = async closeamount => {
-    try {
-      console.log('MASUK SUMMARY SHIFT POST');
-      const today = new Date();
-      const year = today.getFullYear();
-      const month = today.getMonth() + 1;
-      const day = today.getDate();
-      const hours = today.getHours();
-      const minutes = today.getMinutes();
-      const formattedDate = `${month}/${day}/${year}`;
-      const formattedtime = `${hours}:${minutes}`;
-      console.log('TODAY DATE: ', formattedDate);
-      console.log('CURRENT TIME: ', formattedtime);
-      console.log('nilai pay in', payin);
-      let datauser = await AsyncStorage.getItem('@dtUser');
-      datauser = JSON.parse(datauser);
-      var userid = datauser[0].userid;
-      var storeid = datauser[0].store_ID;
-      const db = await dbconn.getDBConnection();
-      let datashift = await dbconn.ShiftDetail_getdataSumClose(
-        db,
-        'ShiftDetail',
-        formattedDate,
-      );
-      console.log('data shift: ', datashift);
-      let Opening_Date = datashift[0].Opening_Date;
-      console.log('opening date: ', Opening_Date);
-      savesummaryshift({
-        Batch_ID: datashift[0].Batch_ID,
-        LastEdit_Date: formattedDate,
-        LastEdit_time: formattedtime,
-        Store_ID: storeid[0].value,
-        POS_Device_ID: '',
-        Opening_Date: datashift[0].Opening_Date,
-        Opening_time: datashift[0].Opening_time,
-        Closing_Date: formattedDate,
-        Closing_time: formattedtime,
-        Sum_Amount_Opening: datashift[0].Sum_Amount_Opening,
-        Sum_Amount_Closing: closeamount,
-        Sum_Invoice_Posted: 0,
-        Sum_Tendered: 0,
-        Sum_Changes: 0,
-        Sum_Amount_Discount: 0,
-        Sum_Amount_Tax: 0,
-        Sum_Invoice_Refund_Posted: 0,
-        Sum_Amount_PayOut: payin,
-        Sum_Amount_PayIn: 0,
-        Count_Customers: 0,
-        Status_Batch: 0,
-        UserID: userid,
-      }).then(async result => {
-        var hasil = result.data;
-        console.log('hasil return save shift: ', hasil);
-        navigation.replace('Home');
-      });
-    } catch (error) {
-      let msg = error;
-      CallModalInfo(msg);
-    }
-  };
   const GetCashManagement = async () => {
     try {
       const today = new Date();
@@ -542,7 +202,7 @@ export default function Discount({navigation}) {
       const formattedtime = `${hours}:${minutes}`;
       console.log('nilai pay in manage', payin);
       const db = await dbconn.getDBConnection();
-      let datashift = await dbconn.ShiftDetail_getdataSum(
+      let datashift = await dbconn.ShiftDetail_getdataClos(
         db,
         'ShiftDetail',
         formattedDate,
@@ -553,7 +213,6 @@ export default function Discount({navigation}) {
         console.log('hasil return get cash mng: ', hasil);
         setAmtIn(hasil[0].amounT_IN);
         setAmtOut(hasil[0].amounT_OUT);
-        PostSummaryShift(hasil[0].amounT_IN);
       });
     } catch (error) {
       let msg = error;
@@ -600,11 +259,10 @@ export default function Discount({navigation}) {
       const db = await dbconn.getDBConnection();
       const dbtrx = await dbconnTrx.getDBConnection();
       const pipo = await dbconnMng.getDBConnection();
-      let datashift = await dbconn.ShiftDetail_getdataSum(
+      let datashift = await dbconn.ShiftDetail_getdataClos(
         db,
         'ShiftDetail',
         formattedDate,
-        0,
       );
       let datatrx = await dbconnTrx.AddTrxHdr_getdatashift(
         dbtrx,
@@ -643,6 +301,7 @@ export default function Discount({navigation}) {
       let grosssales = datatrx[0].ORIGTOTL;
       let netsales = datatrx[0].ORIGTOTL - datatrx[0].setsum_Amount_Tax;
       let tax = datatrx[0].setsum_Amount_Tax;
+      setDifferentAmt(datashift[0].Difference);
       setTax(tax);
       setMandiri(totmandiri);
       setGopay(totgopay);
@@ -693,18 +352,6 @@ export default function Discount({navigation}) {
       });
     } catch (error) {
       let msg = error;
-      CallModalInfo(msg);
-    }
-  };
-
-  const DifferentAmount = async closeamount => {
-    try {
-      let changes = expamount - closeamount;
-      console.log('hasil changes: ', changes);
-      setDifferentAmt(changes);
-    } catch (error) {
-      let msg = error.message;
-      console.log(error);
       CallModalInfo(msg);
     }
   };
@@ -1017,7 +664,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshifthdr,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                Rp 0
+                Rp {Intl.NumberFormat('id-ID').format(expected)}
               </Text>
             </View>
           </SafeAreaView>
@@ -1039,7 +686,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshifthdr,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                Rp 0
+                Rp {Intl.NumberFormat('id-ID').format(differenamt)}
               </Text>
             </View>
           </SafeAreaView>

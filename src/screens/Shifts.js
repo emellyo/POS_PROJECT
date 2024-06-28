@@ -1271,7 +1271,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshifthdr,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                Rp 0
+                Rp {Intl.NumberFormat('id-ID').format(expected)}
               </Text>
             </View>
           </SafeAreaView>

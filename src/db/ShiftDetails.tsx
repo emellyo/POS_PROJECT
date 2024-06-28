@@ -119,6 +119,22 @@ export const ShiftDetail_getdataSum = async (db: SQLiteDatabase, tableName: stri
   }
 };
 
+export const ShiftDetail_getdataClos = async (db: SQLiteDatabase, tableName: string, date: string): Promise<ShiftDetail[]> => {
+  try {
+    const Lists: ShiftDetail[] = [];
+    const results = await db.executeSql(`SELECT * FROM ${tableName} where Opening_Date = '${date}' and Status_Batch = 1`);
+    results.forEach(result => {
+      for (let index = 0; index < result.rows.length; index++) {
+        Lists.push(result.rows.item(index))
+      }
+    });
+    return Lists;
+  } catch (error) {
+    console.error(error);
+    throw Error('Failed to get Add Item !!!');
+  }
+};
+
 export const ShiftDetail_getdataSumClose = async (db: SQLiteDatabase, tableName: string, date: string): Promise<ShiftDetail[]> => {
   try {
     const Lists: ShiftDetail[] = [];
