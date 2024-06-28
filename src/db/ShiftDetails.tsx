@@ -32,7 +32,7 @@ export const ShiftDetail_CreateTbl = async (db: SQLiteDatabase, tableName: strin
         Sum_Amount_PayOut REAL NOT NULL,
         Sum_Amount_PayIn REAL NOT NULL,
         Count_Customers INT NOT NULL,
-        Difference REAL NOT NULL
+        Difference REAL NOT NULL,
         Status_Batch INT NOT NULL
     );`;
 

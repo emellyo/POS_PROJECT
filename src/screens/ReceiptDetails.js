@@ -76,7 +76,54 @@ const Receipts = () => {
   const [salesTypes, setSalesTypes] = useState([]);
   const [open, setOpen] = useState(false);
   const [domain, setDomain] = useState('');
-  const [receipts, setReceipts] = useState([]);
+  const [receipts, setReceipts] = useState([
+    {
+      date: 'Thursday, 17 August 2023',
+      data: [
+        {
+          id: '1',
+          invoice: 'INV202308170003',
+          type: 'Walk In',
+          time: '16:21',
+          payment: 'BCA - Rp. 75.000',
+        },
+        {
+          id: '2',
+          invoice: 'INV202308170002',
+          type: 'Walk In',
+          time: '13:18',
+          payment: 'CASH - Rp. 25.000',
+          refund: 'Refund #1-1001',
+        },
+        {
+          id: '3',
+          invoice: 'INV202308170001',
+          type: 'Walk In',
+          time: '10:34',
+          payment: 'CASH - Rp. 25.000',
+        },
+      ],
+    },
+    {
+      date: 'Wednesday, 16 August 2023',
+      data: [
+        {
+          id: '4',
+          invoice: 'INV202308160002',
+          type: 'Walk In',
+          time: '13:18',
+          payment: 'CASH - Rp. 25.000',
+        },
+        {
+          id: '5',
+          invoice: 'INV202308160001',
+          type: 'Walk In',
+          time: '10:34',
+          payment: 'CASH - Rp. 25.000',
+        },
+      ],
+    },
+  ]);
   const [selectedReceipt, setSelectedReceipt] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
   useEffect(() => {

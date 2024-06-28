@@ -96,6 +96,7 @@ export default function Discount({navigation}) {
 
   useEffect(() => {
     setMdlDiscount(true);
+    GetSummayShift();
     //ShowWarning();
     BackHandler.addEventListener(
       'hardwareBackPress',
@@ -142,8 +143,6 @@ export default function Discount({navigation}) {
       console.log('total SHIFT count: ', totline);
       if (totline == 1) {
         GetSummayShift();
-        GetCashManagement();
-        GetCashManagementOut();
         LOADTBLPIPO();
       } else {
         let msg = 'Mohon opening shift terlebih dahulu, sebelum ke halaman ini';
@@ -909,14 +908,16 @@ export default function Discount({navigation}) {
             </View>
           </SafeAreaView>
         </View>
-        <View style={globalStyles.ButtonCloseShift}>
-          <SafeAreaView style={[invrecStyles.buttontotalanclose]}>
-            <TouchableOpacity
-              style={[globalStyles.buttonclose]}
-              onPress={handleBackButtonClick}>
-              <Text style={globalStyles.textCloseShift}>CLOSE</Text>
-            </TouchableOpacity>
-          </SafeAreaView>
+        <View style={[invrecStyles.form]}>
+          <View style={globalStyles.kanan3}>
+            <View style={[invrecStyles.menuitemsubmit3]}>
+              <TouchableOpacity
+                style={globalStyles.buttoncashmanag}
+                onPress={handleBackButtonClick}>
+                <Text style={globalStyles.textbut}>CLOSE SHIFT</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
       </ScrollView>
       {/* //* CONTENT */}

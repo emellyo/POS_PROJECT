@@ -1033,6 +1033,14 @@ export const globalStyles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   buttonclose: {
+    width: '50%',
+    height: 40,
+    borderWidth: 1,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#0096FF',
+  },
+  buttonclose2: {
     width: '100%',
     height: 40,
     borderWidth: 1,
@@ -1422,6 +1430,12 @@ export const globalStyles = StyleSheet.create({
     display: 'flex',
     alignItems: 'flex-end',
     width: '50%',
+    padding: 10,
+  },
+  kanan3: {
+    display: 'flex',
+    alignItems: 'flex-end',
+    width: '100%',
     padding: 10,
   },
   kirilogin: {

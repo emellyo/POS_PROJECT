@@ -142,8 +142,7 @@ export default function Discount({navigation}) {
       console.log('total SHIFT count: ', totline);
       if (totline == 1) {
         GetSummayShift();
-        GetCashManagement();
-        GetCashManagementOut();
+        //GetCashManagementAll();
         LOADTBLPIPO();
       } else {
         let msg = 'Mohon opening shift terlebih dahulu, sebelum ke halaman ini';
@@ -190,7 +189,7 @@ export default function Discount({navigation}) {
     }
   };
 
-  const PostCloseShift = async closeamount => {
+  const PostCloseShift = async (closeamount, differenamt) => {
     try {
       setMdlCloseShift(false);
       console.log('nilai Amount_Closing', closeamount);
@@ -231,7 +230,7 @@ export default function Discount({navigation}) {
       }).then(async result => {
         var hasil = result.data;
         console.log('hasil return post openshift: ', hasil);
-        let query = `UPDATE ShiftDetail SET Sum_Amount_Closing = ${closeamount}, Status_Batch = 1, Sum_Invoice_Posted = ${datatrx[0].InvoicePosted}
+        let query = `UPDATE ShiftDetail SET Sum_Amount_Closing = ${closeamount}, Status_Batch = 1, Sum_Invoice_Posted = ${datatrx[0].InvoicePosted}, Difference = ${differenamt}
         WHERE Opening_Date = '${formattedDate}' AND Batch_ID = '${datashift[0].Batch_ID}' AND Status_Batch = 0;`;
         await dbconn.querydynamic(db, query);
         setMdlCloseShift(false);
@@ -523,7 +522,52 @@ export default function Discount({navigation}) {
       }).then(async result => {
         var hasil = result.data;
         console.log('hasil return save shift: ', hasil);
-        navigation.replace('Home');
+        navigation.replace('Close');
+      });
+    } catch (error) {
+      let msg = error;
+      CallModalInfo(msg);
+    }
+  };
+  const GetCashManagementAll = async () => {
+    try {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1;
+      const day = today.getDate();
+      const hours = today.getHours();
+      const minutes = today.getMinutes();
+      const formattedDate = `${month}/${day}/${year}`;
+      const formattedtime = `${hours}:${minutes}`;
+      console.log('nilai pay in manage', payin);
+      const db = await dbconn.getDBConnection();
+      const dbtrx = await dbconnTrx.getDBConnection();
+      let datashift = await dbconn.ShiftDetail_getdataSum(
+        db,
+        'ShiftDetail',
+        formattedDate,
+      );
+      let datacash = await dbconnTrx.AddTrxHdr_getdatacash(
+        dbtrx,
+        'AddTrxHdr',
+        datashift[0].Batch_ID,
+      );
+      console.log('BATCH ID MANAGE: ', datashift[0].Batch_ID);
+      getcashmanagement(datashift[0].Batch_ID).then(async result => {
+        var hasil = result.data;
+        console.log('hasil return get cash mng: ', hasil);
+        setAmtIn(hasil[0].amounT_IN);
+        setAmtOut(hasil[0].amounT_OUT);
+        console.log(
+          'amount masing2: ',
+          datacash[0].TOTALCASH,
+          hasil[0].amounT_IN,
+          hasil[0].amounT_OUT,
+        );
+        let totexpected = datacash[0].TOTALCASH + hasil[0].amounT_IN;
+        let allexpected = totexpected - hasil[0].amounT_OUT;
+        console.log('TOTAL EXPECTED: ', allexpected);
+        setExpected(allexpected);
       });
     } catch (error) {
       let msg = error;
@@ -689,6 +733,7 @@ export default function Discount({navigation}) {
           setcreated_Date(hasil[0].created_Date);
           setcreated_time(hasil[0].created_time);
           setstore_ID(hasil[0].store_ID);
+          GetCashManagementAll();
         }
       });
     } catch (error) {
@@ -699,7 +744,7 @@ export default function Discount({navigation}) {
 
   const DifferentAmount = async closeamount => {
     try {
-      let changes = expamount - closeamount;
+      let changes = expected - closeamount;
       console.log('hasil changes: ', changes);
       setDifferentAmt(changes);
     } catch (error) {
@@ -887,8 +932,8 @@ export default function Discount({navigation}) {
             <View style={globalStyles.ButtonCloseShift}>
               <SafeAreaView style={[invrecStyles.buttontotalanclose]}>
                 <TouchableOpacity
-                  style={[globalStyles.buttonclose]}
-                  onPress={() => PostCloseShift(closeamount)}>
+                  style={[globalStyles.buttonclose2]}
+                  onPress={() => PostCloseShift(closeamount, differenamt)}>
                   <Text style={globalStyles.textCloseShift}>CLOSE SHIFT</Text>
                 </TouchableOpacity>
               </SafeAreaView>
