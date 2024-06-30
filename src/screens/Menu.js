@@ -179,10 +179,11 @@ export default function Menu({navigation}) {
       const dbtrxhdr = await dbhdr.getDBConnection();
       //await dbconnTrx.dropTbl(db, 'AddTrxHdr');
       //await dbconn.dropTbl(db, 'Variant');
-      await dbconnTrx.deletedataAllTbl(dbtrx, 'AddTrxDtl');
-      await dbhdr.AddTrxHdr_CreateTbl(dbtrxhdr, 'AddTrxHdr');
-      await dbconn.Variant_CreateTbl(db, 'Variant');
+      //await dbconnTrx.dropTbl(dbtrx, 'AddTrxDtl');
       await dbconnTrx.AddTrxDtl_CreateTbl(dbtrx, 'AddTrxDtl');
+      await dbconn.Variant_CreateTbl(db, 'Variant');
+      await dbhdr.AddTrxHdr_CreateTbl(dbtrxhdr, 'AddTrxHdr');
+      await dbconnTrx.deletedataAllTbl(dbtrx, 'AddTrxDtl');
       await dbconn.deletedataAllTbl(db, 'Variant');
       const storedTbl = await dbconn.Variant_getdata(db, 'Variant');
       if (storedTbl.length) {
