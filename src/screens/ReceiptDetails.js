@@ -21,6 +21,7 @@ import {globalStyles, invrecStyles} from '../css/global';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {gettrxhist} from '../api/gettrxhist';
+import * as dbconn from '../db/TrxHist';
 
 const ReceiptModal = ({visible, onClose, receipt}) => {
   if (!receipt) return null;
@@ -129,6 +130,7 @@ const Receipts = () => {
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     GetSalesType();
+    LOADTBLHIST();
     return () => {
       clearInterval(increment.current);
       BackHandler.removeEventListener(
@@ -138,6 +140,15 @@ const Receipts = () => {
     };
   }, []);
 
+  const LOADTBLHIST = async () => {
+    try {
+      const db = await dbconn.getDBConnection();
+      await dbconn.TrxHist_CreateTbl(db, 'TrxHist');
+      await dbconn.deletedataAllTbl(db, 'TrxHist');
+    } catch (error) {
+      console.error(error);
+    }
+  };
   const GetSalesType = async () => {
     try {
       getsalestype({
@@ -157,6 +168,7 @@ const Receipts = () => {
 
   const GetHistoryTrxHDR = async () => {
     try {
+      const db = await dbconn.getDBConnection();
       gettrxhist({
         DOCNUMBER: '',
         DateFrom: dateFrom,
@@ -166,6 +178,7 @@ const Receipts = () => {
       }).then(async result => {
         var hasil = result.data;
         console.log('return history tax: ', hasil);
+        await dbconn.TrxHist_savedata(db, 'TrxHist');
         setReceipts(hasil);
       });
     } catch (error) {
@@ -271,7 +284,7 @@ const Receipts = () => {
           <ActivityIndicator size="large" color="#0000ff" />
         )}
       </View>
-      <Button title="Load Receipts" onPress={() => {}} />
+      <Button title="Load Receipts" onPress={() => GetHistoryTrxHDR()} />
       <FlatList
         data={receipts}
         keyExtractor={item => item.date}
