@@ -176,10 +176,12 @@ const Receipts = () => {
         SalesType_ID: setSalesType,
         Search: '',
       }).then(async result => {
+        let dtTrxHisthdr = [];
         var hasil = result.data;
         console.log('return history tax: ', hasil);
         await dbconn.TrxHist_savedata(db, 'TrxHist');
-        setReceipts(hasil);
+        dtTrxHisthdr = await dbconn.TrxHist_getdataHDR(db, 'TrxHist');
+        setReceipts(dtTrxHisthdr);
       });
     } catch (error) {
       let msg = error.message;

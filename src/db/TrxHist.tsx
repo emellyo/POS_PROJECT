@@ -60,10 +60,10 @@ export const TrxHist_getdata = async (db: SQLiteDatabase, tableName: string): Pr
 
 
 
-export const TrxHist_getdataHDR = async (db: SQLiteDatabase, tableName: string, Batch_ID: string): Promise<TrxHist[]> => {
+export const TrxHist_getdataHDR = async (db: SQLiteDatabase, tableName: string): Promise<TrxHist[]> => {
   try {
     const Lists: TrxHist[] = [];
-    const results = await db.executeSql(`SELECT * FROM ${tableName} where Batch_ID = '${Batch_ID}'`);
+    const results = await db.executeSql(`SELECT strftime('%m', docdate) || '-' || strftime('%d', docdate) || '-' || strftime('%Y', docdate) AS formatted_date, docnumber, salesType_Name, strftime('%H:%M:%S', created_time) AS formatted_datetime, origtotal, payment_Name FROM ${tableName}`);
     results.forEach(result => {
       for (let index = 0; index < result.rows.length; index++) {
         Lists.push(result.rows.item(index))
