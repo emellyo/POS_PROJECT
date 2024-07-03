@@ -93,6 +93,8 @@ export default function Discount({navigation}) {
   const [amtin, setAmtIn] = useState(0);
   const [amtout, setAmtOut] = useState(0);
   const [expected, setExpected] = useState(0);
+  const [modalWarningclose, setModalWarningclose] = useState(false);
+  const [minus, setMinus] = useState(0);
 
   useEffect(() => {
     setMdlDiscount(true);
@@ -190,6 +192,64 @@ export default function Discount({navigation}) {
   };
 
   const PostCloseShift = async (closeamount, differenamt) => {
+    try {
+      if (differenamt < 0) {
+        setModalWarningclose(true);
+        setMinus(differenamt);
+      } else {
+        setMdlCloseShift(false);
+        console.log('nilai Amount_Closing', closeamount);
+        let datauser = await AsyncStorage.getItem('@dtUser');
+        datauser = JSON.parse(datauser);
+        var userid = datauser[0].userid;
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = today.getMonth() + 1;
+        const day = today.getDate();
+        const hours = today.getHours();
+        const minutes = today.getMinutes();
+        const seconds = today.getSeconds();
+        const formattedDate = `${month}/${day}/${year}`;
+        const formattedtime = `${hours}:${minutes}`;
+        console.log('TODAY DATE: ', formattedDate);
+        console.log('CURRENT TIME: ', formattedtime);
+        const db = await dbconn.getDBConnection();
+        const dbtrx = await dbconnTrx.getDBConnection();
+        let datashift = await dbconn.ShiftDetail_getdataSum(
+          db,
+          'ShiftDetail',
+          formattedDate,
+          0,
+        );
+        let datatrx = await dbconnTrx.AddTrxHdr_getdatashift(
+          dbtrx,
+          'AddTrxHdr',
+          datashift[0].Batch_ID,
+        );
+        closeshift({
+          Batch_ID: datashift[0].Batch_ID,
+          Lineitmseq: 0,
+          Payment_ID: '',
+          Payment_Type: '',
+          Amount_Opening: closeamount,
+          UserID: userid,
+        }).then(async result => {
+          var hasil = result.data;
+          console.log('hasil return post openshift: ', hasil);
+          let query = `UPDATE ShiftDetail SET Sum_Amount_Closing = ${closeamount}, Status_Batch = 1, Sum_Invoice_Posted = ${datatrx[0].InvoicePosted}, Difference = ${differenamt}
+        WHERE Opening_Date = '${formattedDate}' AND Batch_ID = '${datashift[0].Batch_ID}' AND Status_Batch = 0;`;
+          await dbconn.querydynamic(db, query);
+          setMdlCloseShift(false);
+          PostSummaryShiftClosing(closeamount);
+        });
+      }
+    } catch (error) {
+      let msg = error;
+      CallModalInfo(msg);
+    }
+  };
+
+  const PostCloseShift2 = async (closeamount, differenamt) => {
     try {
       setMdlCloseShift(false);
       console.log('nilai Amount_Closing', closeamount);
@@ -317,6 +377,8 @@ export default function Discount({navigation}) {
       const year = today.getFullYear();
       const month = today.getMonth() + 1; // Months are zero-indexed
       const day = today.getDate();
+      const hours = today.getHours();
+      const minutes = today.getMinutes();
       const formattedDate = `${month}/${day}/${year}`;
       const formattedtime = `${hours}:${minutes}`;
       let noitem = 0;
@@ -577,19 +639,34 @@ export default function Discount({navigation}) {
       getcashmanagement(datashift[0].Batch_ID).then(async result => {
         var hasil = result.data;
         console.log('hasil return get cash mng: ', hasil);
-        setAmtIn(hasil[0].amounT_IN);
-        setAmtOut(hasil[0].amounT_OUT);
-        console.log(
-          'amount masing2: ',
-          datacash[0].TOTALCASH,
-          hasil[0].amounT_IN,
-          hasil[0].amounT_OUT,
-        );
-        let totcash = sum_Amount_Opening + datacash[0].TOTALCASH;
-        let totpipo = hasil[0].amounT_IN - hasil[0].amounT_OUT;
-        let allexpected = totcash - totpipo;
-        console.log('TOTAL EXPECTED: ', allexpected);
-        setExpected(allexpected);
+        if (hasil.length > 0) {
+          setAmtIn(hasil[0].amounT_IN ?? 0);
+          setAmtOut(hasil[0].amounT_OUT ?? 0);
+          console.log(
+            'amount masing2: ',
+            datacash[0].TOTALCASH,
+            hasil[0].amounT_IN,
+            hasil[0].amounT_OUT,
+          );
+          let totcash = datashift[0].Sum_Amount_Opening + datacash[0].TOTALCASH;
+          let totpipo = (hasil[0].amounT_IN ?? 0) - (hasil[0].amounT_OUT ?? 0);
+          let allexpected = totcash - totpipo;
+          console.log('TOTAL EXPECTED: ', allexpected);
+          setExpected(allexpected);
+        } else {
+          setAmtIn(0); // or any default value you prefer
+          setAmtOut(0); // or any default value you prefer
+          console.log(
+            'amount masing2: ',
+            datacash[0].TOTALCASH,
+            sum_Amount_Opening,
+            0,
+          );
+          let totpipo = 0; // no amounts to subtract
+          let totcash = datashift[0].Sum_Amount_Opening + datacash[0].TOTALCASH;
+          let allexpected = totcash - totpipo; // no adjustments needed
+          setExpected(allexpected);
+        }
       });
     } catch (error) {
       let msg = error;
@@ -829,6 +906,51 @@ export default function Discount({navigation}) {
           </View>
         </View>
       </Modal>
+      {/* //* MODAL WARNING CLOSE */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalWarningclose}>
+        <View style={globalStyles.centeredView}>
+          <View style={globalStyles.modalView}>
+            <View style={globalStyles.modalheader}>
+              <Text style={globalStyles.modalText}>Warning</Text>
+            </View>
+            <View style={{margin: 20, marginBottom: 0}}>
+              <Text style={{color: '#212121', fontSize: 16}}>
+                Nilai Cash kurang dari yang ada di sistem senilai
+              </Text>
+              <Text
+                style={{
+                  color: '#ff0000',
+                  fontSize: 16,
+                  textAlign: 'center',
+                }}>
+                {Intl.NumberFormat('id-ID').format(minus)}
+              </Text>
+            </View>
+            <View style={{margin: 20, marginBottom: 0}}>
+              <Text style={{color: '#212121', fontSize: 16}}>
+                Yakin close shift?
+              </Text>
+            </View>
+            <View style={{flexDirection: 'row', marginHorizontal: 0}}>
+              <TouchableOpacity
+                style={[globalStyles.buttonNo]}
+                onPress={() => PostCloseShift2(closeamount, differenamt)}>
+                <Text style={globalStyles.textNo}>Tidak</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[globalStyles.buttonYes]}
+                //onPress={PostDataInvOut}
+              >
+                <Text style={globalStyles.textStyle}>Ya</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      {/* //* MODAL WARNING CLOSE */}
 
       {/* //* MODAL CLOSE SHIFT */}
       <Modal animationType="fade" transparent={true} visible={mdlCloseShift}>

@@ -51,7 +51,6 @@ const Login = () => {
   ]);
   useEffect(() => {
     setModalVisible(false);
-
     //companydata();
     getrememberme();
     GetStore();
@@ -85,6 +84,7 @@ const Login = () => {
   const [domain, setDomain] = useState('');
 
   const [modalVisible, setModalVisible] = useState(false);
+
   const [information, setInformation] = useState('');
   const [isLoad, setLoad] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -395,6 +395,7 @@ const Login = () => {
                   </View>
                 </Modal>
                 {/* //* INFORMATION */}
+
                 <StatusBar
                   backgroundColor={'#0096FF'}
                   barStyle="dark-content"></StatusBar>
