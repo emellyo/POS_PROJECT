@@ -585,8 +585,9 @@ export default function Discount({navigation}) {
           hasil[0].amounT_IN,
           hasil[0].amounT_OUT,
         );
-        let totexpected = datacash[0].TOTALCASH + hasil[0].amounT_IN;
-        let allexpected = totexpected - hasil[0].amounT_OUT;
+        let totcash = sum_Amount_Opening + datacash[0].TOTALCASH;
+        let totpipo = hasil[0].amounT_IN - hasil[0].amounT_OUT;
+        let allexpected = totcash - totpipo;
         console.log('TOTAL EXPECTED: ', allexpected);
         setExpected(allexpected);
       });
