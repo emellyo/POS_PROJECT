@@ -318,7 +318,10 @@ export default function Discount({navigation}) {
       const month = today.getMonth() + 1; // Months are zero-indexed
       const day = today.getDate();
       const formattedDate = `${month}/${day}/${year}`;
+      const formattedtime = `${hours}:${minutes}`;
+      let noitem = 0;
       const db = await dbconn.getDBConnection();
+      const pipo = await dbconnMng.getDBConnection();
       let datashift = await dbconn.ShiftDetail_getdataSum(
         db,
         'ShiftDetail',
@@ -337,6 +340,24 @@ export default function Discount({navigation}) {
         console.log('hasil return post openshift: ', hasil);
         let query = `UPDATE ShiftDetail SET Sum_Amount_PayOut = ${payin} WHERE Opening_Date = '${formattedDate}' AND Batch_ID = '${datashift[0].Batch_ID}' AND Status_Batch = 0;`;
         await dbconn.querydynamic(db, query);
+        let datamax = await dbconnMng.queryselecPayInPayOut(
+          pipo,
+          `select * from PayInPayOut order by Sequence desc;`,
+        );
+        let len = datamax.length < 1 ? 0 : datamax.length;
+        noitem = len + 1;
+        await dbconnMng.PayInPayOut_savedata(
+          pipo,
+          'PayInPayOut',
+          datashift[0].Batch_ID,
+          2,
+          payin,
+          noitem,
+          notes,
+          userid,
+          formattedDate,
+          formattedtime,
+        );
         setMdlCashMan(false);
         GetCashManagementOut();
         //PostSummaryShiftOut(payin);

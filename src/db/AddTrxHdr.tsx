@@ -94,7 +94,7 @@ export const AddTrxHdr_getdatashift = async (db: SQLiteDatabase, tableName: stri
 export const AddTrxHdr_getdatacash = async (db: SQLiteDatabase, tableName: string, Batch_ID: string): Promise<AddTrxHdr[]> => {
   try {
     const Lists: AddTrxHdr[] = [];
-    const results = await db.executeSql(`SELECT SUM(Amount_Tendered) as TOTALCASH FROM ${tableName} where Batch_ID = '${Batch_ID}' AND Payment_ID = 'PAY0001'`);
+    const results = await db.executeSql(`SELECT SUM(ORIGTOTAL) as TOTALCASH FROM ${tableName} where Batch_ID = '${Batch_ID}' AND Payment_ID = 'PAY0001'`);
     results.forEach(result => {
       for (let index = 0; index < result.rows.length; index++) {
         Lists.push(result.rows.item(index))
