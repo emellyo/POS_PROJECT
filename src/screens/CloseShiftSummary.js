@@ -248,6 +248,80 @@ export default function Discount({navigation}) {
       CallModalInfo(msg);
     }
   };
+  const GetCashManagementAll = async () => {
+    try {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1;
+      const day = today.getDate();
+      const hours = today.getHours();
+      const minutes = today.getMinutes();
+      const formattedDate = `${month}/${day}/${year}`;
+      const formattedtime = `${hours}:${minutes}`;
+      console.log('nilai pay in manage', payin);
+      const db = await dbconn.getDBConnection();
+      const dbtrx = await dbconnTrx.getDBConnection();
+      const pipo = await dbconnMng.getDBConnection();
+      let datashift = await dbconn.ShiftDetail_getdataSum(
+        db,
+        'ShiftDetail',
+        formattedDate,
+      );
+      let datacash = await dbconnTrx.AddTrxHdr_getdatacash(
+        dbtrx,
+        'AddTrxHdr',
+        datashift[0].Batch_ID,
+      );
+      let datapayin = await dbconnMng.PayInPayOut_getsumpayin(
+        pipo,
+        'PayInPayOut',
+        datashift[0].Batch_ID,
+      );
+      let datapayout = await dbconnMng.PayInPayOut_getsumpayout(
+        pipo,
+        'PayInPayOut',
+        datashift[0].Batch_ID,
+      );
+      console.log('BATCH ID MANAGE: ', datashift[0].Batch_ID);
+      getcashmanagement(datashift[0].Batch_ID).then(async result => {
+        var hasil = result.data;
+        console.log('hasil return get cash mng: ', hasil);
+        if (hasil.length > 0) {
+          setAmtIn(datapayin[0].TOTALPAYIN ?? 0);
+          setAmtOut(datapayout[0].TOTALPAYOUT ?? 0);
+          console.log(
+            'amount masing2: ',
+            datacash[0].TOTALCASH,
+            hasil[0].amounT_IN,
+            hasil[0].amounT_OUT,
+          );
+          let totcash =
+            datashift[0].Sum_Amount_Opening +
+            datacash[0].TOTALCASH +
+            (datapayin[0].TOTALPAYIN ?? 0);
+          let allexpected = totcash - (datapayout[0].TOTALPAYOUT ?? 0);
+          console.log('TOTAL EXPECTED: ', allexpected);
+          setExpected(allexpected);
+        } else {
+          setAmtIn(0); // or any default value you prefer
+          setAmtOut(0); // or any default value you prefer
+          console.log(
+            'amount masing2: ',
+            datacash[0].TOTALCASH,
+            sum_Amount_Opening,
+            0,
+          );
+          let totpipo = 0; // no amounts to subtract
+          let totcash = datashift[0].Sum_Amount_Opening + datacash[0].TOTALCASH;
+          let allexpected = totcash - totpipo; // no adjustments needed
+          setExpected(allexpected);
+        }
+      });
+    } catch (error) {
+      let msg = error;
+      CallModalInfo(msg);
+    }
+  };
   const GetSummayShift = async () => {
     try {
       const today = new Date();
@@ -347,6 +421,7 @@ export default function Discount({navigation}) {
           setcreated_Date(hasil[0].created_Date);
           setcreated_time(hasil[0].created_time);
           setstore_ID(hasil[0].store_ID);
+          GetCashManagementAll();
         }
       });
     } catch (error) {

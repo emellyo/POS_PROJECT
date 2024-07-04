@@ -95,6 +95,7 @@ export default function Discount({navigation}) {
   const [expected, setExpected] = useState(0);
   const [modalWarningclose, setModalWarningclose] = useState(false);
   const [minus, setMinus] = useState(0);
+  const [userid, setUSERID] = useState('');
 
   useEffect(() => {
     setMdlDiscount(true);
@@ -659,10 +660,11 @@ export default function Discount({navigation}) {
             hasil[0].amounT_IN,
             hasil[0].amounT_OUT,
           );
-          let totcash = datashift[0].Sum_Amount_Opening + datacash[0].TOTALCASH;
-          let totpipo =
-            (datapayin[0].TOTALPAYIN ?? 0) - (datapayout[0].TOTALPAYOUT ?? 0);
-          let allexpected = totcash - totpipo;
+          let totcash =
+            datashift[0].Sum_Amount_Opening +
+            datacash[0].TOTALCASH +
+            (datapayin[0].TOTALPAYIN ?? 0);
+          let allexpected = totcash - (datapayout[0].TOTALPAYOUT ?? 0);
           console.log('TOTAL EXPECTED: ', allexpected);
           setExpected(allexpected);
         } else {
@@ -755,6 +757,10 @@ export default function Discount({navigation}) {
       const db = await dbconn.getDBConnection();
       const dbtrx = await dbconnTrx.getDBConnection();
       const pipo = await dbconnMng.getDBConnection();
+      let datauser = await AsyncStorage.getItem('@dtUser');
+      datauser = JSON.parse(datauser);
+      var userid = datauser[0].userid;
+      setUSERID(userid);
       let datashift = await dbconn.ShiftDetail_getdataSum(
         db,
         'ShiftDetail',
@@ -870,10 +876,11 @@ export default function Discount({navigation}) {
   };
 
   const viewModalCloseShift = async () => {
-    var sumexpected = cash + amtin;
-    var totexpected = sumexpected - amtout;
-    setExpected(totexpected);
     setMdlCloseShift(true);
+  };
+  const closeModalClose = async () => {
+    setModalWarningclose(false);
+    setMdlCloseShift(false);
   };
   const viewModalCashMan = async () => {
     setPayIn(0);
@@ -949,13 +956,12 @@ export default function Discount({navigation}) {
             <View style={{flexDirection: 'row', marginHorizontal: 0}}>
               <TouchableOpacity
                 style={[globalStyles.buttonNo]}
-                onPress={() => PostCloseShift2(closeamount, differenamt)}>
+                onPress={() => closeModalClose()}>
                 <Text style={globalStyles.textNo}>Tidak</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[globalStyles.buttonYes]}
-                //onPress={PostDataInvOut}
-              >
+                onPress={() => PostCloseShift2(closeamount, differenamt)}>
                 <Text style={globalStyles.textStyle}>Ya</Text>
               </TouchableOpacity>
             </View>
@@ -1325,7 +1331,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshift,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                {store_ID}
+                {userid}
               </Text>
             </View>
           </SafeAreaView>
