@@ -237,7 +237,7 @@ export default function Discount({navigation}) {
         }).then(async result => {
           var hasil = result.data;
           console.log('hasil return post openshift: ', hasil);
-          let query = `UPDATE ShiftDetail SET Sum_Amount_Closing = ${closeamount}, Status_Batch = 1, Sum_Invoice_Posted = ${datatrx[0].InvoicePosted}, Difference = ${differenamt}
+          let query = `UPDATE ShiftDetail SET Sum_Amount_Closing = ${closeamount}, Status_Batch = 1, Sum_Invoice_Posted = ${datatrx[0].InvoicePosted}, Difference = ${differenamt}, Closing_Date = '${formattedDate}', Closing_time = '${formattedtime}'
         WHERE Opening_Date = '${formattedDate}' AND Batch_ID = '${datashift[0].Batch_ID}' AND Status_Batch = 0;`;
           await dbconn.querydynamic(db, query);
           setMdlCloseShift(false);
@@ -291,7 +291,7 @@ export default function Discount({navigation}) {
       }).then(async result => {
         var hasil = result.data;
         console.log('hasil return post openshift: ', hasil);
-        let query = `UPDATE ShiftDetail SET Sum_Amount_Closing = ${closeamount}, Status_Batch = 1, Sum_Invoice_Posted = ${datatrx[0].InvoicePosted}, Difference = ${differenamt}
+        let query = `UPDATE ShiftDetail SET Sum_Amount_Closing = ${closeamount}, Status_Batch = 1, Sum_Invoice_Posted = ${datatrx[0].InvoicePosted}, Difference = ${differenamt}, Closing_Date = '${formattedDate}', Closing_time = '${formattedtime}'
         WHERE Opening_Date = '${formattedDate}' AND Batch_ID = '${datashift[0].Batch_ID}' AND Status_Batch = 0;`;
         await dbconn.querydynamic(db, query);
         setMdlCloseShift(false);
