@@ -61,6 +61,38 @@ export const PayInPayOut_getdataHDR = async (db: SQLiteDatabase, tableName: stri
   }
 };
 
+export const PayInPayOut_getsumpayin = async (db: SQLiteDatabase, tableName: string, Batch_ID: string): Promise<PayInPayOut[]> => {
+  try {
+    const Lists: PayInPayOut[] = [];
+    const results = await db.executeSql(`SELECT SUM(Amount) AS TOTALPAYIN FROM ${tableName} where Batch_ID = '${Batch_ID}' AND Type_CashManagement = 1`);
+    results.forEach(result => {
+      for (let index = 0; index < result.rows.length; index++) {
+        Lists.push(result.rows.item(index))
+      }
+    });
+    return Lists;
+  } catch (error) {
+    console.error(error);
+    throw Error('Failed to get Add Item !!!');
+  }
+};
+
+export const PayInPayOut_getsumpayout = async (db: SQLiteDatabase, tableName: string, Batch_ID: string): Promise<PayInPayOut[]> => {
+  try {
+    const Lists: PayInPayOut[] = [];
+    const results = await db.executeSql(`SELECT SUM(Amount) as TOTALPAYOUT FROM ${tableName} where Batch_ID = '${Batch_ID}' AND Type_CashManagement = 2`);
+    results.forEach(result => {
+      for (let index = 0; index < result.rows.length; index++) {
+        Lists.push(result.rows.item(index))
+      }
+    });
+    return Lists;
+  } catch (error) {
+    console.error(error);
+    throw Error('Failed to get Add Item !!!');
+  }
+};
+
 export const PayInPayOut_savedata = async (db: SQLiteDatabase, tableName: string ,
    Batch_ID: string, Type_CashManagement: number, Amount: number, Sequence: number, notes: string, userid: string, date: string, time: string) => {
   const insertQuery =

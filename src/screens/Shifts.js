@@ -358,7 +358,7 @@ export default function Discount({navigation}) {
           formattedtime,
         );
         setMdlCashMan(false);
-        GetCashManagement(payin);
+        PostSummaryShift(payin);
         //PostSummaryShift(payin);
       });
     } catch (error) {
@@ -421,8 +421,8 @@ export default function Discount({navigation}) {
           formattedtime,
         );
         setMdlCashMan(false);
-        GetCashManagementOut();
-        //PostSummaryShiftOut(payin);
+        //GetCashManagementOut();
+        PostSummaryShiftOut(payin);
       });
     } catch (error) {
       let msg = error;
@@ -625,6 +625,7 @@ export default function Discount({navigation}) {
       console.log('nilai pay in manage', payin);
       const db = await dbconn.getDBConnection();
       const dbtrx = await dbconnTrx.getDBConnection();
+      const pipo = await dbconnMng.getDBConnection();
       let datashift = await dbconn.ShiftDetail_getdataSum(
         db,
         'ShiftDetail',
@@ -635,13 +636,23 @@ export default function Discount({navigation}) {
         'AddTrxHdr',
         datashift[0].Batch_ID,
       );
+      let datapayin = await dbconnMng.PayInPayOut_getsumpayin(
+        pipo,
+        'PayInPayOut',
+        datashift[0].Batch_ID,
+      );
+      let datapayout = await dbconnMng.PayInPayOut_getsumpayout(
+        pipo,
+        'PayInPayOut',
+        datashift[0].Batch_ID,
+      );
       console.log('BATCH ID MANAGE: ', datashift[0].Batch_ID);
       getcashmanagement(datashift[0].Batch_ID).then(async result => {
         var hasil = result.data;
         console.log('hasil return get cash mng: ', hasil);
         if (hasil.length > 0) {
-          setAmtIn(hasil[0].amounT_IN ?? 0);
-          setAmtOut(hasil[0].amounT_OUT ?? 0);
+          setAmtIn(datapayin[0].TOTALPAYIN ?? 0);
+          setAmtOut(datapayout[0].TOTALPAYOUT ?? 0);
           console.log(
             'amount masing2: ',
             datacash[0].TOTALCASH,
@@ -649,7 +660,8 @@ export default function Discount({navigation}) {
             hasil[0].amounT_OUT,
           );
           let totcash = datashift[0].Sum_Amount_Opening + datacash[0].TOTALCASH;
-          let totpipo = (hasil[0].amounT_IN ?? 0) - (hasil[0].amounT_OUT ?? 0);
+          let totpipo =
+            (datapayin[0].TOTALPAYIN ?? 0) - (datapayout[0].TOTALPAYOUT ?? 0);
           let allexpected = totcash - totpipo;
           console.log('TOTAL EXPECTED: ', allexpected);
           setExpected(allexpected);
