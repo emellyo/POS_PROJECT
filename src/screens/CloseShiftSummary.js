@@ -265,7 +265,7 @@ export default function Discount({navigation}) {
       const db = await dbconn.getDBConnection();
       const dbtrx = await dbconnTrx.getDBConnection();
       const pipo = await dbconnMng.getDBConnection();
-      let datashift = await dbconn.ShiftDetail_getdataSum(
+      let datashift = await dbconn.ShiftDetail_getdataClos(
         db,
         'ShiftDetail',
         formattedDate,
@@ -335,6 +335,10 @@ export default function Discount({navigation}) {
       const db = await dbconn.getDBConnection();
       const dbtrx = await dbconnTrx.getDBConnection();
       const pipo = await dbconnMng.getDBConnection();
+      let datauser = await AsyncStorage.getItem('@dtUser');
+      datauser = JSON.parse(datauser);
+      var userid = datauser[0].userid;
+      setUSERID(userid);
       let datashift = await dbconn.ShiftDetail_getdataClos(
         db,
         'ShiftDetail',
@@ -594,7 +598,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshift,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                {store_ID}
+                {userid}
               </Text>
             </View>
           </SafeAreaView>
