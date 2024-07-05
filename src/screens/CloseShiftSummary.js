@@ -93,6 +93,9 @@ export default function Discount({navigation}) {
   const [amtin, setAmtIn] = useState(0);
   const [amtout, setAmtOut] = useState(0);
   const [expected, setExpected] = useState(0);
+  const [modalWarningclose, setModalWarningclose] = useState(false);
+  const [minus, setMinus] = useState(0);
+  const [userid, setUSERID] = useState('');
 
   useEffect(() => {
     setMdlDiscount(true);

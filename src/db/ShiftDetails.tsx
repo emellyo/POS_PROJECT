@@ -87,7 +87,7 @@ export const ShiftDetail_getdata = async (db: SQLiteDatabase, tableName: string,
   }
 };
 
-export const ShiftDetail_getdataAll = async (db: SQLiteDatabase, tableName: string, Batch_ID: string): Promise<ShiftDetail[]> => {
+export const ShiftDetail_getdataAll = async (db: SQLiteDatabase, tableName: string): Promise<ShiftDetail[]> => {
   try {
     const Lists: ShiftDetail[] = [];
     const results = await db.executeSql(`SELECT * FROM ${tableName}`);
