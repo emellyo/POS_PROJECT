@@ -63,7 +63,7 @@ export const TrxHist_getdata = async (db: SQLiteDatabase, tableName: string): Pr
 export const TrxHist_getdataHDR = async (db: SQLiteDatabase, tableName: string): Promise<TrxHist[]> => {
   try {
     const Lists: TrxHist[] = [];
-    const results = await db.executeSql(`SELECT strftime('%m', docdate) || '-' || strftime('%d', docdate) || '-' || strftime('%Y', docdate) AS formatted_date, docnumber, salesType_Name, strftime('%H:%M:%S', created_time) AS formatted_datetime, origtotal, payment_Name FROM ${tableName}`);
+    const results = await db.executeSql(`SELECT strftime('%m', docdate) || '-' || strftime('%d', docdate) || '-' || strftime('%Y', docdate) AS formatted_date, docnumber, salesType_Name, strftime('%H:%M:%S', created_time) AS formatted_datetime, origtotal, payment_Name, amt_Refund FROM ${tableName}`);
     results.forEach(result => {
       for (let index = 0; index < result.rows.length; index++) {
         Lists.push(result.rows.item(index))
@@ -78,13 +78,13 @@ export const TrxHist_getdataHDR = async (db: SQLiteDatabase, tableName: string):
 
 export const TrxHist_savedata = async (db: SQLiteDatabase, tableName: string, lists: TrxHist[]) => {
   const insertQuery =
-    `INSERT INTO ${tableName}`+
+    `INSERT OR REPLACE INTO ${tableName}`+
     `(docnumber, doctype, docdate, store_ID, salesType_ID, salesType_Name, payment_ID, payment_Name, total_Line_Item, origtotal, subtotal, amount_Tendered,`+
     `tax_Amount, discount_ID, discount_Amount, amount_Tendered1, change_Amount, batch_ID, created_User, created_Date, created_time, refundnumber, amt_Refund, userName)`+
     ` values ` +
     lists.map(
-        i => `('${i.docnumber}', ${i.doctype}, '${i.docdate}', '${i.store_ID}', '${i.salesType_ID}', '${i.payment_ID}', '${i.payment_Name}', ${i.total_Line_Item}, ${i.origtotal}, ${i.subtotal}, ${i.amount_Tendered},`+
-        `${i.tax_Amount}, '${i.docnumber}', ${i.discount_Amount}, ${i.amount_Tendered1}, ${i.change_Amount},  '${i.batch_ID}', '${i.created_User}', '${i.created_Date}', '${i.created_time}', '${i.refundnumber}', ${i.amt_Refund}, '${i.userName}')`
+        i => `('${i.docnumber}', ${i.doctype}, '${i.docdate}', '${i.store_ID}', '${i.salesType_ID}', '${i.salesType_Name}' ,'${i.payment_ID}', '${i.payment_Name}', ${i.total_Line_Item}, ${i.origtotal}, ${i.subtotal}, ${i.amount_Tendered},`+
+        `${i.tax_Amount}, '${i.discount_ID}', ${i.discount_Amount}, ${i.amount_Tendered1}, ${i.change_Amount},  '${i.batch_ID}', '${i.created_User}', '${i.created_Date}', '${i.created_time}', '${i.refundnumber}', ${i.amt_Refund}, '${i.userName}')`
     ).join(',');
   return db.executeSql(insertQuery)
 };

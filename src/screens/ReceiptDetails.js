@@ -22,6 +22,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {gettrxhist} from '../api/gettrxhist';
 import * as dbconn from '../db/TrxHist';
+import {format} from 'date-fns';
 
 const ReceiptModal = ({visible, onClose, receipt}) => {
   if (!receipt) return null;
@@ -77,54 +78,7 @@ const Receipts = () => {
   const [salesTypes, setSalesTypes] = useState([]);
   const [open, setOpen] = useState(false);
   const [domain, setDomain] = useState('');
-  const [receipts, setReceipts] = useState([
-    {
-      date: 'Thursday, 17 August 2023',
-      data: [
-        {
-          id: '1',
-          invoice: 'INV202308170003',
-          type: 'Walk In',
-          time: '16:21',
-          payment: 'BCA - Rp. 75.000',
-        },
-        {
-          id: '2',
-          invoice: 'INV202308170002',
-          type: 'Walk In',
-          time: '13:18',
-          payment: 'CASH - Rp. 25.000',
-          refund: 'Refund #1-1001',
-        },
-        {
-          id: '3',
-          invoice: 'INV202308170001',
-          type: 'Walk In',
-          time: '10:34',
-          payment: 'CASH - Rp. 25.000',
-        },
-      ],
-    },
-    {
-      date: 'Wednesday, 16 August 2023',
-      data: [
-        {
-          id: '4',
-          invoice: 'INV202308160002',
-          type: 'Walk In',
-          time: '13:18',
-          payment: 'CASH - Rp. 25.000',
-        },
-        {
-          id: '5',
-          invoice: 'INV202308160001',
-          type: 'Walk In',
-          time: '10:34',
-          payment: 'CASH - Rp. 25.000',
-        },
-      ],
-    },
-  ]);
+  const [receipts, setReceipts] = useState([]);
   const [selectedReceipt, setSelectedReceipt] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
   useEffect(() => {
@@ -169,18 +123,21 @@ const Receipts = () => {
   const GetHistoryTrxHDR = async () => {
     try {
       const db = await dbconn.getDBConnection();
+      const fromdate = format(new Date(dateFrom), 'yyyy-MM-dd');
+      const todate = format(new Date(dateTo), 'yyyy-MM-dd');
       gettrxhist({
         DOCNUMBER: '',
-        DateFrom: dateFrom,
-        DateTo: dateTo,
-        SalesType_ID: setSalesType,
+        DateFrom: fromdate,
+        DateTo: todate,
+        SalesType_ID: salesType,
         Search: '',
       }).then(async result => {
         let dtTrxHisthdr = [];
         var hasil = result.data;
-        console.log('return history tax: ', hasil);
-        await dbconn.TrxHist_savedata(db, 'TrxHist');
+        await dbconn.deletedataAllTbl(db, 'TrxHist');
+        await dbconn.TrxHist_savedata(db, 'TrxHist', hasil);
         dtTrxHisthdr = await dbconn.TrxHist_getdataHDR(db, 'TrxHist');
+        console.log('hasil get hist hdr: ', dtTrxHisthdr);
         setReceipts(dtTrxHisthdr);
       });
     } catch (error) {
@@ -289,25 +246,26 @@ const Receipts = () => {
       <Button title="Load Receipts" onPress={() => GetHistoryTrxHDR()} />
       <FlatList
         data={receipts}
-        keyExtractor={item => item.date}
+        keyExtractor={item => item.docnumber}
         renderItem={({item}) => (
           <View>
-            <Text style={styles.date}>{item.date}</Text>
-            {item.data.map(receipt => (
-              <TouchableOpacity
-                key={receipt.id}
-                style={styles.receiptContainer}
-                onPress={() => openModal(receipt)}>
-                <Text style={styles.invoice}>{receipt.invoice}</Text>
-                <Text style={styles.type}>
-                  {receipt.type} - {receipt.time}
+            <TouchableOpacity
+              key={item.docnumber}
+              style={styles.receiptContainer}
+              onPress={() => openModal(item)}>
+              <Text style={styles.invoice}>{item.docnumber}</Text>
+              <Text style={styles.salesType_Name}>
+                {item.salesType_Name} - {item.formatted_datetime}
+              </Text>
+              <Text style={styles.payment}>
+                {Intl.NumberFormat('id-ID').format(item.origtotal)}
+              </Text>
+              {item.refund && (
+                <Text style={styles.refund}>
+                  {Intl.NumberFormat('id-ID').format(item.amt_Refund)}
                 </Text>
-                <Text style={styles.payment}>{receipt.payment}</Text>
-                {receipt.refund && (
-                  <Text style={styles.refund}>{receipt.refund}</Text>
-                )}
-              </TouchableOpacity>
-            ))}
+              )}
+            </TouchableOpacity>
           </View>
         )}
       />
