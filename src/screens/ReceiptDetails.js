@@ -10,9 +10,8 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Modal,
+  ScrollView,
 } from 'react-native';
-
-import {globalStyles, invrecStyles} from '../css/global';
 import {useTheme, useRoute, useNavigation} from '@react-navigation/native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {Picker} from '@react-native-picker/picker';
@@ -73,6 +72,7 @@ import {PERMISSIONS, requestMultiple, RESULTS} from 'react-native-permissions';
 // };
 
 const Receipts = () => {
+  const colors = useTheme().colors;
   const increment = useRef(null);
   const navigation = useNavigation();
   const [dateFrom, setDateFrom] = useState(new Date('2023-08-17'));
@@ -90,10 +90,17 @@ const Receipts = () => {
   const [mdlDetail, setModaldetail] = useState(false);
   const [selectedReceipt, setSelectedReceipt] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
+  const [docnumber, setDocnumber] = useState('');
+  const [totaltrx, setTotaltrx] = useState(0);
+  const [employee, setEmployee] = useState('');
+  const [tipesales, setTipesales] = useState('');
+  const [trxdate, setTrxDate] = useState('');
+  const [trxtime, setTrxtime] = useState('');
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     GetSalesType();
     LOADTBLHIST();
+    setModaldetail(true);
     return () => {
       clearInterval(increment.current);
       BackHandler.removeEventListener(
@@ -172,9 +179,9 @@ const Receipts = () => {
       }).then(async result => {
         let dtTrxHisthdr = [];
         var hasil = result.data;
-        await dbconn.deletedataAllTbl(db, 'TrxHist');
-        await dbconn.TrxHist_savedata(db, 'TrxHist', hasil);
-        dtTrxHisthdr = await dbconn.TrxHist_getdataHDR(db, 'TrxHist');
+        await dbconnTrx.deletedataAllTbl(db, 'TrxHistDtl');
+        await dbconnTrx.TrxHistDtl_savedata(db, 'TrxHistDtl', hasil);
+        dtTrxHisthdr = await dbconnTrx.TrxHistDtl_getdataHDR(db, 'TrxHist');
         console.log('hasil get hist hdr: ', dtTrxHisthdr);
         setReceipts(dtTrxHisthdr);
       });
@@ -467,48 +474,125 @@ const Receipts = () => {
         <View style={globalStyles.centeredViewPayment}>
           <View style={globalStyles.modalViewBills} nestedScrollEnabled={true}>
             <View style={globalStyles.modalheader}>
-              <Text style={globalStyles.modalText}>Invoice</Text>
+              <Text style={globalStyles.modalText}>Receipt Details</Text>
             </View>
-            <Text style={globalStyles.TextHeaderBills}>Receipt Details</Text>
-            <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
-              <View style={globalStyles.labelinputtotalanbillsdisc}>
-                <Text
-                  style={[
-                    invrecStyles.labeldetailshistdocnumber,
-                    {backgroundColor: colors.card, color: colors.text},
-                  ]}>
-                  DOCNUMBER
-                </Text>
-              </View>
+            <SafeAreaView style={globalStyles.InputDetailhist}>
+              <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
+                <View style={globalStyles.labelinputtotalanbillsdisc2}>
+                  <Text
+                    style={[
+                      invrecStyles.labeldetailshistdocnumber,
+                      {backgroundColor: colors.card, color: colors.text},
+                    ]}>
+                    DOCNUMBER
+                  </Text>
+                </View>
+              </SafeAreaView>
+              <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
+                <View style={globalStyles.labelinputtotalanbillsdisc2}>
+                  <Text
+                    style={[
+                      invrecStyles.labeldetailshistdocnumber,
+                      {backgroundColor: colors.card, color: colors.text},
+                    ]}>
+                    DATE
+                  </Text>
+                </View>
+              </SafeAreaView>
+              <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
+                <View style={globalStyles.labelinputtotalanbillsdisc2}>
+                  <Text
+                    style={[
+                      invrecStyles.labeldetailshistdocnumber,
+                      {backgroundColor: colors.card, color: colors.text},
+                    ]}>
+                    TIME
+                  </Text>
+                </View>
+              </SafeAreaView>
+              <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
+                <View style={globalStyles.labelinputtotalanbillsdisc}>
+                  <Text
+                    style={[
+                      invrecStyles.labeldetailshistdocnumber,
+                      {backgroundColor: colors.card, color: colors.text},
+                    ]}>
+                    RP. 70.000
+                  </Text>
+                </View>
+              </SafeAreaView>
+              <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
+                <View style={globalStyles.labelinputtotalanbillsdisc}>
+                  <Text
+                    style={[
+                      invrecStyles.labeldetailshistdocnumber,
+                      {backgroundColor: colors.card, color: colors.text},
+                    ]}>
+                    Total
+                  </Text>
+                </View>
+              </SafeAreaView>
             </SafeAreaView>
-            <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
-              <View style={globalStyles.labelinputtotalanbillsdisc}>
-                <Text
-                  style={[
-                    invrecStyles.labeldetailshistdocnumber,
-                    {backgroundColor: colors.card, color: colors.text},
-                  ]}>
-                  RP. 70.000
-                </Text>
-              </View>
-            </SafeAreaView>
-            <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
-              <View style={globalStyles.labelinputtotalanbillsdisc}>
-                <Text
-                  style={[
-                    invrecStyles.labeldetailshistdocnumber,
-                    {backgroundColor: colors.card, color: colors.text},
-                  ]}>
-                  Total
-                </Text>
-              </View>
-            </SafeAreaView>
+            <ScrollView style={globalStyles.InputBills3}>
+              <SafeAreaView style={[invrecStyles.inputantotalanbills2new]}>
+                <View style={globalStyles.labelinputtotalanbillsdisc}>
+                  <Text
+                    style={[
+                      invrecStyles.labeldetailshistdocnumber,
+                      {backgroundColor: colors.card, color: colors.text},
+                    ]}>
+                    Employee:
+                  </Text>
+                </View>
+                <View style={globalStyles.kanan2}>
+                  <Text
+                    style={[
+                      invrecStyles.labeldetailshistdocnumber,
+                      {backgroundColor: colors.card, color: colors.text},
+                    ]}>
+                    {/* Rp {total.toLocaleString('id-ID')} */}
+                    Owner
+                  </Text>
+                </View>
+              </SafeAreaView>
+              <SafeAreaView style={[invrecStyles.inputantotalanbills2new]}>
+                <View style={globalStyles.labelinputtotalanbillsdisc}>
+                  <Text
+                    style={[
+                      invrecStyles.labeldetailshistdocnumber,
+                      {backgroundColor: colors.card, color: colors.text},
+                    ]}>
+                    POS:
+                  </Text>
+                </View>
+                <View style={globalStyles.kanan2}>
+                  <Text
+                    style={[
+                      invrecStyles.labeldetailshistdocnumber,
+                      {backgroundColor: colors.card, color: colors.text},
+                    ]}>
+                    POS 1
+                  </Text>
+                </View>
+              </SafeAreaView>
+              <SafeAreaView style={[invrecStyles.inputantotalanbillsnew]}>
+                <View style={globalStyles.labelinputtotalanbillsdisc}>
+                  <Text
+                    style={[
+                      invrecStyles.labeldetailshistdocnumber,
+                      {backgroundColor: colors.card, color: colors.text},
+                    ]}>
+                    Walk In
+                  </Text>
+                </View>
+              </SafeAreaView>
+            </ScrollView>
             <ScrollView
               style={globalStyles.InputBills}
               nestedScrollEnabled={true}>
               {/* //* BILLS*/}
               <View style={[invrecStyles.inputantotalanbillskiri]}>
-                {bills.map((bills, index) => {
+                {/* {bills.map((bills, index) => {
                   return (
                     <View key={index} style={globalStyles.cartlist}>
                       <View style={globalStyles.kiri}>
@@ -574,7 +658,7 @@ const Receipts = () => {
                       </View>
                     </View>
                   );
-                })}
+                })} */}
               </View>
               {/* //* BILLS*/}
             </ScrollView>
@@ -625,7 +709,7 @@ const Receipts = () => {
                       {backgroundColor: colors.card, color: colors.text},
                     ]}>
                     {/* Rp {total.toLocaleString('id-ID')} */}
-                    Rp {Intl.NumberFormat('id-ID').format(total)}
+                    Rp 10.000
                   </Text>
                 </View>
               </SafeAreaView>
@@ -665,7 +749,7 @@ const Receipts = () => {
                       invrecStyles.labelinputbills,
                       {backgroundColor: colors.card, color: colors.text},
                     ]}>
-                    Rp {Intl.NumberFormat('id-ID').format(tax)}
+                    Rp 10.000
                   </Text>
                 </View>
               </SafeAreaView>
@@ -685,7 +769,7 @@ const Receipts = () => {
                       invrecStyles.labelinputbills,
                       {backgroundColor: colors.card, color: colors.text},
                     ]}>
-                    Rp {Intl.NumberFormat('id-ID').format(grandtotal)}
+                    Rp 10.000
                   </Text>
                 </View>
               </SafeAreaView>
@@ -694,7 +778,7 @@ const Receipts = () => {
               <SafeAreaView style={[invrecStyles.buttontotalan]}>
                 <TouchableOpacity
                   style={[globalStyles.buttonNoPayment]}
-                  onPress={() => setMdlBills(!mdlBills)}>
+                  onPress={() => setModaldetail(!mdlDetail)}>
                   <Text style={globalStyles.textNo}>Cancel</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -797,11 +881,11 @@ const Receipts = () => {
         onConfirm={handleDateToConfirm}
         onCancel={hideDateToPicker}
       />
-      <ReceiptModal
+      {/* <ReceiptModal
         visible={isModalVisible}
         onClose={closeModal}
         receipt={selectedReceipt}
-      />
+      /> */}
     </SafeAreaView>
   );
 };
