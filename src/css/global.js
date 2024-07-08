@@ -1852,6 +1852,12 @@ export const invrecStyles = StyleSheet.create({
     fontWeight: 'bold',
     //marginLeft: 5,
   },
+  labeldetailshistdocnumber: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    //marginLeft: 5,
+  },
   labelinputshifthdr: {
     fontSize: 20,
     fontWeight: 'bold',
