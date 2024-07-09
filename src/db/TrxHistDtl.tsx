@@ -69,7 +69,7 @@ export const TrxHistDtl_getdata = async (db: SQLiteDatabase, tableName: string):
 export const TrxHistDtl_getdataDTL = async (db: SQLiteDatabase, tableName: string, docnumber: string): Promise<TrxHistDtl[]> => {
   try {
     const Lists: TrxHistDtl[] = [];
-    const results = await db.executeSql(`SELECT strftime('%m', docdate) || '-' || strftime('%d', docdate) || '-' || strftime('%Y', docdate) AS formatted_date, docnumber, salesType_Name, strftime('%H:%M:%S', created_time) AS formatted_datetime, origtotal, payment_Name, tax_Amount, amt_Refund, userName FROM ${tableName} where docnumber = '${docnumber}' LIMIT 1`);
+    const results = await db.executeSql(`SELECT strftime('%m', docdate) || '-' || strftime('%d', docdate) || '-' || strftime('%Y', docdate) AS formatted_date, docnumber, salesType_Name, strftime('%H:%M:%S', created_time) AS formatted_datetime, origtotal, change_Amount, payment_Name, tax_Amount, amt_Refund, userName FROM ${tableName} where docnumber = '${docnumber}' LIMIT 1`);
     results.forEach(result => {
       for (let index = 0; index < result.rows.length; index++) {
         Lists.push(result.rows.item(index))

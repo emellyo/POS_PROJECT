@@ -1320,7 +1320,7 @@ export const globalStyles = StyleSheet.create({
   },
   InputDetailhist: {
     width: '100%',
-    height: '20%',
+    height: '15%',
     //padding: 5,
     borderBottomWidth: 1,
     borderBottomColor: '#212121',

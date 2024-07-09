@@ -98,11 +98,12 @@ const Receipts = () => {
   const [trxtime, setTrxtime] = useState('');
   const [tottax, setTotTax] = useState(0);
   const [paymentName, setPaymentName] = useState('');
+  const [changes, setChanges] = useState(0);
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     GetSalesType();
     LOADTBLHIST();
-    setModaldetail(true);
+    //setModaldetail(true);
     return () => {
       clearInterval(increment.current);
       BackHandler.removeEventListener(
@@ -203,6 +204,7 @@ const Receipts = () => {
         setEmployee(dtTrxHistdtl[0].userName);
         setTotTax(dtTrxHistdtl[0].tax_Amount);
         setPaymentName(dtTrxHistdtl[0].payment_Name);
+        setChanges(dtTrxHistdtl[0].change_Amount);
         setItemdetail(dtlitem);
       });
     } catch (error) {
@@ -256,19 +258,19 @@ const Receipts = () => {
       await BluetoothEscposPrinter.printColumn(
         [24, 24],
         [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
-        [formattedDate, formattedtime],
+        [trxdate, trxtime],
         {},
       );
       await BluetoothEscposPrinter.printColumn(
         [24, 24],
         [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
-        ['Receipt Numbers', runno],
+        ['Receipt Numbers', docnumber],
         {},
       );
       await BluetoothEscposPrinter.printColumn(
         [24, 24],
         [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
-        ['Customer Name', custname],
+        ['Customer Name', ''],
         {},
       );
       await BluetoothEscposPrinter.printText(
@@ -278,14 +280,18 @@ const Receipts = () => {
       await BluetoothEscposPrinter.printColumn(
         [32],
         [BluetoothEscposPrinter.ALIGN.CENTER],
-        [salesname],
+        [employee],
         {},
       );
       await BluetoothEscposPrinter.printText(
         '================================================',
         {},
       );
-      getbills = await dbconnTrx.AddTrxDtl_getdataPrint(db, 'AddTrxDtl', runno);
+      getbills = await dbconnTrx.TrxHistDtl_getdataItemDtl(
+        db,
+        'TrxHistDtl',
+        runno,
+      );
       try {
         let alignments = [
           BluetoothEscposPrinter.ALIGN.LEFT,
@@ -301,15 +307,15 @@ const Receipts = () => {
           BluetoothEscposPrinter.ALIGN.RIGHT, // Align with description column
         ];
         for (let row of getbills) {
-          const formattedPrice = `${Intl.NumberFormat('id-ID').format(
-            row.Item_Price,
-          )}`;
+          // const formattedPrice = `${Intl.NumberFormat('id-ID').format(
+          //   row.Item_Price,
+          // )}`;
           const currency = `Rp.`;
           const printData = [
-            row.Item_Description,
-            `${row.Quantity}x`,
-            currency,
-            formattedPrice,
+            row.item_Description,
+            `${row.quantity}x`,
+            // currency,
+            // formattedPrice,
           ];
           // Adjust alignment for variant line if needed
           console.log('Print Data:', printData);
@@ -319,12 +325,12 @@ const Receipts = () => {
             printData,
             {},
           );
-          await BluetoothEscposPrinter.printColumn(
-            columnWidthsVAR,
-            variantAlignments,
-            [row.variant_Name, '', '', ''],
-            {},
-          );
+          // await BluetoothEscposPrinter.printColumn(
+          //   columnWidthsVAR,
+          //   variantAlignments,
+          //   [row.variant_Name, '', '', ''],
+          //   {},
+          // );
         }
       } catch (error) {
         console.error('Error printing: ', error);
@@ -355,7 +361,7 @@ const Receipts = () => {
           BluetoothEscposPrinter.ALIGN.RIGHT,
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ],
-        ['Total', 'Rp.', Intl.NumberFormat('id-ID').format(total)],
+        ['Total', 'Rp.', Intl.NumberFormat('id-ID').format(totaltrx)],
         {},
       );
       await BluetoothEscposPrinter.printColumn(
@@ -365,7 +371,7 @@ const Receipts = () => {
           BluetoothEscposPrinter.ALIGN.RIGHT,
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ],
-        ['PPN 11%', 'Rp.', Intl.NumberFormat('id-ID').format(tax)],
+        ['PPN 11%', 'Rp.', Intl.NumberFormat('id-ID').format(tottax)],
         {},
       );
       await BluetoothEscposPrinter.printText(
@@ -379,7 +385,7 @@ const Receipts = () => {
           BluetoothEscposPrinter.ALIGN.RIGHT,
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ],
-        ['Grand Total', 'Rp.', Intl.NumberFormat('id-ID').format(grandtotal)],
+        ['Grand Total', 'Rp.', Intl.NumberFormat('id-ID').format(totaltrx)],
         {},
       );
       await BluetoothEscposPrinter.printColumn(
@@ -389,7 +395,7 @@ const Receipts = () => {
           BluetoothEscposPrinter.ALIGN.RIGHT,
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ],
-        [paymentName, 'Rp.', Intl.NumberFormat('id-ID').format(tottender)],
+        [paymentName, 'Rp.', Intl.NumberFormat('id-ID').format(totaltrx)],
         {},
       );
       await BluetoothEscposPrinter.printColumn(
