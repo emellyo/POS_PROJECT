@@ -894,6 +894,17 @@ export const globalStyles = StyleSheet.create({
     // borderWidth: 1,
     // borderBottomColor: '#212121',
   },
+  TextHeaderBills3: {
+    width: '97%',
+    fontSize: 18,
+    color: '#212121',
+    paddingHorizontal: 0,
+    marginHorizontal: 0,
+    textAlign: 'left',
+    fontWeight: 'bold',
+    // borderWidth: 1,
+    // borderBottomColor: '#212121',
+  },
   Payinout: {
     width: '97%',
     fontSize: 18,

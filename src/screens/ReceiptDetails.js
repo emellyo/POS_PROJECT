@@ -96,6 +96,8 @@ const Receipts = () => {
   const [tipesales, setTipesales] = useState('');
   const [trxdate, setTrxDate] = useState('');
   const [trxtime, setTrxtime] = useState('');
+  const [tottax, setTotTax] = useState(0);
+  const [paymentName, setPaymentName] = useState('');
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     GetSalesType();
@@ -166,8 +168,8 @@ const Receipts = () => {
 
   const GetHistoryTrxDTL = async item => {
     try {
-      setModalVisible(true);
-      const db = await dbconn.getDBConnection();
+      setModaldetail(true);
+      const dbdtl = await dbconnTrx.getDBConnection();
       const fromdate = format(new Date(dateFrom), 'yyyy-MM-dd');
       const todate = format(new Date(dateTo), 'yyyy-MM-dd');
       gettrxhist({
@@ -177,13 +179,31 @@ const Receipts = () => {
         SalesType_ID: salesType,
         Search: '',
       }).then(async result => {
-        let dtTrxHisthdr = [];
+        let dtTrxHistdtl = [];
+        let dtlitem = [];
         var hasil = result.data;
-        await dbconnTrx.deletedataAllTbl(db, 'TrxHistDtl');
-        await dbconnTrx.TrxHistDtl_savedata(db, 'TrxHistDtl', hasil);
-        dtTrxHisthdr = await dbconnTrx.TrxHistDtl_getdataHDR(db, 'TrxHist');
-        console.log('hasil get hist hdr: ', dtTrxHisthdr);
-        setReceipts(dtTrxHisthdr);
+        await dbconnTrx.deletedataAllTbl(dbdtl, 'TrxHistDtl');
+        await dbconnTrx.TrxHistDtl_savedata(dbdtl, 'TrxHistDtl', hasil);
+        dtTrxHistdtl = await dbconnTrx.TrxHistDtl_getdataDTL(
+          dbdtl,
+          'TrxHist',
+          item.docnumber,
+        );
+        dtlitem = await dbconnTrx.TrxHistDtl_getdataItemDtl(
+          dbdtl,
+          'TrxHistDtl',
+          item.docnumber,
+        );
+        console.log('hasil get hist hdr: ', dtTrxHistdtl);
+        setDocnumber(dtTrxHistdtl[0].docnumber);
+        setTrxDate(dtTrxHistdtl[0].formatted_date);
+        setTrxtime(dtTrxHistdtl[0].formatted_datetime);
+        setTipesales(dtTrxHistdtl[0].salesType_Name);
+        setTotaltrx(dtTrxHistdtl[0].origtotal);
+        setEmployee(dtTrxHistdtl[0].userName);
+        setTotTax(dtTrxHistdtl[0].tax_Amount);
+        setPaymentName(dtTrxHistdtl[0].payment_Name);
+        setItemdetail(dtlitem);
       });
     } catch (error) {
       let msg = error.message;
@@ -484,7 +504,7 @@ const Receipts = () => {
                       invrecStyles.labeldetailshistdocnumber,
                       {backgroundColor: colors.card, color: colors.text},
                     ]}>
-                    DOCNUMBER
+                    {docnumber}
                   </Text>
                 </View>
               </SafeAreaView>
@@ -495,7 +515,7 @@ const Receipts = () => {
                       invrecStyles.labeldetailshistdocnumber,
                       {backgroundColor: colors.card, color: colors.text},
                     ]}>
-                    DATE
+                    {trxdate}
                   </Text>
                 </View>
               </SafeAreaView>
@@ -506,7 +526,7 @@ const Receipts = () => {
                       invrecStyles.labeldetailshistdocnumber,
                       {backgroundColor: colors.card, color: colors.text},
                     ]}>
-                    TIME
+                    {trxtime}
                   </Text>
                 </View>
               </SafeAreaView>
@@ -517,18 +537,7 @@ const Receipts = () => {
                       invrecStyles.labeldetailshistdocnumber,
                       {backgroundColor: colors.card, color: colors.text},
                     ]}>
-                    RP. 70.000
-                  </Text>
-                </View>
-              </SafeAreaView>
-              <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
-                <View style={globalStyles.labelinputtotalanbillsdisc}>
-                  <Text
-                    style={[
-                      invrecStyles.labeldetailshistdocnumber,
-                      {backgroundColor: colors.card, color: colors.text},
-                    ]}>
-                    Total
+                    RP. {Intl.NumberFormat('id-ID').format(totaltrx)}
                   </Text>
                 </View>
               </SafeAreaView>
@@ -550,8 +559,7 @@ const Receipts = () => {
                       invrecStyles.labeldetailshistdocnumber,
                       {backgroundColor: colors.card, color: colors.text},
                     ]}>
-                    {/* Rp {total.toLocaleString('id-ID')} */}
-                    Owner
+                    {employee}
                   </Text>
                 </View>
               </SafeAreaView>
@@ -582,7 +590,7 @@ const Receipts = () => {
                       invrecStyles.labeldetailshistdocnumber,
                       {backgroundColor: colors.card, color: colors.text},
                     ]}>
-                    Walk In
+                    {tipesales}
                   </Text>
                 </View>
               </SafeAreaView>
@@ -592,29 +600,11 @@ const Receipts = () => {
               nestedScrollEnabled={true}>
               {/* //* BILLS*/}
               <View style={[invrecStyles.inputantotalanbillskiri]}>
-                {/* {bills.map((bills, index) => {
+                {itemdetail.map((itemdetail, index) => {
                   return (
                     <View key={index} style={globalStyles.cartlist}>
                       <View style={globalStyles.kiri}>
                         <View style={globalStyles.itemqty}>
-                          <TouchableOpacity
-                            onPress={() => {
-                              viewModalEditVariant(
-                                bills.Lineitmseq,
-                                bills.isVarian,
-                              );
-                            }}>
-                            <Text
-                              style={[
-                                invrecStyles.labelinputbills,
-                                {
-                                  backgroundColor: colors.card,
-                                  color: colors.text,
-                                },
-                              ]}>
-                              {bills.Item_Description}
-                            </Text>
-                          </TouchableOpacity>
                           <Text
                             style={[
                               invrecStyles.labelinputbills,
@@ -623,10 +613,20 @@ const Receipts = () => {
                                 color: colors.text,
                               },
                             ]}>
-                            x{bills.Quantity}
+                            {itemdetail.item_Description}
+                          </Text>
+                          <Text
+                            style={[
+                              invrecStyles.labelinputbills,
+                              {
+                                backgroundColor: colors.card,
+                                color: colors.text,
+                              },
+                            ]}>
+                            x{itemdetail.quantity}
                           </Text>
                         </View>
-                        <Text
+                        {/* <Text
                           style={[
                             invrecStyles.labelinputbills,
                             {
@@ -635,17 +635,17 @@ const Receipts = () => {
                             },
                           ]}>
                           {bills.variant_Name}
-                        </Text>
+                        </Text> */}
                       </View>
                       <View style={globalStyles.kanan}>
-                        <TouchableOpacity
+                        {/* <TouchableOpacity
                           style={{position: 'absolute', right: 0}}
                           onPress={() => DeleteItem(bills.Lineitmseq)}>
                           <Text style={invrecStyles.labelrightdatalist}>
                             Hapus
                           </Text>
-                        </TouchableOpacity>
-                        <Text
+                        </TouchableOpacity> */}
+                        {/* <Text
                           style={[
                             invrecStyles.labelinputbills,
                             {
@@ -653,17 +653,17 @@ const Receipts = () => {
                               color: colors.text,
                             },
                           ]}>
-                          {bills.Item_Price}
-                        </Text>
+                          {itemdetail.Item_Price}
+                        </Text> */}
                       </View>
                     </View>
                   );
-                })} */}
+                })}
               </View>
               {/* //* BILLS*/}
             </ScrollView>
             <ScrollView style={globalStyles.InputBills2}>
-              <Text style={globalStyles.TextHeaderBills2}>Discounts</Text>
+              <Text style={globalStyles.TextHeaderBills3}>Discounts</Text>
               {/* <View
                 key={index}
                 style={[invrecStyles.inputantotalanbills2]}></View> */}
@@ -692,7 +692,7 @@ const Receipts = () => {
               })} */}
             </ScrollView>
             <ScrollView style={globalStyles.InputBills3}>
-              <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
+              <SafeAreaView style={[invrecStyles.inputantotalanbills2new]}>
                 <View style={globalStyles.labelinputtotalanbillsdisc}>
                   <Text
                     style={[
@@ -709,7 +709,7 @@ const Receipts = () => {
                       {backgroundColor: colors.card, color: colors.text},
                     ]}>
                     {/* Rp {total.toLocaleString('id-ID')} */}
-                    Rp 10.000
+                    Rp {Intl.NumberFormat('id-ID').format(totaltrx)}
                   </Text>
                 </View>
               </SafeAreaView>
@@ -733,7 +733,7 @@ const Receipts = () => {
                   </Text>
                 </View>
               </SafeAreaView> */}
-              <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
+              <SafeAreaView style={[invrecStyles.inputantotalanbills2new]}>
                 <View style={globalStyles.labelinputtotalanbillsdisc}>
                   <Text
                     style={[
@@ -749,18 +749,18 @@ const Receipts = () => {
                       invrecStyles.labelinputbills,
                       {backgroundColor: colors.card, color: colors.text},
                     ]}>
-                    Rp 10.000
+                    Rp {Intl.NumberFormat('id-ID').format(tottax)}
                   </Text>
                 </View>
               </SafeAreaView>
-              <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
+              <SafeAreaView style={[invrecStyles.inputantotalanbills2new]}>
                 <View style={globalStyles.labelinputtotalanbillsdisc}>
                   <Text
                     style={[
                       invrecStyles.labelinputbills,
                       {backgroundColor: colors.card, color: colors.text},
                     ]}>
-                    BCA
+                    {paymentName}
                   </Text>
                 </View>
                 <View style={globalStyles.kanan2}>
@@ -769,7 +769,7 @@ const Receipts = () => {
                       invrecStyles.labelinputbills,
                       {backgroundColor: colors.card, color: colors.text},
                     ]}>
-                    Rp 10.000
+                    Rp {Intl.NumberFormat('id-ID').format(totaltrx)}
                   </Text>
                 </View>
               </SafeAreaView>
@@ -783,8 +783,8 @@ const Receipts = () => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[globalStyles.buttonYesPayment]}
-                  onPress={() => GetPayment()}>
-                  <Text style={globalStyles.textStyle}>Payment</Text>
+                  onPress={() => PrintStruk()}>
+                  <Text style={globalStyles.textStyle}>Reprint</Text>
                 </TouchableOpacity>
               </SafeAreaView>
             </View>

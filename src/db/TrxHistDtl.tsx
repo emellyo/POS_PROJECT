@@ -66,10 +66,26 @@ export const TrxHistDtl_getdata = async (db: SQLiteDatabase, tableName: string):
 
 
 
-export const TrxHistDtl_getdataHDR = async (db: SQLiteDatabase, tableName: string): Promise<TrxHistDtl[]> => {
+export const TrxHistDtl_getdataDTL = async (db: SQLiteDatabase, tableName: string, docnumber: string): Promise<TrxHistDtl[]> => {
   try {
     const Lists: TrxHistDtl[] = [];
-    const results = await db.executeSql(`SELECT strftime('%m', docdate) || '-' || strftime('%d', docdate) || '-' || strftime('%Y', docdate) AS formatted_date, docnumber, salesType_Name, strftime('%H:%M:%S', created_time) AS formatted_datetime, origtotal, payment_Name, amt_Refund FROM ${tableName}`);
+    const results = await db.executeSql(`SELECT strftime('%m', docdate) || '-' || strftime('%d', docdate) || '-' || strftime('%Y', docdate) AS formatted_date, docnumber, salesType_Name, strftime('%H:%M:%S', created_time) AS formatted_datetime, origtotal, payment_Name, tax_Amount, amt_Refund, userName FROM ${tableName} where docnumber = '${docnumber}' LIMIT 1`);
+    results.forEach(result => {
+      for (let index = 0; index < result.rows.length; index++) {
+        Lists.push(result.rows.item(index))
+      }
+    });
+    return Lists;
+  } catch (error) {
+    console.error(error);
+    throw Error('Failed to get Add Item !!!');
+  }
+};
+
+export const TrxHistDtl_getdataItemDtl = async (db: SQLiteDatabase, tableName: string, docnumber: string): Promise<TrxHistDtl[]> => {
+  try {
+    const Lists: TrxHistDtl[] = [];
+    const results = await db.executeSql(`SELECT item_Number, item_Description, lineitmseq, quantity, uofM, notes FROM ${tableName} where docnumber = '${docnumber}'`);
     results.forEach(result => {
       for (let index = 0; index < result.rows.length; index++) {
         Lists.push(result.rows.item(index))
