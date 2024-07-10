@@ -56,6 +56,12 @@ export const globalStyles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
+  invoice2: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+
   type: {
     fontSize: 1,
     color: '#000',

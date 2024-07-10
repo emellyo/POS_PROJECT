@@ -48,7 +48,7 @@ export const PayInPayOut_getdata = async (db: SQLiteDatabase, tableName: string)
 export const PayInPayOut_getdataHDR = async (db: SQLiteDatabase, tableName: string, Batch_ID: string): Promise<PayInPayOut[]> => {
   try {
     const Lists: PayInPayOut[] = [];
-    const results = await db.executeSql(`SELECT * FROM ${tableName} where Batch_ID = '${Batch_ID}'`);
+    const results = await db.executeSql(`SELECT *, CASE WHEN Type_CashManagement = 1 THEN 'Pay In' ELSE 'Pay Out' END AS Tipe_Cash FROM ${tableName} where Batch_ID = '${Batch_ID}'`);
     results.forEach(result => {
       for (let index = 0; index < result.rows.length; index++) {
         Lists.push(result.rows.item(index))

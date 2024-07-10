@@ -394,7 +394,7 @@ export default function Discount({navigation}) {
         Type_CashManagement: '2',
         Amount: payin,
         Notes: notes,
-        POS_ID: '',
+        POS_ID: 'POS01',
         UserID: userid,
       }).then(async result => {
         var hasil = result.data;
@@ -868,7 +868,7 @@ export default function Discount({navigation}) {
 
   const DifferentAmount = async closeamount => {
     try {
-      let changes = expected - closeamount;
+      let changes = closeamount - expected;
       console.log('hasil changes: ', changes);
       setDifferentAmt(changes);
     } catch (error) {
@@ -1223,6 +1223,7 @@ export default function Discount({navigation}) {
                   <Text style={globalStyles.invoice}>
                     Rp. {Intl.NumberFormat('id-ID').format(item.Amount)}
                   </Text>
+                  <Text style={globalStyles.invoice2}>{item.Tipe_Cash}</Text>
                 </View>
               )}
             />
