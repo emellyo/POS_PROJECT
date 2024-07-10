@@ -16,6 +16,8 @@ import {
   Alert,
   LogBox,
   FlatList,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import {globalStyles, invrecStyles} from '../css/global';
 import Icon from 'react-native-vector-icons/FontAwesome5';

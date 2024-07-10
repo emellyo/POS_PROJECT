@@ -540,12 +540,7 @@ export const globalStyles = StyleSheet.create({
   textinputcashclose: {
     fontWeight: '600',
     flex: 0,
-    //borderBottomLeftRadius: 3,
-    //borderTopLeftRadius: 3,
-    //elevation: 5,
     borderWidth: 1,
-    //borderColor: '#212121',
-    //padding: 0,
     fontSize: 13,
     paddingBottom: 5,
     width: 300,
