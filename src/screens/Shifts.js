@@ -232,7 +232,7 @@ export default function Discount({navigation}) {
         closeshift({
           Batch_ID: datashift[0].Batch_ID,
           Lineitmseq: 0,
-          Payment_ID: '',
+          Payment_ID: 'PAY0001',
           Payment_Type: '',
           Amount_Opening: closeamount,
           UserID: userid,

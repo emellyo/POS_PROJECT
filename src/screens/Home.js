@@ -222,8 +222,8 @@ const Home = () => {
       openshift({
         Batch_ID: runno,
         Lineitmseq: 0,
-        Payment_ID: 'PAY001',
-        Payment_Type: 'Cash',
+        Payment_ID: 'PAY0001',
+        Payment_Type: '',
         Amount_Opening: openamount,
         UserID: userid,
       }).then(async result => {
