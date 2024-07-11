@@ -8,6 +8,9 @@ export const globalStyles = StyleSheet.create({
     paddingTop: 40,
     paddingHorizontal: 20,
   },
+  containerkeyboard: {
+    flex: 1, // Memastikan KeyboardAvoidingView mengisi seluruh ruang yang tersedia
+  },
   containerList: {flex: 1, flexDirection: 'column'},
   bluetoothStatusContainer: {justifyContent: 'flex-end', alignSelf: 'flex-end'},
   bluetoothStatus: color => ({

@@ -1139,29 +1139,34 @@ export default function Discount({navigation}) {
                       </Text>
                     </View>
                   </View>
-                  <View style={globalStyles.kanan}>
-                    <TextInput
-                      style={[
-                        globalStyles.textinputcashclose,
-                        {backgroundColor: colors.card, color: colors.text},
-                      ]}
-                      maxLength={100}
-                      keyboardType="numeric"
-                      editable={true}
-                      value={payin.toLocaleString()}
-                      onChangeText={text => {
-                        const cleanedValue = text.replace(/[^0-9]/g, '');
-                        const numericValue = parseFloat(cleanedValue);
-                        if (!isNaN(numericValue)) {
-                          // Update the state with the formatted value
-                          setPayIn(numericValue);
-                        } else {
-                          // Handle invalid input, for example, setting an empty string
-                          setPayIn('');
-                        }
-                      }}
-                    />
-                  </View>
+                  <KeyboardAvoidingView
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'} // Mengatur perilaku berdasarkan platform
+                    style={globalStyles.containerkeyboard} // Menerapkan gaya ke KeyboardAvoidingView
+                  >
+                    <View style={globalStyles.kanan}>
+                      <TextInput
+                        style={[
+                          globalStyles.textinputcashclose,
+                          {backgroundColor: colors.card, color: colors.text},
+                        ]}
+                        maxLength={100}
+                        keyboardType="numeric"
+                        editable={true}
+                        value={payin.toLocaleString()}
+                        onChangeText={text => {
+                          const cleanedValue = text.replace(/[^0-9]/g, '');
+                          const numericValue = parseFloat(cleanedValue);
+                          if (!isNaN(numericValue)) {
+                            // Update the state with the formatted value
+                            setPayIn(numericValue);
+                          } else {
+                            // Handle invalid input, for example, setting an empty string
+                            setPayIn('');
+                          }
+                        }}
+                      />
+                    </View>
+                  </KeyboardAvoidingView>
                 </View>
               </SafeAreaView>
               <SafeAreaView style={[invrecStyles.inputantotalanbillskiri]}>
@@ -1177,18 +1182,23 @@ export default function Discount({navigation}) {
                       </Text>
                     </View>
                   </View>
-                  <View style={globalStyles.kanan}>
-                    <TextInput
-                      style={[
-                        globalStyles.textinputcashclose,
-                        {backgroundColor: colors.card, color: colors.text},
-                      ]}
-                      maxLength={100}
-                      value={notes}
-                      placeholderTextColor={colors.text}
-                      onChangeText={text => setNotes(text)}
-                    />
-                  </View>
+                  <KeyboardAvoidingView
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'} // Mengatur perilaku berdasarkan platform
+                    style={globalStyles.containerkeyboard} // Menerapkan gaya ke KeyboardAvoidingView
+                  >
+                    <View style={globalStyles.kanan}>
+                      <TextInput
+                        style={[
+                          globalStyles.textinputcashclose,
+                          {backgroundColor: colors.card, color: colors.text},
+                        ]}
+                        maxLength={100}
+                        value={notes}
+                        placeholderTextColor={colors.text}
+                        onChangeText={text => setNotes(text)}
+                      />
+                    </View>
+                  </KeyboardAvoidingView>
                 </View>
               </SafeAreaView>
               <View style={globalStyles.ButtonCloseShift}>
