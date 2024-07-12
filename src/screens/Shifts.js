@@ -1124,99 +1124,99 @@ export default function Discount({navigation}) {
               </TouchableOpacity>
               <Text style={globalStyles.modalTextcashman}>Cash Management</Text>
             </View>
-            <ScrollView style={globalStyles.InputClose}>
-              {/* //* BILLS*/}
-              <SafeAreaView style={[invrecStyles.inputantotalanbillskiri]}>
-                <View style={globalStyles.cartlist}>
-                  <View style={globalStyles.kiri}>
-                    <View style={globalStyles.itemqty}>
-                      <Text
-                        style={[
-                          invrecStyles.labelinputbills,
-                          {backgroundColor: colors.card, color: colors.text},
-                        ]}>
-                        Amount
-                      </Text>
-                    </View>
+
+            {/* //* BILLS*/}
+            <SafeAreaView style={[invrecStyles.inputantotalanbillskiri]}>
+              <View style={globalStyles.cartlist}>
+                <View style={globalStyles.kiri}>
+                  <View style={globalStyles.itemqty}>
+                    <Text
+                      style={[
+                        invrecStyles.labelinputbills,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      Amount
+                    </Text>
                   </View>
-                  <KeyboardAvoidingView
-                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'} // Mengatur perilaku berdasarkan platform
-                    style={globalStyles.containerkeyboard} // Menerapkan gaya ke KeyboardAvoidingView
-                  >
-                    <View style={globalStyles.kanan}>
-                      <TextInput
-                        style={[
-                          globalStyles.textinputcashclose,
-                          {backgroundColor: colors.card, color: colors.text},
-                        ]}
-                        maxLength={100}
-                        keyboardType="numeric"
-                        editable={true}
-                        value={payin.toLocaleString()}
-                        onChangeText={text => {
-                          const cleanedValue = text.replace(/[^0-9]/g, '');
-                          const numericValue = parseFloat(cleanedValue);
-                          if (!isNaN(numericValue)) {
-                            // Update the state with the formatted value
-                            setPayIn(numericValue);
-                          } else {
-                            // Handle invalid input, for example, setting an empty string
-                            setPayIn('');
-                          }
-                        }}
-                      />
-                    </View>
-                  </KeyboardAvoidingView>
                 </View>
-              </SafeAreaView>
-              <SafeAreaView style={[invrecStyles.inputantotalanbillskiri]}>
-                <View style={globalStyles.cartlist}>
-                  <View style={globalStyles.kiri}>
-                    <View style={globalStyles.itemqty}>
-                      <Text
-                        style={[
-                          invrecStyles.labelinputbills,
-                          {backgroundColor: colors.card, color: colors.text},
-                        ]}>
-                        Notes
-                      </Text>
-                    </View>
+                <KeyboardAvoidingView
+                  behavior={Platform.OS === 'ios' ? 'padding' : 'height'} // Mengatur perilaku berdasarkan platform
+                  style={globalStyles.containerkeyboard} // Menerapkan gaya ke KeyboardAvoidingView
+                >
+                  <View style={globalStyles.kananpipo}>
+                    <TextInput
+                      style={[
+                        globalStyles.textinputcashmng,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}
+                      maxLength={100}
+                      keyboardType="numeric"
+                      editable={true}
+                      value={payin.toLocaleString()}
+                      onChangeText={text => {
+                        const cleanedValue = text.replace(/[^0-9]/g, '');
+                        const numericValue = parseFloat(cleanedValue);
+                        if (!isNaN(numericValue)) {
+                          // Update the state with the formatted value
+                          setPayIn(numericValue);
+                        } else {
+                          // Handle invalid input, for example, setting an empty string
+                          setPayIn('');
+                        }
+                      }}
+                    />
                   </View>
-                  <KeyboardAvoidingView
-                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'} // Mengatur perilaku berdasarkan platform
-                    style={globalStyles.containerkeyboard} // Menerapkan gaya ke KeyboardAvoidingView
-                  >
-                    <View style={globalStyles.kanan}>
-                      <TextInput
-                        style={[
-                          globalStyles.textinputcashclose,
-                          {backgroundColor: colors.card, color: colors.text},
-                        ]}
-                        maxLength={100}
-                        value={notes}
-                        placeholderTextColor={colors.text}
-                        onChangeText={text => setNotes(text)}
-                      />
-                    </View>
-                  </KeyboardAvoidingView>
-                </View>
-              </SafeAreaView>
-              <View style={globalStyles.ButtonCloseShift}>
-                <SafeAreaView style={[invrecStyles.buttontotalanclose]}>
-                  <TouchableOpacity
-                    style={[globalStyles.buttonclose]}
-                    onPress={() => PostPayIn(payin)}>
-                    <Text style={globalStyles.textCloseShift}>PAY IN</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[globalStyles.buttonpayout]}
-                    onPress={() => PostPayOut(payin)}>
-                    <Text style={globalStyles.textpayout}>PAY OUT</Text>
-                  </TouchableOpacity>
-                </SafeAreaView>
+                </KeyboardAvoidingView>
               </View>
-              {/* //* BILLS*/}
-            </ScrollView>
+            </SafeAreaView>
+            <SafeAreaView style={[invrecStyles.inputantotalanbillskiri]}>
+              <View style={globalStyles.cartlist}>
+                <View style={globalStyles.kiri}>
+                  <View style={globalStyles.itemqty}>
+                    <Text
+                      style={[
+                        invrecStyles.labelinputbills,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}>
+                      Notes
+                    </Text>
+                  </View>
+                </View>
+                <KeyboardAvoidingView
+                  behavior={Platform.OS === 'ios' ? 'padding' : 'height'} // Mengatur perilaku berdasarkan platform
+                  style={globalStyles.containerkeyboard} // Menerapkan gaya ke KeyboardAvoidingView
+                >
+                  <View style={globalStyles.kananpipo}>
+                    <TextInput
+                      style={[
+                        globalStyles.textinputcashmng,
+                        {backgroundColor: colors.card, color: colors.text},
+                      ]}
+                      maxLength={100}
+                      value={notes}
+                      placeholderTextColor={colors.text}
+                      onChangeText={text => setNotes(text)}
+                    />
+                  </View>
+                </KeyboardAvoidingView>
+              </View>
+            </SafeAreaView>
+            <View style={globalStyles.ButtonCloseShift}>
+              <SafeAreaView style={[invrecStyles.buttontotalanclose]}>
+                <TouchableOpacity
+                  style={[globalStyles.buttonclose]}
+                  onPress={() => PostPayIn(payin)}>
+                  <Text style={globalStyles.textCloseShift}>PAY IN</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[globalStyles.buttonpayout]}
+                  onPress={() => PostPayOut(payin)}>
+                  <Text style={globalStyles.textpayout}>PAY OUT</Text>
+                </TouchableOpacity>
+              </SafeAreaView>
+            </View>
+            {/* //* BILLS*/}
+
             {/* <ScrollView style={globalStyles.InputBills2}>
               <Text style={globalStyles.Payinout}>Pay In/Pay Out</Text>
             </ScrollView> */}

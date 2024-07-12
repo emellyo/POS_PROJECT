@@ -555,6 +555,15 @@ export const globalStyles = StyleSheet.create({
     width: 300,
     marginTop: '5%',
   },
+  textinputcashmng: {
+    fontWeight: '600',
+    flex: 0,
+    borderWidth: 1,
+    fontSize: 13,
+    paddingBottom: 5,
+    width: 400,
+    marginTop: '5%',
+  },
   textinputprinter: {
     fontWeight: '600',
     flex: 0,
@@ -1459,6 +1468,12 @@ export const globalStyles = StyleSheet.create({
     alignItems: 'flex-end',
     width: '30%',
     padding: 20,
+  },
+  kananpipo: {
+    display: 'flex',
+    alignItems: 'flex-end',
+    width: '95%',
+    //padding: 20,
   },
   kanan2: {
     display: 'flex',
