@@ -64,6 +64,8 @@ const Receipts = () => {
   const [bleOpend, setBleOpend] = useState(false);
   const [dataprint, setDataPrint] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [namatoko1, setNamaToko] = useState('');
+  const [alamattoko, setAlamatToko] = useState('');
   useEffect(() => {
     BluetoothManager.isBluetoothEnabled().then(
       enabled => {
@@ -77,6 +79,7 @@ const Receipts = () => {
     BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     GetSalesType();
     LOADTBLHIST();
+    GetStorename();
     //setModaldetail(true);
     return () => {
       clearInterval(increment.current);
@@ -85,7 +88,7 @@ const Receipts = () => {
         handleBackButtonClick,
       );
     };
-  }, [boundAddress, deviceAlreadPaired, deviceFoundEvent, scan]);
+  }, [boundAddress, deviceAlreadPaired, deviceFoundEvent, pairedDevices, scan]);
 
   const deviceAlreadPaired = useCallback(
     rsp => {
@@ -136,6 +139,36 @@ const Receipts = () => {
     },
     [foundDs],
   );
+
+  const connect = row => {
+    setLoading(true);
+    BluetoothManager.connect(row.address).then(
+      s => {
+        setLoading(false);
+        setBoundAddress(row.address);
+        setName(row.name || 'UNKNOWN');
+      },
+      e => {
+        setLoading(false);
+        alert(e);
+      },
+    );
+  };
+
+  const unPair = address => {
+    setLoading(true);
+    BluetoothManager.unpaire(address).then(
+      s => {
+        setLoading(false);
+        setBoundAddress('');
+        setName('');
+      },
+      e => {
+        setLoading(false);
+        alert(e);
+      },
+    );
+  };
 
   const scanDevices = useCallback(() => {
     setLoading(true);
@@ -196,6 +229,28 @@ const Receipts = () => {
     }
   }, [scanDevices]);
 
+  const scanBluetoothDevice = async () => {
+    setLoading(true);
+    try {
+      const request = await requestMultiple([
+        PERMISSIONS.ANDROID.BLUETOOTH_CONNECT,
+        PERMISSIONS.ANDROID.BLUETOOTH_SCAN,
+        PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+      ]);
+
+      if (
+        request['android.permission.ACCESS_FINE_LOCATION'] === RESULTS.GRANTED
+      ) {
+        scanDevices();
+        setLoading(false);
+      } else {
+        setLoading(false);
+      }
+    } catch (err) {
+      setLoading(false);
+    }
+  };
+
   const LOADTBLHIST = async () => {
     try {
       const db = await dbconn.getDBConnection();
@@ -205,6 +260,22 @@ const Receipts = () => {
       await dbconn.deletedataAllTbl(db, 'TrxHist');
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const GetStorename = async () => {
+    try {
+      let datauser = await AsyncStorage.getItem('@dtUser');
+      datauser = JSON.parse(datauser);
+      let alamat = datauser[0].alamat;
+      let namatoko = datauser[0].namatoko;
+      setAlamatToko(alamat[0].alamat);
+      setNamaToko(namatoko[0].label);
+      console.log('alamat: ', alamattoko);
+      console.log('nama toko: ', namatoko1);
+    } catch (error) {
+      console.log(error);
+      let msg = error.message;
     }
   };
   const GetSalesType = async () => {
