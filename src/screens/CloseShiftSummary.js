@@ -506,7 +506,7 @@ export default function Discount({navigation}) {
             width: '100%',
             flexDirection: 'row',
           }}>
-          <Text style={invrecStyles.bannermenutext}>Shift Details</Text>
+          <Text style={invrecStyles.bannermenutext}>Close Shift Details</Text>
         </View>
       </SafeAreaView>
       {/* //* BANNER */}
@@ -996,7 +996,7 @@ export default function Discount({navigation}) {
               <TouchableOpacity
                 style={globalStyles.buttoncashmanag}
                 onPress={handleBackButtonClick}>
-                <Text style={globalStyles.textbut}>CLOSE SHIFT</Text>
+                <Text style={globalStyles.textbut}>CLOSE</Text>
               </TouchableOpacity>
             </View>
           </View>

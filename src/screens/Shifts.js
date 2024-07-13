@@ -217,18 +217,17 @@ export default function Discount({navigation}) {
         console.log('TODAY DATE: ', formattedDate);
         console.log('CURRENT TIME: ', formattedtime);
         const db = await dbconn.getDBConnection();
-        const dbtrx = await dbconnTrx.getDBConnection();
+        //const dbtrx = await dbconnTrx.getDBConnection();
         let datashift = await dbconn.ShiftDetail_getdataSum(
           db,
           'ShiftDetail',
           formattedDate,
-          0,
         );
-        let datatrx = await dbconnTrx.AddTrxHdr_getdatashift(
-          dbtrx,
-          'AddTrxHdr',
-          datashift[0].Batch_ID,
-        );
+        // let datashift2 = await dbconn.ShiftDetail_getdataClos(
+        //   db,
+        //   'ShiftDetail',
+        //   formattedDate,
+        // );
         closeshift({
           Batch_ID: datashift[0].Batch_ID,
           Lineitmseq: 0,
@@ -239,9 +238,13 @@ export default function Discount({navigation}) {
         }).then(async result => {
           var hasil = result.data;
           console.log('hasil return post openshift: ', hasil);
-          let query = `UPDATE ShiftDetail SET Sum_Amount_Closing = ${closeamount}, Status_Batch = 1, Sum_Invoice_Posted = ${datatrx[0].InvoicePosted}, Difference = ${differenamt}, Closing_Date = '${formattedDate}', Closing_time = '${formattedtime}'
-          WHERE Opening_Date = '${formattedDate}' AND Batch_ID = '${datashift[0].Batch_ID}' AND Status_Batch = 0;`;
+          let query = `DELETE FROM ShiftDetail WHERE Closing_time != '' AND Opening_Date = '${formattedDate}' AND Status_Batch = 1;`;
           await dbconn.querydynamic(db, query);
+          let datashiftABC = await dbconn.ShiftDetail_getdataAll(
+            db,
+            'ShiftDetail',
+          );
+          console.log('hasil get close after delete: ', datashiftABC);
           setMdlCloseShift(false);
           PostSummaryShiftClosing(closeamount);
         });
@@ -271,13 +274,11 @@ export default function Discount({navigation}) {
       console.log('TODAY DATE: ', formattedDate);
       console.log('CURRENT TIME: ', formattedtime);
       const db = await dbconn.getDBConnection();
-      let datashift = await dbconn.ShiftDetail_getdataSum(
+      let datashift = await dbconn.ShiftDetail_getdataClos(
         db,
         'ShiftDetail',
         formattedDate,
-        0,
       );
-
       closeshift({
         Batch_ID: datashift[0].Batch_ID,
         Lineitmseq: 0,
@@ -564,14 +565,13 @@ export default function Discount({navigation}) {
       const formattedtime = `${hours}:${minutes}`;
       console.log('TODAY DATE: ', formattedDate);
       console.log('CURRENT TIME: ', formattedtime);
-      console.log('nilai pay in', payin);
       let datauser = await AsyncStorage.getItem('@dtUser');
       datauser = JSON.parse(datauser);
       var userid = datauser[0].userid;
       var storeid = datauser[0].store_ID;
       const db = await dbconn.getDBConnection();
       const dbtrx = await dbconnTrx.getDBConnection();
-      let datashift = await dbconn.ShiftDetail_getdataSumClose(
+      let datashift = await dbconn.ShiftDetail_getdataSum(
         db,
         'ShiftDetail',
         formattedDate,
@@ -1092,6 +1092,7 @@ export default function Discount({navigation}) {
                       ]}
                       maxLength={100}
                       keyboardType="numeric"
+                      editable={false}
                       value={differenamt.toLocaleString()}
                     />
                   </View>
@@ -1233,7 +1234,9 @@ export default function Discount({navigation}) {
                   <Text style={globalStyles.invoice}>
                     Rp. {Intl.NumberFormat('id-ID').format(item.Amount)}
                   </Text>
-                  <Text style={globalStyles.invoice2}>{item.Tipe_Cash}</Text>
+                  <View style={globalStyles.kananpipolist}>
+                    <Text style={globalStyles.invoice2}>{item.Tipe_Cash}</Text>
+                  </View>
                 </View>
               )}
             />

@@ -138,12 +138,12 @@ const Home = () => {
       //await dbconn.deletedataAllTbl(db, 'ShiftDetail');
       await dbconn.ShiftDetail_CreateTbl(db, 'ShiftDetail');
       await dbtrx.AddTrxHdr_CreateTbl(dbhdr, 'AddTrxHdr');
-      const storedTbl = await dbconn.ShiftDetail_getdata(db, 'ShiftDetail');
-      if (storedTbl.length) {
-        console.log('datastored:', storedTbl);
-      } else {
-        console.log('no data');
-      }
+      // const storedTbl = await dbconn.ShiftDetail_getdata(db, 'ShiftDetail');
+      // if (storedTbl.length) {
+      //   console.log('datastored:', storedTbl);
+      // } else {
+      //   console.log('no data');
+      // }
     } catch (error) {
       console.error(error);
     }

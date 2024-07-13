@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {
   View,
   Text,
@@ -30,47 +30,6 @@ import {
 } from 'react-native-bluetooth-escpos-printer';
 import {PERMISSIONS, requestMultiple, RESULTS} from 'react-native-permissions';
 
-// const ReceiptModal = ({visible, onClose, receipt}) => {
-//   if (!receipt) return null;
-
-//   // return (
-//   //   <Modal
-//   //     animationType="slide"s
-//   //     transparent={true}
-//   //     visible={visible}
-//   //     onRequestClose={onClose}>
-//   //     <View style={styles.modalContainer}>
-//   //       <View style={styles.modalContent}>
-//   //         <View style={styles.header}>
-//   //           <TouchableOpacity onPress={onClose}>
-//   //             <Icon name={'arrow-left'} size={24} color="white" />
-//   //           </TouchableOpacity>
-//   //           <Text style={styles.headerText}>Receipt Details</Text>
-//   //         </View>
-//   //         <View style={styles.body}>
-//   //           <Text style={styles.invoice}>{receipt.invoice}</Text>
-//   //           <Text style={styles.amount}>Rp. {receipt.amount}</Text>
-//   //           <Text style={styles.total}>Total</Text>
-//   //           <Text style={styles.employee}>Employee: {receipt.employee}</Text>
-//   //           <Text style={styles.pos}>POS: {receipt.pos}</Text>
-//   //           <Text style={styles.type}>{receipt.type}</Text>
-//   //           <Text style={styles.item}>{receipt.item}</Text>
-//   //           <Text style={styles.discount}>Discount: {receipt.discount}</Text>
-//   //           <Text style={styles.total}>Total: Rp. {receipt.total}</Text>
-//   //           <Text style={styles.ppn}>PPN 11%: Rp. {receipt.ppn}</Text>
-//   //           <Text style={styles.payment}>BCA: Rp. {receipt.bca}</Text>
-//   //           <Text style={styles.date}>{receipt.date}</Text>
-//   //           <Text style={styles.time}>{receipt.time}</Text>
-//   //           <TouchableOpacity style={styles.reprintButton} onPress={() => {}}>
-//   //             <Text style={styles.reprintText}>REPRINT</Text>
-//   //           </TouchableOpacity>
-//   //         </View>
-//   //       </View>
-//   //     </View>
-//   //   </Modal>
-//   // );
-// };
-
 const Receipts = () => {
   const colors = useTheme().colors;
   const increment = useRef(null);
@@ -99,7 +58,22 @@ const Receipts = () => {
   const [tottax, setTotTax] = useState(0);
   const [paymentName, setPaymentName] = useState('');
   const [changes, setChanges] = useState(0);
+  const [pairedDevices, setPairedDevices] = useState([]);
+  const [foundDs, setFoundDs] = useState([]);
+  const [boundAddress, setBoundAddress] = useState('');
+  const [bleOpend, setBleOpend] = useState(false);
+  const [dataprint, setDataPrint] = useState([]);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
+    BluetoothManager.isBluetoothEnabled().then(
+      enabled => {
+        setBleOpend(Boolean(enabled));
+        setLoading(false);
+      },
+      err => {
+        err;
+      },
+    );
     BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     GetSalesType();
     LOADTBLHIST();
@@ -111,7 +85,116 @@ const Receipts = () => {
         handleBackButtonClick,
       );
     };
-  }, []);
+  }, [boundAddress, deviceAlreadPaired, deviceFoundEvent, scan]);
+
+  const deviceAlreadPaired = useCallback(
+    rsp => {
+      var ds = null;
+      if (typeof rsp.devices === 'object') {
+        ds = rsp.devices;
+      } else {
+        try {
+          ds = JSON.parse(rsp.devices);
+        } catch (e) {}
+      }
+      if (ds && ds.length) {
+        let pared = pairedDevices;
+        if (pared.length < 1) {
+          pared = pared.concat(ds || []);
+        }
+        setPairedDevices(pared);
+      }
+    },
+    [pairedDevices],
+  );
+
+  const deviceFoundEvent = useCallback(
+    rsp => {
+      var r = null;
+      try {
+        if (typeof rsp.device === 'object') {
+          r = rsp.device;
+        } else {
+          r = JSON.parse(rsp.device);
+        }
+      } catch (e) {
+        // ignore error
+      }
+
+      if (r) {
+        let found = foundDs || [];
+        if (found.findIndex) {
+          let duplicated = found.findIndex(function (x) {
+            return x.address == r.address;
+          });
+          if (duplicated == -1) {
+            found.push(r);
+            setFoundDs(found);
+          }
+        }
+      }
+    },
+    [foundDs],
+  );
+
+  const scanDevices = useCallback(() => {
+    setLoading(true);
+    BluetoothManager.scanDevices().then(
+      s => {
+        // const pairedDevices = s.paired;
+        var found = s.found;
+        try {
+          found = JSON.parse(found); //@FIX_it: the parse action too weired..
+        } catch (e) {
+          //ignore
+        }
+        var fds = foundDs;
+        if (found && found.length) {
+          fds = found;
+        }
+        setFoundDs(fds);
+        setLoading(false);
+      },
+      er => {
+        setLoading(false);
+        // ignore
+      },
+    );
+  }, [foundDs]);
+
+  const scan = useCallback(() => {
+    try {
+      async function blueTooth() {
+        const permissions = {
+          title: 'HSD bluetooth meminta izin untuk mengakses bluetooth',
+          message:
+            'HSD bluetooth memerlukan akses ke bluetooth untuk proses koneksi ke bluetooth printer',
+          buttonNeutral: 'Lain Waktu',
+          buttonNegative: 'Tidak',
+          buttonPositive: 'Boleh',
+        };
+
+        const bluetoothConnectGranted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+          permissions,
+        );
+        if (bluetoothConnectGranted === PermissionsAndroid.RESULTS.GRANTED) {
+          const bluetoothScanGranted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
+            permissions,
+          );
+          if (bluetoothScanGranted === PermissionsAndroid.RESULTS.GRANTED) {
+            scanDevices();
+          }
+        } else {
+          // ignore akses ditolak
+        }
+      }
+      blueTooth();
+    } catch (err) {
+      console.warn(err);
+    }
+  }, [scanDevices]);
 
   const LOADTBLHIST = async () => {
     try {
@@ -503,8 +586,8 @@ const Receipts = () => {
               <Text style={globalStyles.modalText}>Receipt Details</Text>
             </View>
             <SafeAreaView style={globalStyles.InputDetailhist}>
-              <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
-                <View style={globalStyles.labelinputtotalanbillsdisc2}>
+              <SafeAreaView style={[invrecStyles.inputantotalanreceiptdetails]}>
+                <View style={globalStyles.labelinputtotalanreceiptdtls}>
                   <Text
                     style={[
                       invrecStyles.labeldetailshistdocnumber,
@@ -515,7 +598,7 @@ const Receipts = () => {
                 </View>
               </SafeAreaView>
               <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
-                <View style={globalStyles.labelinputtotalanbillsdisc2}>
+                <View style={globalStyles.labelinputtotalanreceiptdtls2}>
                   <Text
                     style={[
                       invrecStyles.labeldetailshistdocnumber,
@@ -526,7 +609,7 @@ const Receipts = () => {
                 </View>
               </SafeAreaView>
               <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
-                <View style={globalStyles.labelinputtotalanbillsdisc2}>
+                <View style={globalStyles.labelinputtotalanreceiptdtls3}>
                   <Text
                     style={[
                       invrecStyles.labeldetailshistdocnumber,
@@ -537,7 +620,7 @@ const Receipts = () => {
                 </View>
               </SafeAreaView>
               <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
-                <View style={globalStyles.labelinputtotalanbillsdisc}>
+                <View style={globalStyles.labelinputtotalanreceiptdtls4}>
                   <Text
                     style={[
                       invrecStyles.labeldetailshistdocnumber,
@@ -548,7 +631,7 @@ const Receipts = () => {
                 </View>
               </SafeAreaView>
             </SafeAreaView>
-            <ScrollView style={globalStyles.InputBills3}>
+            <SafeAreaView style={globalStyles.InputDetailhist}>
               <SafeAreaView style={[invrecStyles.inputantotalanbills2new]}>
                 <View style={globalStyles.labelinputtotalanbillsdisc}>
                   <Text
@@ -600,17 +683,17 @@ const Receipts = () => {
                   </Text>
                 </View>
               </SafeAreaView>
-            </ScrollView>
+            </SafeAreaView>
             <ScrollView
-              style={globalStyles.InputBills}
+              style={globalStyles.Inputreceiptdetails}
               nestedScrollEnabled={true}>
               {/* //* BILLS*/}
               <View style={[invrecStyles.inputantotalanbillskiri]}>
                 {itemdetail.map((itemdetail, index) => {
                   return (
-                    <View key={index} style={globalStyles.cartlist}>
-                      <View style={globalStyles.kiri}>
-                        <View style={globalStyles.itemqty}>
+                    <View key={index} style={globalStyles.cartlist2}>
+                      <View style={globalStyles.kiri2}>
+                        <View style={globalStyles.itemreceiptdtls}>
                           <Text
                             style={[
                               invrecStyles.labelinputbills,
@@ -668,7 +751,7 @@ const Receipts = () => {
               </View>
               {/* //* BILLS*/}
             </ScrollView>
-            <ScrollView style={globalStyles.InputBills2}>
+            <ScrollView style={globalStyles.Inputreceiptdisc}>
               <Text style={globalStyles.TextHeaderBills3}>Discounts</Text>
               {/* <View
                 key={index}
@@ -815,7 +898,6 @@ const Receipts = () => {
           }}></View>
       </SafeAreaView>
       {/* //* BANNER */}
-
       <Text style={styles.title}>Receipts</Text>
       <View style={styles.inputContainer}>
         <TouchableOpacity style={styles.input} onPress={showDateFromPicker}>
@@ -833,18 +915,20 @@ const Receipts = () => {
           />
         </TouchableOpacity>
         {salesTypes.length > 0 ? (
-          <Picker
-            selectedValue={salesType}
-            style={styles.picker}
-            onValueChange={itemValue => setSalesType(itemValue)}>
-            {salesTypes.map(type => (
-              <Picker.Item
-                key={type.salesType_ID}
-                label={type.salesType_Name}
-                value={type.salesType_ID}
-              />
-            ))}
-          </Picker>
+          <View style={styles.pickerWrapper}>
+            <Picker
+              selectedValue={salesType}
+              style={styles.picker}
+              onValueChange={itemValue => setSalesType(itemValue)}>
+              {salesTypes.map(type => (
+                <Picker.Item
+                  key={type.salesType_ID}
+                  label={type.salesType_Name}
+                  value={type.salesType_ID}
+                />
+              ))}
+            </Picker>
+          </View>
         ) : (
           <ActivityIndicator size="large" color="#0000ff" />
         )}
@@ -863,7 +947,8 @@ const Receipts = () => {
               <Text style={styles.salesType_Name}>
                 {item.salesType_Name} - {item.formatted_datetime}
               </Text>
-              <Text style={styles.payment}>
+              <Text style={styles.salesType_Name}>
+                {item.payment_Name} -{' '}
                 {Intl.NumberFormat('id-ID').format(item.origtotal)}
               </Text>
               {item.refund && (
@@ -905,6 +990,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+    textAlign: 'center',
   },
   inputContainer: {
     flexDirection: 'row',
@@ -918,10 +1004,13 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 10,
   },
-  picker: {
+  pickerWrapper: {
     flex: 1,
     borderWidth: 1,
     borderColor: '#ccc',
+  },
+  picker: {
+    flex: 1,
   },
   date: {
     fontSize: 18,

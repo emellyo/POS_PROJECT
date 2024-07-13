@@ -1308,10 +1308,17 @@ export const globalStyles = StyleSheet.create({
     width: '100%',
     display: 'flex',
     flexDirection: 'column',
-    height: '10%',
+    height: '40%',
     padding: 10,
     // borderBottomWidth: 1,
     // borderBottomColor: '#212121',
+  },
+  Inputreceiptdetails: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    height: '30%',
+    //padding: 10,
   },
   InputClose: {
     width: '100%',
@@ -1324,7 +1331,16 @@ export const globalStyles = StyleSheet.create({
   },
   InputBills2: {
     width: '100%',
-    height: '10%',
+    height: '35%',
+    //padding: 5,
+    borderBottomWidth: 1,
+    borderBottomColor: '#212121',
+    borderTopWidth: 1,
+    borderTopColor: '#212121',
+  },
+  Inputreceiptdisc: {
+    width: '100%',
+    height: '25%',
     //padding: 5,
     borderBottomWidth: 1,
     borderBottomColor: '#212121',
@@ -1342,7 +1358,7 @@ export const globalStyles = StyleSheet.create({
   },
   InputBills3: {
     width: '100%',
-    height: '25%',
+    height: '55%',
   },
   InputBills4: {
     width: '100%',
@@ -1420,12 +1436,11 @@ export const globalStyles = StyleSheet.create({
   },
   labelinputtotalanbillsdisc: {
     width: '50%',
-    //padding: 5,
     display: 'flex',
     flexWrap: 'wrap',
     justifyContent: 'center',
     //height: 40,
-    verticalAlign: 'middle',
+    //verticalAlign: 'middle',
   },
   labelinputtotalanbillsdisc2: {
     width: '100%',
@@ -1436,6 +1451,34 @@ export const globalStyles = StyleSheet.create({
     textAlign: 'center',
     //height: 40,
     verticalAlign: 'middle',
+  },
+  labelinputtotalanreceiptdtls: {
+    width: '100%',
+    display: 'flex',
+    flexWrap: 'wrap',
+    textAlign: 'center',
+    left: 300,
+  },
+  labelinputtotalanreceiptdtls2: {
+    width: '100%',
+    display: 'flex',
+    flexWrap: 'wrap',
+    textAlign: 'justify',
+    left: 330,
+  },
+  labelinputtotalanreceiptdtls3: {
+    width: '100%',
+    display: 'flex',
+    flexWrap: 'wrap',
+    textAlign: 'justify',
+    left: 340,
+  },
+  labelinputtotalanreceiptdtls4: {
+    width: '100%',
+    display: 'flex',
+    flexWrap: 'wrap',
+    textAlign: 'justify',
+    left: 325,
   },
   variantkiri: {
     display: 'flex',
@@ -1453,10 +1496,22 @@ export const globalStyles = StyleSheet.create({
     height: 80,
     flexDirection: 'row',
   },
+  cartlist2: {
+    //display: 'flex',
+    width: '100%',
+    height: '50%',
+    flexDirection: 'row',
+  },
   kiri: {
     display: 'flex',
     width: '70%',
     padding: 10,
+  },
+  kiri2: {
+    display: 'flex',
+    width: '50%',
+    top: 0,
+    // padding: 10,
   },
   tengah: {
     display: 'flex',
@@ -1474,6 +1529,14 @@ export const globalStyles = StyleSheet.create({
     alignItems: 'flex-end',
     width: '95%',
     //padding: 20,
+  },
+  kananpipolist: {
+    //display: 'flex',
+    //alignItems: 'flex-end',
+    width: '30%',
+    left: '80%',
+    bottom: '45%',
+    // padding: 20,
   },
   kanan2: {
     display: 'flex',
@@ -1500,6 +1563,11 @@ export const globalStyles = StyleSheet.create({
     padding: 10,
   },
   itemqty: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+  },
+  itemreceiptdtls: {
     display: 'flex',
     justifyContent: 'space-between',
     flexDirection: 'row',
@@ -1800,10 +1868,6 @@ export const invrecStyles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%',
     flexWrap: 'wrap',
-    //padding: 10,
-    //height: '50%',
-    // borderBottomWidth: 1,
-    // borderBottomColor: '#212121',
   },
   halamanfulllogin: {
     display: 'flex',
@@ -1836,17 +1900,21 @@ export const invrecStyles = StyleSheet.create({
     // borderBottomWidth: 1,
     // borderBottomColor: '#212121',
   },
+  inputantotalanreceiptdetails: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
+    marginBottom: 5,
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    textAlign: 'center',
+  },
   inputantotalanbills2new: {
     display: 'flex',
     flexDirection: 'row',
     width: '100%',
-    //marginBottom: 5,
     flexWrap: 'wrap',
     alignItems: 'center',
-    //padding: 10,
-    //height: '50%',
-    // borderBottomWidth: 1,
-    // borderBottomColor: '#212121',
   },
   inputantotalanbillsnew: {
     display: 'flex',
@@ -1857,8 +1925,8 @@ export const invrecStyles = StyleSheet.create({
     alignItems: 'center',
     //padding: 10,
     //height: '50%',
-    borderBottomWidth: 1,
-    borderBottomColor: '#212121',
+    // borderBottomWidth: 1,
+    // borderBottomColor: '#000',
   },
   inputanprinter2: {
     display: 'flex',
@@ -1935,6 +2003,7 @@ export const invrecStyles = StyleSheet.create({
   labelinputshifthdr: {
     fontSize: 20,
     fontWeight: 'bold',
+    textAlign: 'center',
     //marginLeft: 5,
   },
   labelinputshift: {
