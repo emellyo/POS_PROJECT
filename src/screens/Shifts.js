@@ -332,7 +332,7 @@ export default function Discount({navigation}) {
         Type_CashManagement: '1',
         Amount: payin,
         Notes: notes,
-        POS_ID: '',
+        POS_ID: 'POS01',
         UserID: userid,
       }).then(async result => {
         var hasil = result.data;
