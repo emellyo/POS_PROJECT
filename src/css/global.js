@@ -1349,7 +1349,7 @@ export const globalStyles = StyleSheet.create({
   },
   InputDetailhist: {
     width: '100%',
-    height: '15%',
+    height: '18%',
     //padding: 5,
     borderBottomWidth: 1,
     borderBottomColor: '#212121',
@@ -1359,6 +1359,10 @@ export const globalStyles = StyleSheet.create({
   InputBills3: {
     width: '100%',
     height: '55%',
+  },
+  InputBillsdetailpaymentrcpt: {
+    width: '100%',
+    height: '40%',
   },
   InputBills4: {
     width: '100%',
@@ -1499,7 +1503,7 @@ export const globalStyles = StyleSheet.create({
   cartlist2: {
     //display: 'flex',
     width: '100%',
-    height: '50%',
+    height: '100%',
     flexDirection: 'row',
   },
   kiri: {
@@ -1510,8 +1514,8 @@ export const globalStyles = StyleSheet.create({
   kiri2: {
     display: 'flex',
     width: '50%',
-    top: 0,
-    // padding: 10,
+    top: 5,
+    //padding: 10,
   },
   tengah: {
     display: 'flex',

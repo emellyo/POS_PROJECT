@@ -34,8 +34,8 @@ const Receipts = () => {
   const colors = useTheme().colors;
   const increment = useRef(null);
   const navigation = useNavigation();
-  const [dateFrom, setDateFrom] = useState(new Date('2023-08-17'));
-  const [dateTo, setDateTo] = useState(new Date('2023-08-17'));
+  const [dateFrom, setDateFrom] = useState(new Date());
+  const [dateTo, setDateTo] = useState(new Date());
   const [isDateFromPickerVisible, setDateFromPickerVisibility] =
     useState(false);
   const [isDateToPickerVisible, setDateToPickerVisibility] = useState(false);
@@ -66,6 +66,7 @@ const Receipts = () => {
   const [loading, setLoading] = useState(true);
   const [namatoko1, setNamaToko] = useState('');
   const [alamattoko, setAlamatToko] = useState('');
+  const [runno, setRunno] = useState('');
   useEffect(() => {
     BluetoothManager.isBluetoothEnabled().then(
       enabled => {
@@ -327,6 +328,7 @@ const Receipts = () => {
       const dbdtl = await dbconnTrx.getDBConnection();
       const fromdate = format(new Date(dateFrom), 'yyyy-MM-dd');
       const todate = format(new Date(dateTo), 'yyyy-MM-dd');
+      setRunno(item.docnumber);
       gettrxhist({
         DOCNUMBER: item.docnumber,
         DateFrom: fromdate,
@@ -596,7 +598,7 @@ const Receipts = () => {
         {},
       );
       await BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
-      handleBackButtonClick();
+      setModaldetail(false);
     } catch (e) {
       Alert(e.message || 'ERROR');
     }
@@ -851,7 +853,7 @@ const Receipts = () => {
                 );
               })} */}
             </ScrollView>
-            <ScrollView style={globalStyles.InputBills3}>
+            <ScrollView style={globalStyles.InputBillsdetailpaymentrcpt}>
               <SafeAreaView style={[invrecStyles.inputantotalanbills2new]}>
                 <View style={globalStyles.labelinputtotalanbillsdisc}>
                   <Text
