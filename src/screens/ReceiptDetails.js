@@ -426,7 +426,7 @@ const Receipts = () => {
       await BluetoothEscposPrinter.printColumn(
         [24, 24],
         [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
-        ['Customer Name', ''],
+        ['Customer Name', employee],
         {},
       );
       await BluetoothEscposPrinter.printText(
@@ -436,7 +436,7 @@ const Receipts = () => {
       await BluetoothEscposPrinter.printColumn(
         [32],
         [BluetoothEscposPrinter.ALIGN.CENTER],
-        [employee],
+        [salesType],
         {},
       );
       await BluetoothEscposPrinter.printText(
