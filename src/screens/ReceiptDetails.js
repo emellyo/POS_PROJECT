@@ -24,6 +24,7 @@ import {gettrxhist} from '../api/gettrxhist';
 import * as dbconn from '../db/TrxHist';
 import * as dbconnTrx from '../db/TrxHistDtl';
 import {format} from 'date-fns';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   BluetoothEscposPrinter,
   BluetoothManager,
@@ -67,6 +68,8 @@ const Receipts = () => {
   const [namatoko1, setNamaToko] = useState('');
   const [alamattoko, setAlamatToko] = useState('');
   const [runno, setRunno] = useState('');
+  const [salesname, setSalesName] = useState('');
+
   useEffect(() => {
     BluetoothManager.isBluetoothEnabled().then(
       enabled => {
@@ -78,9 +81,9 @@ const Receipts = () => {
       },
     );
     BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+    GetStorename();
     GetSalesType();
     LOADTBLHIST();
-    GetStorename();
     //setModaldetail(true);
     return () => {
       clearInterval(increment.current);
@@ -270,17 +273,29 @@ const Receipts = () => {
       datauser = JSON.parse(datauser);
       let alamat = datauser[0].alamat;
       let namatoko = datauser[0].namatoko;
-      setAlamatToko(alamat[0].alamat);
-      setNamaToko(namatoko[0].label);
-      console.log('alamat: ', alamattoko);
-      console.log('nama toko: ', namatoko1);
+      let alamat1 = alamat[0].alamat;
+      let namatokodesc = namatoko[0].label;
+      setAlamatToko(alamat1);
+      setNamaToko(namatokodesc);
+      // console.log('alamat: ', alamattoko);
+      // console.log('nama toko: ', namatoko1);
     } catch (error) {
-      console.log(error);
+      console.log(msg);
       let msg = error.message;
     }
   };
+
+  useEffect(() => {
+    console.log('alamat now: ', alamattoko);
+    console.log('nama toko now: ', namatoko1);
+  }, [alamattoko, namatoko1]);
+
   const GetSalesType = async () => {
     try {
+      let datatipesales = await AsyncStorage.getItem('@datasalestype');
+      datatipesales = JSON.parse(datatipesales);
+      var param_tipesales = datatipesales[0].salesid;
+      var param_salesname = datatipesales[0].tipesales;
       getsalestype({
         interid: '',
         ID: '',
@@ -289,6 +304,8 @@ const Receipts = () => {
         console.log('return sales type: ', hasil);
         setSalesTypes(hasil);
         setSalesType(hasil[0]?.salesType_ID || '');
+        //setSalesName(param_salesname);
+        //console.log('TIPE SALES: ', salesname);
       });
     } catch (error) {
       let msg = error.message;
@@ -412,6 +429,16 @@ const Receipts = () => {
         {},
       );
       await BluetoothEscposPrinter.printColumn(
+        [32],
+        [BluetoothEscposPrinter.ALIGN.CENTER],
+        ['Reprint'],
+        {},
+      );
+      await BluetoothEscposPrinter.printText(
+        '================================================',
+        {},
+      );
+      await BluetoothEscposPrinter.printColumn(
         [24, 24],
         [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
         [trxdate, trxtime],
@@ -426,7 +453,13 @@ const Receipts = () => {
       await BluetoothEscposPrinter.printColumn(
         [24, 24],
         [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
-        ['Customer Name', employee],
+        ['Customer Name', ''],
+        {},
+      );
+      await BluetoothEscposPrinter.printColumn(
+        [24, 24],
+        [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+        ['Employee Name', employee],
         {},
       );
       await BluetoothEscposPrinter.printText(
@@ -436,7 +469,7 @@ const Receipts = () => {
       await BluetoothEscposPrinter.printColumn(
         [32],
         [BluetoothEscposPrinter.ALIGN.CENTER],
-        [salesType],
+        [tipesales],
         {},
       );
       await BluetoothEscposPrinter.printText(
