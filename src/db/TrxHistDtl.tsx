@@ -102,11 +102,11 @@ export const TrxHistDtl_getdataItemDtl = async (db: SQLiteDatabase, tableName: s
 export const TrxHistDtl_savedata = async (db: SQLiteDatabase, tableName: string, lists: TrxHistDtl[]) => {
   const insertQuery =
     `INSERT OR REPLACE INTO ${tableName}`+
-    `(docnumber, doctype, docdate, store_ID, salesType_ID, salesType_Name, payment_ID, payment_Name, total_Line_Item, origtotal, subtotal, amount_Tendered,`+
+    `(docnumber, doctype, docdate, store_ID, salesType_ID, custName, salesType_Name, payment_ID, payment_Name, total_Line_Item, origtotal, subtotal, amount_Tendered,`+
     `tax_Amount, discount_ID, discount_Amount, amount_Tendered1, change_Amount, batch_ID, created_User, created_Date, created_time, lineitmseq, item_Number, item_Description, quantity, uofM, notes, refundnumber, amt_Refund, userName)`+
     ` values ` +
     lists.map(
-        i => `('${i.docnumber}', ${i.doctype}, '${i.docdate}', '${i.store_ID}', '${i.salesType_ID}', '${i.salesType_Name}' ,'${i.payment_ID}', '${i.payment_Name}', ${i.total_Line_Item}, ${i.origtotal}, ${i.subtotal}, ${i.amount_Tendered},`+
+        i => `('${i.docnumber}', ${i.doctype}, '${i.docdate}', '${i.store_ID}', '${i.salesType_ID}', '${i.custName}','${i.salesType_Name}' ,'${i.payment_ID}', '${i.payment_Name}', ${i.total_Line_Item}, ${i.origtotal}, ${i.subtotal}, ${i.amount_Tendered},`+
         `${i.tax_Amount}, '${i.discount_ID}', ${i.discount_Amount}, ${i.amount_Tendered1}, ${i.change_Amount},  '${i.batch_ID}', '${i.created_User}', '${i.created_Date}', '${i.created_time}', ${i.lineitmseq}, '${i.item_Number}', '${i.item_Description}', ${i.quantity}, '${i.uofM}', '${i.notes}', '${i.refundnumber}', ${i.amt_Refund}, '${i.userName}')`
     ).join(',');
   return db.executeSql(insertQuery)
