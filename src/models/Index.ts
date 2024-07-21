@@ -147,6 +147,7 @@ export type TrxHistDtl = {
     docdate: string,
     store_ID: string,
     salesType_ID: string,
+    custName: string,
     salesType_Name: string,
     payment_ID: string,
     payment_Name: string,

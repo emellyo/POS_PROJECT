@@ -68,7 +68,7 @@ const Receipts = () => {
   const [namatoko1, setNamaToko] = useState('');
   const [alamattoko, setAlamatToko] = useState('');
   const [runno, setRunno] = useState('');
-  const [salesname, setSalesName] = useState('');
+  const [custname, setCustName] = useState('');
 
   useEffect(() => {
     BluetoothManager.isBluetoothEnabled().then(
@@ -292,10 +292,6 @@ const Receipts = () => {
 
   const GetSalesType = async () => {
     try {
-      let datatipesales = await AsyncStorage.getItem('@datasalestype');
-      datatipesales = JSON.parse(datatipesales);
-      var param_tipesales = datatipesales[0].salesid;
-      var param_salesname = datatipesales[0].tipesales;
       getsalestype({
         interid: '',
         ID: '',
@@ -309,7 +305,7 @@ const Receipts = () => {
       });
     } catch (error) {
       let msg = error.message;
-      CallModalInfo(msg);
+      //(msg);
     }
   };
 
@@ -369,6 +365,7 @@ const Receipts = () => {
           item.docnumber,
         );
         console.log('hasil get hist hdr: ', dtTrxHistdtl);
+        setCustName(dtTrxHistdtl[0].custName);
         setDocnumber(dtTrxHistdtl[0].docnumber);
         setTrxDate(dtTrxHistdtl[0].formatted_date);
         setTrxtime(dtTrxHistdtl[0].formatted_datetime);
@@ -453,7 +450,7 @@ const Receipts = () => {
       await BluetoothEscposPrinter.printColumn(
         [24, 24],
         [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
-        ['Customer Name', ''],
+        ['Customer Name', custname],
         {},
       );
       await BluetoothEscposPrinter.printColumn(
@@ -477,9 +474,9 @@ const Receipts = () => {
         {},
       );
       getbills = await dbconnTrx.TrxHistDtl_getdataItemDtl(
-        db,
+        dbdtl,
         'TrxHistDtl',
-        runno,
+        docnumber,
       );
       try {
         let alignments = [

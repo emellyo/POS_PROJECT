@@ -17,6 +17,7 @@ export const TrxHistDtl_CreateTbl = async (db: SQLiteDatabase, tableName: string
         docdate TEXT NOT NULL,
         store_ID TEXT NOT NULL,
         salesType_ID TEXT NOT NULL,
+        custName TEXT NOT NULL,
         salesType_Name TEXT NOT NULL,
         payment_ID TEXT NOT NULL,
         payment_Name TEXT NOT NULL,
