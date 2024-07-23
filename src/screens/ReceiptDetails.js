@@ -474,7 +474,7 @@ const Receipts = () => {
         {},
       );
       getbills = await dbconnTrx.TrxHistDtl_getdataItemDtl(
-        dbdtl,
+        db,
         'TrxHistDtl',
         docnumber,
       );
