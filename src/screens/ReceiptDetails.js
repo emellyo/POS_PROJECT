@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
   Modal,
   ScrollView,
+  Alert,
 } from 'react-native';
 import {useTheme, useRoute, useNavigation} from '@react-navigation/native';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -387,7 +388,7 @@ const Receipts = () => {
     let columnWidths = [20, 3, 17, 8];
     let columnWidthsVAR = [20, 3, 17, 8];
     let columnWidths2 = [15, 25, 8];
-    const db = await dbconnTrx.getDBConnection();
+    const dbdtl = await dbconnTrx.getDBConnection();
     let getbills = [];
     const today = new Date();
     // Get various parts of the date
@@ -474,7 +475,7 @@ const Receipts = () => {
         {},
       );
       getbills = await dbconnTrx.TrxHistDtl_getdataItemDtl(
-        db,
+        dbdtl,
         'TrxHistDtl',
         docnumber,
       );
