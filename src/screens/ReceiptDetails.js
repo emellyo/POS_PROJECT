@@ -493,32 +493,27 @@ const Receipts = () => {
           BluetoothEscposPrinter.ALIGN.RIGHT, // Align with description column
           BluetoothEscposPrinter.ALIGN.RIGHT, // Align with description column
         ];
-        for (let row of getbills) {
-          // const formattedPrice = `${Intl.NumberFormat('id-ID').format(
-          //   row.Item_Price,
-          // )}`;
-          const currency = `Rp.`;
-          const printData = [
-            row.item_Description,
-            `${row.quantity}x`,
-            // currency,
-            // formattedPrice,
-          ];
-          // Adjust alignment for variant line if needed
-          console.log('Print Data:', printData);
-          await BluetoothEscposPrinter.printColumn(
-            columnWidths,
-            alignments,
-            printData,
-            {},
-          );
-          // await BluetoothEscposPrinter.printColumn(
-          //   columnWidthsVAR,
-          //   variantAlignments,
-          //   [row.variant_Name, '', '', ''],
-          //   {},
-          // );
-        }
+        // for (let row of getbills) {
+        //   // const formattedPrice = `${Intl.NumberFormat('id-ID').format(
+        //   //   row.Item_Price,
+        //   // )}`;
+        //   // const currency = `Rp.`;
+        //   const printData = [row.item_Description, `${row.quantity}x`];
+        //   // Adjust alignment for variant line if needed
+        //   console.log('Print Data:', printData);
+        //   await BluetoothEscposPrinter.printColumn(
+        //     columnWidths,
+        //     alignments,
+        //     printData,
+        //     {},
+        //   );
+        //   // await BluetoothEscposPrinter.printColumn(
+        //   //   columnWidthsVAR,
+        //   //   variantAlignments,
+        //   //   [row.variant_Name, '', '', ''],
+        //   //   {},
+        //   // );
+        // }
       } catch (error) {
         console.error('Error printing: ', error);
       }
@@ -976,7 +971,7 @@ const Receipts = () => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[globalStyles.buttonYesPayment]}
-                  onPress={() => PrintStruk()}>
+                  onPress={PrintStruk}>
                   <Text style={globalStyles.textStyle}>Reprint</Text>
                 </TouchableOpacity>
               </SafeAreaView>
