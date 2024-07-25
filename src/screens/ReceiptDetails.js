@@ -12,6 +12,8 @@ import {
   Modal,
   ScrollView,
   Alert,
+  PermissionsAndroid,
+  LogBox,
 } from 'react-native';
 import {useTheme, useRoute, useNavigation} from '@react-navigation/native';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -286,11 +288,6 @@ const Receipts = () => {
     }
   };
 
-  useEffect(() => {
-    console.log('alamat now: ', alamattoko);
-    console.log('nama toko now: ', namatoko1);
-  }, [alamattoko, namatoko1]);
-
   const GetSalesType = async () => {
     try {
       getsalestype({
@@ -352,12 +349,14 @@ const Receipts = () => {
       }).then(async result => {
         let dtTrxHistdtl = [];
         let dtlitem = [];
+        let abcd = [];
         var hasil = result.data;
+        console.log('log return detail: ', hasil);
         await dbconnTrx.deletedataAllTbl(dbdtl, 'TrxHistDtl');
         await dbconnTrx.TrxHistDtl_savedata(dbdtl, 'TrxHistDtl', hasil);
         dtTrxHistdtl = await dbconnTrx.TrxHistDtl_getdataDTL(
           dbdtl,
-          'TrxHist',
+          'TrxHistDtl',
           item.docnumber,
         );
         dtlitem = await dbconnTrx.TrxHistDtl_getdataItemDtl(
@@ -365,7 +364,7 @@ const Receipts = () => {
           'TrxHistDtl',
           item.docnumber,
         );
-        console.log('hasil get hist hdr: ', dtTrxHistdtl);
+        console.log('hasil get hist dtl: ', dtTrxHistdtl);
         setCustName(dtTrxHistdtl[0].custName);
         setDocnumber(dtTrxHistdtl[0].docnumber);
         setTrxDate(dtTrxHistdtl[0].formatted_date);
@@ -386,25 +385,10 @@ const Receipts = () => {
 
   const PrintStruk = async () => {
     let columnWidths = [20, 3, 17, 8];
-    let columnWidthsVAR = [20, 3, 17, 8];
+    //let columnWidthsVAR = [20, 3, 17, 8];
     let columnWidths2 = [15, 25, 8];
     const dbdtl = await dbconnTrx.getDBConnection();
     let getbills = [];
-    const today = new Date();
-    // Get various parts of the date
-    const year = today.getFullYear();
-    const month = today.getMonth() + 1; // Months are zero-indexed
-    const day = today.getDate();
-    const formattedDate = `${month}/${day}/${year}`;
-    const now = new Date();
-    const hours = now.getHours();
-    const minutes = now.getMinutes();
-    const seconds = now.getSeconds();
-    // Format hours, minutes, and seconds to ensure they are always displayed with two digits
-    const formattedHours = hours < 10 ? '0' + hours : hours;
-    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
-    const formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
-    const formattedtime = `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
     try {
       await BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
       await BluetoothEscposPrinter.printerAlign(
@@ -486,34 +470,17 @@ const Receipts = () => {
           BluetoothEscposPrinter.ALIGN.RIGHT,
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ];
-        const variantAlignments = [
-          // Separate alignments for variant line
-          BluetoothEscposPrinter.ALIGN.LEFT, // Adjust for variant alignment if needed
-          BluetoothEscposPrinter.ALIGN.LEFT, // Adjust for variant alignment if needed
-          BluetoothEscposPrinter.ALIGN.RIGHT, // Align with description column
-          BluetoothEscposPrinter.ALIGN.RIGHT, // Align with description column
-        ];
-        // for (let row of getbills) {
-        //   // const formattedPrice = `${Intl.NumberFormat('id-ID').format(
-        //   //   row.Item_Price,
-        //   // )}`;
-        //   // const currency = `Rp.`;
-        //   const printData = [row.item_Description, `${row.quantity}x`];
-        //   // Adjust alignment for variant line if needed
-        //   console.log('Print Data:', printData);
-        //   await BluetoothEscposPrinter.printColumn(
-        //     columnWidths,
-        //     alignments,
-        //     printData,
-        //     {},
-        //   );
-        //   // await BluetoothEscposPrinter.printColumn(
-        //   //   columnWidthsVAR,
-        //   //   variantAlignments,
-        //   //   [row.variant_Name, '', '', ''],
-        //   //   {},
-        //   // );
-        // }
+        for (let row of getbills) {
+          const printData = [row.item_Description, `${row.quantity}x`, '', ''];
+          // Adjust alignment for variant line if needed
+          console.log('Print Data:', printData);
+          await BluetoothEscposPrinter.printColumn(
+            columnWidths,
+            alignments,
+            printData,
+            {},
+          );
+        }
       } catch (error) {
         console.error('Error printing: ', error);
       }
