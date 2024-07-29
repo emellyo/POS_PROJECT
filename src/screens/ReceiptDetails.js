@@ -72,7 +72,8 @@ const Receipts = () => {
   const [alamattoko, setAlamatToko] = useState('');
   const [runno, setRunno] = useState('');
   const [custname, setCustName] = useState('');
-
+  const [variantname, setVariantName] = useState('');
+  const [itemprice, setItemPrice] = useState(0);
   useEffect(() => {
     BluetoothManager.isBluetoothEnabled().then(
       enabled => {

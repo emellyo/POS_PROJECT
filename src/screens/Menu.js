@@ -586,6 +586,7 @@ export default function Menu({navigation}) {
         runno,
         formattedDate,
         noitem,
+        dtVariant[0].lineItem_Option,
         count,
         notes,
         dtVariant[0].item_Number,
@@ -653,6 +654,7 @@ export default function Menu({navigation}) {
         runno,
         formattedDate,
         noitem,
+        0,
         count,
         notes,
         dtVariant[0].item_Number,
@@ -702,10 +704,11 @@ export default function Menu({navigation}) {
       const db = await dbconnTrx.getDBConnection();
       let dtVariant = await dbconn.Variant_getdataChoose(db, 'Variant');
       let variantedit = dtVariant[0].variant_Name;
+      let variantseq = dtVariant[0].lineItem_Option;
       console.log('isi variant choose: ', variantedit);
       let updatedetail = await dbconnTrx.queryselectTrx(
         db,
-        `UPDATE AddTrxDtl SET Quantity = ${count}, variant_Name = '${variantedit}' WHERE Lineitmseq = ${seqTemp}`,
+        `UPDATE AddTrxDtl SET Quantity = ${count}, lineItem_Option = ${variantseq}, variant_Name = '${variantedit}' WHERE Lineitmseq = ${seqTemp}`,
       );
       let detailUpdate = await dbconnTrx.AddTrxDtl_getdata(db, 'AddTrxDtl');
       setBills(detailUpdate);

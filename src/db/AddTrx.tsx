@@ -46,6 +46,7 @@ export const AddTrxDtl_CreateTbl = async (db: SQLiteDatabase, tableName: string)
         DOCTYPE INT NOT NULL,
         DOCDATE TEXT NOT NULL,
         Lineitmseq INT PRIMARY KEY NOT NULL,
+        lineItem_Option INT NOT NULL,
         Item_Number TEXT NOT NULL,
         Item_Description TEXT NULL,
         Quantity INT NOT NULL,
@@ -245,14 +246,14 @@ export const AddTrxHdr_getdatacash = async (db: SQLiteDatabase, tableName: strin
 };
 
 export const AddTrxDtl_savedata = async (db: SQLiteDatabase, tableName: string ,
-   docnumbr: string, date: string, lnitmseq: number, qty: number, notes: string, itemnmbr: string, itemname: string, itemprice: number,
+   docnumbr: string, date: string, lnitmseq: number, lineItem_Option: number ,qty: number, notes: string, itemnmbr: string, itemname: string, itemprice: number,
    itemcost: number, variantname: string, Store_ID: string, isVarian: number) => {
   const insertQuery =
     `INSERT INTO ${tableName}`+
-    `(DOCNUMBER, DOCTYPE, DOCDATE, Lineitmseq, Item_Number, Item_Description, Quantity, UofM,`+
+    `(DOCNUMBER, DOCTYPE, DOCDATE, Lineitmseq, lineItem_Option, Item_Number, Item_Description, Quantity, UofM,`+
     `Item_Price, Item_Cost, Store_ID, Site_ID, SalesType_ID, Discount_ID, Discount_Amount, Notes, POS_Device_ID, POS_Version, variant_Name, isVarian)`+
     ` values ` +
- `('${docnumbr}', ${1}, '${date}', ${lnitmseq}, '${itemnmbr}','${itemname}', ${qty}, '${'PCS'}', ${itemprice}, ${itemcost}, '${Store_ID}', '${''}', '${''}',` + "\n" +
+ `('${docnumbr}', ${1}, '${date}', ${lnitmseq}, ${lineItem_Option}, '${itemnmbr}','${itemname}', ${qty}, '${'PCS'}', ${itemprice}, ${itemcost}, '${Store_ID}', '${''}', '${''}',` + "\n" +
   `'${''}', ${0}, '${notes}', '${''}', '${''}', '${variantname}', ${isVarian})`;
   // join(',')
 

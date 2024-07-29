@@ -63,6 +63,7 @@ export type AddTrxDtl ={
     DOCTYPE: number;
     DOCDATE: number;
     Lineitmseq: number;
+    lineItem_Option: number;
     Item_Number: string;
     Item_Description: string;
     Quantity: number;
@@ -150,6 +151,7 @@ export type TrxHistDtl = {
     salesType_ID: string,
     custName: string,
     salesType_Name: string,
+    item_Price: number,
     payment_ID: string,
     payment_Name: string,
     total_Line_Item: number,
@@ -168,6 +170,7 @@ export type TrxHistDtl = {
     lineitmseq: number,
     item_Number: string,
     item_Description: string,
+    variant_Name: string,
     quantity: number,
     uofM: string,
     notes: string,
