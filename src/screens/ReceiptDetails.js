@@ -366,6 +366,8 @@ const Receipts = () => {
           item.docnumber,
         );
         console.log('hasil get hist dtl: ', dtTrxHistdtl);
+        setItemPrice(dtTrxHistdtl[0].item_Price);
+        setVariantName(dtTrxHistdtl[0].variant_Name);
         setCustName(dtTrxHistdtl[0].custName);
         setDocnumber(dtTrxHistdtl[0].docnumber);
         setTrxDate(dtTrxHistdtl[0].formatted_date);
@@ -386,7 +388,7 @@ const Receipts = () => {
 
   const PrintStruk = async () => {
     let columnWidths = [20, 3, 17, 8];
-    //let columnWidthsVAR = [20, 3, 17, 8];
+    let columnWidthsVAR = [20, 3, 17, 8];
     let columnWidths2 = [15, 25, 8];
     const dbdtl = await dbconnTrx.getDBConnection();
     let getbills = [];
@@ -472,7 +474,16 @@ const Receipts = () => {
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ];
         for (let row of getbills) {
-          const printData = [row.item_Description, `${row.quantity}x`, '', ''];
+          const formattedPrice = `${Intl.NumberFormat('id-ID').format(
+            row.item_Price,
+          )}`;
+          const currency = `Rp.`;
+          const printData = [
+            row.item_Description,
+            `${row.quantity}x`,
+            currency,
+            formattedPrice,
+          ];
           // Adjust alignment for variant line if needed
           console.log('Print Data:', printData);
           await BluetoothEscposPrinter.printColumn(
@@ -782,7 +793,7 @@ const Receipts = () => {
                             x{itemdetail.quantity}
                           </Text>
                         </View>
-                        {/* <Text
+                        <Text
                           style={[
                             invrecStyles.labelinputbills,
                             {
@@ -790,8 +801,8 @@ const Receipts = () => {
                               color: colors.text,
                             },
                           ]}>
-                          {bills.variant_Name}
-                        </Text> */}
+                          {itemdetail.variant_Name}
+                        </Text>
                       </View>
                       <View style={globalStyles.kanan}>
                         {/* <TouchableOpacity
@@ -801,7 +812,7 @@ const Receipts = () => {
                             Hapus
                           </Text>
                         </TouchableOpacity> */}
-                        {/* <Text
+                        <Text
                           style={[
                             invrecStyles.labelinputbills,
                             {
@@ -809,8 +820,8 @@ const Receipts = () => {
                               color: colors.text,
                             },
                           ]}>
-                          {itemdetail.Item_Price}
-                        </Text> */}
+                          {itemdetail.item_Price}
+                        </Text>
                       </View>
                     </View>
                   );
