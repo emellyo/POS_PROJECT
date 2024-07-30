@@ -473,6 +473,13 @@ const Receipts = () => {
           BluetoothEscposPrinter.ALIGN.RIGHT,
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ];
+        const variantAlignments = [
+          // Separate alignments for variant line
+          BluetoothEscposPrinter.ALIGN.LEFT, // Adjust for variant alignment if needed
+          BluetoothEscposPrinter.ALIGN.LEFT, // Adjust for variant alignment if needed
+          BluetoothEscposPrinter.ALIGN.RIGHT, // Align with description column
+          BluetoothEscposPrinter.ALIGN.RIGHT, // Align with description column
+        ];
         for (let row of getbills) {
           const formattedPrice = `${Intl.NumberFormat('id-ID').format(
             row.item_Price,
@@ -490,6 +497,12 @@ const Receipts = () => {
             columnWidths,
             alignments,
             printData,
+            {},
+          );
+          await BluetoothEscposPrinter.printColumn(
+            columnWidthsVAR,
+            variantAlignments,
+            [row.variant_Name, '', '', ''],
             {},
           );
         }
