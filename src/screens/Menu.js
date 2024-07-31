@@ -39,6 +39,8 @@ import {getrunno} from '../api/generatenumberperday';
 import {getrunnobatch} from '../api/getrunnobatch';
 import {getdiscount} from '../api/getdiscount';
 import {getpayment} from '../api/getpaymentype';
+import {closeshift} from '../api/closeshift';
+import {savesummaryshift} from '../api/savesummaryshift';
 import {syncup} from '../api/syncuptrx';
 import {hsdLogo} from './dummy-logo';
 import * as dbconn from '../db/Variant';
@@ -1097,7 +1099,8 @@ export default function Menu({navigation}) {
           CallModalInfo(hasil.desc);
         } else if (hasil[0].code == 200) {
           setMdlPayment(false);
-          PrintStruk();
+          PostCloseShift();
+          //PrintStruk();
           //handleBackButtonClick();
         }
         //console.log('HASIL GET VARIANT', hasil);
@@ -1105,6 +1108,108 @@ export default function Menu({navigation}) {
     } catch (error) {
       let msg = error.message;
       console.log(error);
+      CallModalInfo(msg);
+    }
+  };
+
+  const PostCloseShift = async () => {
+    try {
+      let datauser = await AsyncStorage.getItem('@dtUser');
+      datauser = JSON.parse(datauser);
+      var userid = datauser[0].userid;
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1;
+      const day = today.getDate();
+      const hours = today.getHours();
+      const minutes = today.getMinutes();
+      const seconds = today.getSeconds();
+      const formattedDate = `${month}/${day}/${year}`;
+      const formattedtime = `${hours}:${minutes}`;
+      console.log('TODAY DATE: ', formattedDate);
+      console.log('CURRENT TIME: ', formattedtime);
+      //const db = await dbconn.getDBConnection();
+      const dbshiftdtl = await dbshift.getDBConnection();
+      let datashift = await dbshift.ShiftDetail_getdataSum(
+        dbshiftdtl,
+        'ShiftDetail',
+        formattedDate,
+        0,
+      );
+      closeshift({
+        Batch_ID: datashift[0].Batch_ID,
+        Lineitmseq: 0,
+        Payment_ID: paymentID,
+        Payment_Type: paymentName,
+        Amount_Opening: grandtotal,
+        UserID: userid,
+      }).then(async result => {
+        var hasil = result.data;
+        console.log('hasil return post openshift: ', hasil);
+        PostSummaryShiftClosing(grandtotal);
+      });
+    } catch (error) {
+      let msg = error;
+      CallModalInfo(msg);
+    }
+  };
+
+  const PostSummaryShiftClosing = async closeamount => {
+    try {
+      console.log('MASUK SUMMARY SHIFT POST');
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1;
+      const day = today.getDate();
+      const hours = today.getHours();
+      const minutes = today.getMinutes();
+      const formattedDate = `${month}/${day}/${year}`;
+      const formattedtime = `${hours}:${minutes}`;
+      console.log('TODAY DATE: ', formattedDate);
+      console.log('CURRENT TIME: ', formattedtime);
+      let datauser = await AsyncStorage.getItem('@dtUser');
+      datauser = JSON.parse(datauser);
+      var userid = datauser[0].userid;
+      var storeid = datauser[0].store_ID;
+      const db = await dbshift.getDBConnection();
+      //const dbtrx = await dbconnTrx.getDBConnection();
+      let datashift = await dbshift.ShiftDetail_getdataSum(
+        db,
+        'ShiftDetail',
+        formattedDate,
+      );
+      console.log('data shift: ', datashift);
+      let Opening_Date = datashift[0].Opening_Date;
+      console.log('opening date: ', Opening_Date);
+      savesummaryshift({
+        Batch_ID: datashift[0].Batch_ID,
+        LastEdit_Date: formattedDate,
+        LastEdit_time: formattedtime,
+        Store_ID: storeid[0].value,
+        POS_Device_ID: '',
+        Opening_Date: datashift[0].Opening_Date,
+        Opening_time: datashift[0].Opening_time,
+        Closing_Date: formattedDate,
+        Closing_time: formattedtime,
+        Sum_Amount_Opening: datashift[0].Sum_Amount_Opening,
+        Sum_Amount_Closing: closeamount,
+        Sum_Invoice_Posted: 0,
+        Sum_Tendered: 0,
+        Sum_Changes: 0,
+        Sum_Amount_Discount: 0,
+        Sum_Amount_Tax: 0,
+        Sum_Invoice_Refund_Posted: 0,
+        Sum_Amount_PayOut: 0,
+        Sum_Amount_PayIn: 0,
+        Count_Customers: 0,
+        Status_Batch: 0,
+        UserID: userid,
+      }).then(async result => {
+        var hasil = result.data;
+        PrintStruk();
+      });
+    } catch (error) {
+      let msg = error;
       CallModalInfo(msg);
     }
   };
