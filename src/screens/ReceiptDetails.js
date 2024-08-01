@@ -349,7 +349,7 @@ const Receipts = () => {
         Search: '',
       }).then(async result => {
         let dtTrxHistdtl = [];
-        let dtlitem = [];
+        // let dtlitem = [];
         let abcd = [];
         var hasil = result.data;
         console.log('log return detail: ', hasil);
@@ -360,12 +360,13 @@ const Receipts = () => {
           'TrxHistDtl',
           item.docnumber,
         );
-        dtlitem = await dbconnTrx.TrxHistDtl_getdataItemDtl(
+        let dtlitem = await dbconnTrx.TrxHistDtl_getdataItemDtl(
           dbdtl,
           'TrxHistDtl',
           item.docnumber,
         );
-        console.log('hasil get hist dtl: ', dtTrxHistdtl);
+        console.log('hasil get hist dtl: ', dtlitem);
+        setItemdetail(dtlitem);
         setItemPrice(dtTrxHistdtl[0].item_Price);
         setVariantName(dtTrxHistdtl[0].variant_Name);
         setCustName(dtTrxHistdtl[0].custName);
@@ -378,7 +379,6 @@ const Receipts = () => {
         setTotTax(dtTrxHistdtl[0].tax_Amount);
         setPaymentName(dtTrxHistdtl[0].payment_Name);
         setChanges(dtTrxHistdtl[0].change_Amount);
-        setItemdetail(dtlitem);
       });
     } catch (error) {
       let msg = error.message;
@@ -817,7 +817,7 @@ const Receipts = () => {
                           {itemdetail.variant_Name}
                         </Text>
                       </View>
-                      <View style={globalStyles.kanan}>
+                      <View style={globalStyles.kanan2}>
                         {/* <TouchableOpacity
                           style={{position: 'absolute', right: 0}}
                           onPress={() => DeleteItem(bills.Lineitmseq)}>

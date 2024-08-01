@@ -88,7 +88,7 @@ export const TrxHistDtl_getdataDTL = async (db: SQLiteDatabase, tableName: strin
 export const TrxHistDtl_getdataItemDtl = async (db: SQLiteDatabase, tableName: string, docnumber: string): Promise<TrxHistDtl[]> => {
   try {
     const Lists: TrxHistDtl[] = [];
-    const results = await db.executeSql(`SELECT item_Description, item_Price, variant_Name, quantity FROM ${tableName} where docnumber = '${docnumber}'`);
+    const results = await db.executeSql(`SELECT item_Description, item_Price, variant_Name, quantity, lineitmseq FROM ${tableName} where docnumber = '${docnumber}'`);
     results.forEach(result => {
       for (let index = 0; index < result.rows.length; index++) {
         Lists.push(result.rows.item(index))
