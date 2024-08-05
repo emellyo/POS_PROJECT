@@ -1317,7 +1317,7 @@ export const globalStyles = StyleSheet.create({
     width: '100%',
     display: 'flex',
     flexDirection: 'column',
-    height: '30%',
+    height: '45%',
     //padding: 10,
   },
   InputClose: {
@@ -1501,9 +1501,9 @@ export const globalStyles = StyleSheet.create({
     flexDirection: 'row',
   },
   cartlist2: {
-    //display: 'flex',
+    display: 'flex',
     width: '100%',
-    height: '100%',
+    height: 80,
     flexDirection: 'row',
   },
   kiri: {

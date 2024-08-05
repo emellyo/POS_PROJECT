@@ -104,7 +104,6 @@ const Home = () => {
     //   AsyncStorage.setItem('lastSeenDate', today.toString()); // Save current date
     //   setLastSeenDate(today);
     // }
-    OpenShiftWindow();
     GetSalesType();
     GetUserData();
     LOADTBLADDSHIFT();
@@ -144,6 +143,7 @@ const Home = () => {
       // } else {
       //   console.log('no data');
       // }
+      OpenShiftWindow();
     } catch (error) {
       console.error(error);
     }

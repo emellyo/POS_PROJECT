@@ -348,8 +348,9 @@ const Receipts = () => {
         SalesType_ID: salesType,
         Search: '',
       }).then(async result => {
+        setItemdetail([]);
         let dtTrxHistdtl = [];
-        // let dtlitem = [];
+        let dtlitem = [];
         let abcd = [];
         var hasil = result.data;
         console.log('log return detail: ', hasil);
@@ -360,7 +361,7 @@ const Receipts = () => {
           'TrxHistDtl',
           item.docnumber,
         );
-        let dtlitem = await dbconnTrx.TrxHistDtl_getdataItemDtl(
+        dtlitem = await dbconnTrx.TrxHistDtl_getdataItemDtl(
           dbdtl,
           'TrxHistDtl',
           item.docnumber,
