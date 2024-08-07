@@ -723,8 +723,8 @@ const Receipts = () => {
                 </View>
               </SafeAreaView>
             </SafeAreaView>
-            <SafeAreaView style={globalStyles.InputDetailhist}>
-              <SafeAreaView style={[invrecStyles.inputantotalanbills2new]}>
+            <SafeAreaView style={globalStyles.InputDetailhist2}>
+              <SafeAreaView style={[invrecStyles.inputantotalanbills2new1]}>
                 <View style={globalStyles.labelinputtotalanbillsdisc}>
                   <Text
                     style={[
@@ -744,7 +744,7 @@ const Receipts = () => {
                   </Text>
                 </View>
               </SafeAreaView>
-              <SafeAreaView style={[invrecStyles.inputantotalanbills2new]}>
+              <SafeAreaView style={[invrecStyles.inputantotalanbills2new2]}>
                 <View style={globalStyles.labelinputtotalanbillsdisc}>
                   <Text
                     style={[
@@ -764,7 +764,7 @@ const Receipts = () => {
                   </Text>
                 </View>
               </SafeAreaView>
-              <SafeAreaView style={[invrecStyles.inputantotalanbillsnew]}>
+              <SafeAreaView style={[invrecStyles.inputantotalanbills2new3]}>
                 <View style={globalStyles.labelinputtotalanbillsdisc}>
                   <Text
                     style={[
