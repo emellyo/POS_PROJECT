@@ -1349,7 +1349,7 @@ export const globalStyles = StyleSheet.create({
   },
   InputDetailhist: {
     width: '100%',
-    height: '15%',
+    height: '18%',
     borderBottomWidth: 1,
     borderBottomColor: '#212121',
     alignItems: 'center',
@@ -1511,7 +1511,7 @@ export const globalStyles = StyleSheet.create({
   cartlist2: {
     display: 'flex',
     width: '100%',
-    height: 80,
+    height: 65,
     flexDirection: 'row',
   },
   kiri: {
@@ -1522,7 +1522,7 @@ export const globalStyles = StyleSheet.create({
   kiri2: {
     display: 'flex',
     width: '50%',
-    top: 5,
+    top: 0,
     //padding: 10,
   },
   tengah: {
