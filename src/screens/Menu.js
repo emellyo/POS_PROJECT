@@ -123,6 +123,7 @@ export default function Menu({navigation}) {
   const [selectedButtonIndex, setSelectedButtonIndex] = useState(null);
   const [activePaymentID, setActivePaymentID] = useState(null);
   const [itemdescvar, setItemDescvar] = useState('');
+  const [selectedDiscount, setSelectedDiscount] = useState(null);
   //#endregion
 
   useEffect(() => {
@@ -759,23 +760,23 @@ export default function Menu({navigation}) {
     }
   };
 
-  const DiscBill = async discount => {
-    setIsChecked(prevChecked => {
-      const updateCheckedArray = [...prevChecked];
-      updateCheckedArray[discount] = !prevChecked[discount];
-      return updateCheckedArray;
-    });
-    discountFunc(discount);
-  };
-
-  const discountFunc = async discount => {
-    if (discount.discount_Type == 1) {
-      let decimalPercentage = discount.discount_Value / 100;
-      setNilaiDisc(decimalPercentage.toString());
-    } else if (discount.discount_Type == 2) {
-      let nominalDisc = discount.discount_Value;
-      setNilaiDisc(nominalDisc.toString());
+  const handleDiscountChange = discount => {
+    if (selectedDiscount === discount.discount_ID) {
+      setSelectedDiscount(null); // Uncheck if already selected
+    } else {
+      if (discount.discount_Type === 1) {
+        setSelectedDiscount(discount.discount_ID);
+        const discountedTotalpercent =
+          total - (total * discount.discount_Value) / 100;
+        setTotal(discountedTotalpercent);
+      } else if (discount.discount_Type === 2) {
+        setSelectedDiscount(discount.discount_ID);
+        const discountedTotalamt = total - discount.discount_Value;
+        setTotal(discountedTotalamt);
+      }
     }
+    // Here you would typically apply the discount to your total
+    console.log(`Applied discount: ${discount.discount_Name}`);
   };
 
   const CalculateTotal = async () => {
@@ -2312,8 +2313,8 @@ export default function Menu({navigation}) {
                       <View style={globalStyles.viewinput2}>
                         <CheckBox
                           tintColors={{true: '#0096FF', false: 'black'}}
-                          //value={isChecked}
-                          //onValueChange={() => DiscBill(discount)}
+                          value={selectedDiscount === discount.discount_ID}
+                          onValueChange={() => handleDiscountChange(discount)}
                         />
                       </View>
                     </View>
