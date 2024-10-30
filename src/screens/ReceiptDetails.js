@@ -22,6 +22,7 @@ import {getsalestype} from '../api/getsalestype';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {globalStyles, invrecStyles} from '../css/global';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {getstore} from '../api/getstore';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {gettrxhist} from '../api/gettrxhist';
 import * as dbconn from '../db/TrxHist';
@@ -69,11 +70,14 @@ const Receipts = () => {
   const [dataprint, setDataPrint] = useState([]);
   const [loading, setLoading] = useState(true);
   const [namatoko1, setNamaToko] = useState('');
+  const [namapos, setNamaPos] = useState('');
   const [alamattoko, setAlamatToko] = useState('');
   const [runno, setRunno] = useState('');
   const [custname, setCustName] = useState('');
   const [variantname, setVariantName] = useState('');
   const [itemprice, setItemPrice] = useState(0);
+  const [discId, setDiscID] = useState('');
+  const [discamt, setDiscAmt] = useState(0);
   useEffect(() => {
     BluetoothManager.isBluetoothEnabled().then(
       enabled => {
@@ -277,12 +281,15 @@ const Receipts = () => {
       datauser = JSON.parse(datauser);
       let alamat = datauser[0].alamat;
       let namatoko = datauser[0].namatoko;
+      let posname = datauser[0].namapos;
       let alamat1 = alamat[0].alamat;
       let namatokodesc = namatoko[0].label;
+      let namapos = posname[0].devicename;
       setAlamatToko(alamat1);
       setNamaToko(namatokodesc);
-      // console.log('alamat: ', alamattoko);
-      // console.log('nama toko: ', namatoko1);
+      setNamaPos(namapos);
+      console.log('namapos: ', namapos);
+      //console.log('nama toko: ', namatoko1);
     } catch (error) {
       console.log(msg);
       let msg = error.message;
@@ -380,6 +387,8 @@ const Receipts = () => {
         setTotTax(dtTrxHistdtl[0].tax_Amount);
         setPaymentName(dtTrxHistdtl[0].payment_Name);
         setChanges(dtTrxHistdtl[0].change_Amount);
+        setDiscID(dtTrxHistdtl[0].discount_ID);
+        setDiscAmt(dtlitem[0].discount_Amount);
       });
     } catch (error) {
       let msg = error.message;
@@ -522,7 +531,7 @@ const Receipts = () => {
           BluetoothEscposPrinter.ALIGN.RIGHT,
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ],
-        ['Discount', 'Rp.', '0'],
+        ['Discount', 'Rp.', Intl.NumberFormat('id-ID').format(discamt)],
         {},
       );
       await BluetoothEscposPrinter.printText(
@@ -760,7 +769,7 @@ const Receipts = () => {
                       invrecStyles.labeldetailshistdocnumber,
                       {backgroundColor: colors.card, color: colors.text},
                     ]}>
-                    POS 1
+                    {namapos}
                   </Text>
                 </View>
               </SafeAreaView>
@@ -844,33 +853,27 @@ const Receipts = () => {
               {/* //* BILLS*/}
             </ScrollView>
             <ScrollView style={globalStyles.Inputreceiptdisc}>
-              <Text style={globalStyles.TextHeaderBills3}>Discounts</Text>
-              {/* <View
-                key={index}
-                style={[invrecStyles.inputantotalanbills2]}></View> */}
-              {/* {discount.map((discount, index) => {
-                return (
-                  <View style={globalStyles.labelinputtotalanbillsdisc}>
+              <SafeAreaView style={[invrecStyles.inputantotalanbills2new]}>
+                <View style={globalStyles.labelinputtotalanbillsdisc}>
                   <Text
                     style={[
                       invrecStyles.labelinputbills,
-                      {
-                        backgroundColor: colors.card,
-                        color: colors.text,
-                      },
+                      {backgroundColor: colors.card, color: colors.text},
                     ]}>
-                    {discount.discount_Name}
+                    Discount
                   </Text>
                 </View>
-                <View style={globalStyles.viewinput2}>
-                  <CheckBox
-                    tintColors={{true: '#0096FF', false: 'black'}}
-                    //value={isChecked}
-                    //onValueChange={() => DiscBill(discount)}
-                  />
+                <View style={globalStyles.kanan2}>
+                  <Text
+                    style={[
+                      invrecStyles.labelinputbills,
+                      {backgroundColor: colors.card, color: colors.text},
+                    ]}>
+                    {/* Rp {total.toLocaleString('id-ID')} */}
+                    Rp {Intl.NumberFormat('id-ID').format(discamt)}
+                  </Text>
                 </View>
-                );
-              })} */}
+              </SafeAreaView>
             </ScrollView>
             <ScrollView style={globalStyles.InputBillsdetailpaymentrcpt}>
               <SafeAreaView style={[invrecStyles.inputantotalanbills2new]}>

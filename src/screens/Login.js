@@ -82,6 +82,7 @@ const Login = () => {
   const [address, setAdress] = useState([]);
   const [jmlstore, setJmlStore] = useState([]);
   const [domain, setDomain] = useState('');
+  const [posdeviceid, setPosDeviceID] = useState('');
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -273,6 +274,7 @@ const Login = () => {
               store_ID: store,
               alamat: address,
               namatoko: storename,
+              namapos: posdeviceid,
             };
             datauserall.push(dataparams);
 
@@ -325,15 +327,18 @@ const Login = () => {
             let value = data.store_ID;
             let alamat1 = data.address;
             let namastore = data.store_Name;
+            let posdevicename = data.poS_Device_Name;
             console.log('alamat: ', alamat1);
             if (i == 0) {
               store = value;
               alamattoko = alamat1;
               namatoko = namastore;
+              posname = posdevicename;
             }
             var joined = {
               label: data.store_Name,
               alamat: data.address,
+              devicename: data.poS_Device_Name,
               value: value,
             };
             results.push(joined);
@@ -342,6 +347,7 @@ const Login = () => {
         setStore(results);
         setAdress(results);
         setStoreName(results);
+        setPosDeviceID(results);
         setJmlStore(results.length);
 
         if (results.length > 0) {

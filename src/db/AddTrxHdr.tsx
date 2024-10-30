@@ -158,7 +158,7 @@ export const AddTrxHdr_getdatagopay = async (db: SQLiteDatabase, tableName: stri
 
 export const AddTrxHdr_savedata = async (db: SQLiteDatabase, tableName: string ,
    UserID: string, DOCNUMBER: string, DOCDATE: string, Store_ID: string, SalesType_ID: string, 
-  CustName: string, Total_Line_Item: number, ORIGTOTAL: number, SUBTOTAL: number, Tax_Amount: number, 
+  CustName: string, Total_Line_Item: number, ORIGTOTAL: number, SUBTOTAL: number, Tax_Amount: number, Discount_Amount: number, 
 Amount_Tendered: number, Change_Amount: number, Batch_ID: string, Payment_ID: string, Payment_Type: string) => {
   const insertQuery =
     `INSERT INTO ${tableName}`+
@@ -166,7 +166,7 @@ Amount_Tendered: number, Change_Amount: number, Batch_ID: string, Payment_ID: st
    `Tax_Amount, Discount_ID, Discount_Amount, Amount_Tendered, Change_Amount, Batch_ID, POS_Device_ID, POS_Version, SyncStatus, Payment_ID, Payment_Type)`+
     ` values ` +
  `('${UserID}', '${DOCNUMBER}', ${1}, '${DOCDATE}', '${Store_ID}', '${''}', '${SalesType_ID}','${CustName}', ${Total_Line_Item}, ` + "\n" +
-  `${ORIGTOTAL}, ${SUBTOTAL}, ${Tax_Amount}, '${''}', ${0}, ${Amount_Tendered}, ${Change_Amount}, '${Batch_ID}', '${''}', '${''}', ${0}, '${Payment_ID}', '${Payment_Type}')`;
+  `${ORIGTOTAL}, ${SUBTOTAL}, ${Tax_Amount}, '${''}', ${Discount_Amount}, ${Amount_Tendered}, ${Change_Amount}, '${Batch_ID}', '${''}', '${''}', ${0}, '${Payment_ID}', '${Payment_Type}')`;
   // join(',')
 
   return db.executeSql(insertQuery);

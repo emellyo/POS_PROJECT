@@ -121,6 +121,7 @@ export default function Menu({navigation}) {
   const [isChecked, setIsChecked] = useState(discount.map(() => false));
   const [nilaidisc, setNilaiDisc] = useState(0);
   const [selectedButtonIndex, setSelectedButtonIndex] = useState(null);
+  const [discid, setDiscId] = useState('');
   const [activePaymentID, setActivePaymentID] = useState(null);
   const [itemdescvar, setItemDescvar] = useState('');
   const [selectedDiscount, setSelectedDiscount] = useState(null);
@@ -156,6 +157,11 @@ export default function Menu({navigation}) {
       );
     };
   }, [boundAddress, deviceAlreadPaired, deviceFoundEvent, pairedDevices, scan]);
+
+  useEffect(() => {
+    // Recalculate total whenever relevant states change
+    CalculateTotal();
+  }, [selectedDiscount, total, nilaidisc]);
 
   const LOADMENU = async () => {
     try {
@@ -760,22 +766,29 @@ export default function Menu({navigation}) {
     }
   };
 
-  const handleDiscountChange = discount => {
+  const handleDiscountChange = async discount => {
     if (selectedDiscount === discount.discount_ID) {
       setSelectedDiscount(null); // Uncheck if already selected
+      setNilaiDisc(0);
     } else {
+      let newDiscountValue = 0;
       if (discount.discount_Type === 1) {
-        setSelectedDiscount(discount.discount_ID);
-        const discountedTotalpercent =
-          total - (total * discount.discount_Value) / 100;
-        setTotal(discountedTotalpercent);
+        console.log('masuk discount type 1');
+        newDiscountValue = Math.round(
+          (grandtotal * discount.discount_Value) / 100,
+        );
       } else if (discount.discount_Type === 2) {
-        setSelectedDiscount(discount.discount_ID);
-        const discountedTotalamt = total - discount.discount_Value;
-        setTotal(discountedTotalamt);
+        console.log('masuk discount type 2');
+        newDiscountValue = Math.round(discount.discount_Value);
+        //setTotal(discountedTotalamt);
       }
+      setSelectedDiscount(discount.discount_ID);
+      setDiscId(discount.discount_ID);
+      setNilaiDisc(newDiscountValue);
     }
+    await new Promise(resolve => setTimeout(resolve, 0));
     // Here you would typically apply the discount to your total
+    //CalculateTotal();
     console.log(`Applied discount: ${discount.discount_Name}`);
   };
 
@@ -803,11 +816,11 @@ export default function Menu({navigation}) {
       // console.log('HASIL SUM TOTAL', sumtotal);
 
       console.log('HASIL TAX: ', querytax[0].totalppn);
-      // console.log('HASIL TOTAL: ', total);
+      console.log('HASIL DISCOUNT: ', nilaidisc);
       if (querytotal.length == 0) {
         setGrandTotal(0);
       } else {
-        const roundedTotal = Math.round(querytotal[0].GRANDTOTAL);
+        const roundedTotal = Math.round(querytotal[0].GRANDTOTAL - nilaidisc);
         setGrandTotal(JSON.stringify(roundedTotal));
       }
       if (querytax.length == 0) {
@@ -824,6 +837,7 @@ export default function Menu({navigation}) {
         const roundedTotal = Math.round(qty[0].TOTAL / 1.11);
         setTotal(JSON.stringify(roundedTotal).split('.')[0]);
       }
+      console.log('nilai grandtotal: ', grandtotal);
       console.log('nilai total: ', total);
     } catch (error) {
       console.log('ERROR CALCULATE: ', error.message);
@@ -1058,6 +1072,7 @@ export default function Menu({navigation}) {
         grandtotal,
         total,
         tax,
+        nilaidisc,
         tottender,
         changes,
         shiftdtl[0].Batch_ID,
@@ -1079,8 +1094,8 @@ export default function Menu({navigation}) {
         ORIGTOTAL: grandtotal,
         SUBTOTAL: total,
         Tax_Amount: tax,
-        Discount_ID: '',
-        Discount_Amount: 0,
+        Discount_ID: discid,
+        Discount_Amount: nilaidisc,
         Amount_Tendered: tottender,
         Change_Amount: changes,
         Batch_ID: shiftdtl[0].Batch_ID,
@@ -1182,6 +1197,7 @@ export default function Menu({navigation}) {
       console.log('data shift: ', datashift);
       let Opening_Date = datashift[0].Opening_Date;
       console.log('opening date: ', Opening_Date);
+      console.log('NILAI DISCOUNT BEFORE SUMMARY SHIFT: ', nilaidisc);
       savesummaryshift({
         Batch_ID: datashift[0].Batch_ID,
         LastEdit_Date: formattedDate,
@@ -1197,7 +1213,7 @@ export default function Menu({navigation}) {
         Sum_Invoice_Posted: 0,
         Sum_Tendered: 0,
         Sum_Changes: 0,
-        Sum_Amount_Discount: 0,
+        Sum_Amount_Discount: nilaidisc,
         Sum_Amount_Tax: 0,
         Sum_Invoice_Refund_Posted: 0,
         Sum_Amount_PayOut: 0,
@@ -1345,7 +1361,7 @@ export default function Menu({navigation}) {
           BluetoothEscposPrinter.ALIGN.RIGHT,
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ],
-        ['Discount', 'Rp.', '0'],
+        ['Discount', 'Rp.', Intl.NumberFormat('id-ID').format(nilaidisc)],
         {},
       );
       await BluetoothEscposPrinter.printText(
@@ -2359,7 +2375,7 @@ export default function Menu({navigation}) {
                         invrecStyles.labelinputbills,
                         {backgroundColor: colors.card, color: colors.text},
                       ]}>
-                      Rp 0
+                      Rp {Intl.NumberFormat('id-ID').format(nilaidisc)}
                     </Text>
                   </View>
                 </SafeAreaView>

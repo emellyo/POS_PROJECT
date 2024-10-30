@@ -381,6 +381,10 @@ export default function Discount({navigation}) {
       let grosssales = datatrx[0].ORIGTOTL;
       let netsales = datatrx[0].ORIGTOTL - datatrx[0].setsum_Amount_Tax;
       let tax = datatrx[0].setsum_Amount_Tax;
+      console.log(
+        'total nilai discount per batch: ',
+        datatrx[0].setsum_Amount_Discount,
+      );
       setDifferentAmt(datashift[0].Difference);
       setTax(tax);
       setMandiri(totmandiri);
@@ -391,6 +395,7 @@ export default function Discount({navigation}) {
       setGross(grosssales);
       setCash(datacash[0].TOTALCASH);
       setPayment(datatrx);
+      setsum_Amount_Discount(datatrx[0].setsum_Amount_Discount);
       getsummaryshift({
         Batch_ID: datashift[0].Batch_ID,
       }).then(async result => {
@@ -417,7 +422,6 @@ export default function Discount({navigation}) {
           setsum_Invoice_Posted(hasil[0].sum_Invoice_Posted);
           setsum_Tendered(hasil[0].sum_Tendered);
           setsum_Changes(hasil[0].sum_Changes);
-          setsum_Amount_Discount(hasil[0].sum_Amount_Discount);
           setsum_Amount_Tax(hasil[0].sum_Amount_Tax);
           setsum_Invoice_Refund_Posted(hasil[0].sum_Invoice_Refund_Posted);
           setsum_Amount_PayOut(hasil[0].sum_Amount_PayOut);
@@ -848,7 +852,7 @@ export default function Discount({navigation}) {
                   invrecStyles.labelinputshift,
                   {backgroundColor: colors.card, color: colors.text},
                 ]}>
-                Rp {sum_Amount_Discount}
+                Rp {Intl.NumberFormat('id-ID').format(sum_Amount_Discount)}
               </Text>
             </View>
           </SafeAreaView>

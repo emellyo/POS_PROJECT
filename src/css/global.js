@@ -504,8 +504,9 @@ export const globalStyles = StyleSheet.create({
   },
   viewinput2: {
     flexDirection: 'row',
-    width: '10%',
-    marginHorizontal: '80%',
+    width: '30%',
+    paddingHorizontal: '20%',
+    // marginHorizontal: '80%',
     // marginBottom: '10%',
   },
   viewbutton: {
