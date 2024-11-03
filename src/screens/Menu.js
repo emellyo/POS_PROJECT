@@ -772,10 +772,12 @@ export default function Menu({navigation}) {
       setNilaiDisc(0);
     } else {
       let newDiscountValue = 0;
+      let totalall = Number(total) + Number(tax);
+      console.log('TOTAL ALL: ', totalall);
       if (discount.discount_Type === 1) {
         console.log('masuk discount type 1');
         newDiscountValue = Math.round(
-          (grandtotal * discount.discount_Value) / 100,
+          (totalall * discount.discount_Value) / 100,
         );
       } else if (discount.discount_Type === 2) {
         console.log('masuk discount type 2');
@@ -784,7 +786,7 @@ export default function Menu({navigation}) {
       }
       setSelectedDiscount(discount.discount_ID);
       setDiscId(discount.discount_ID);
-      setNilaiDisc(newDiscountValue);
+      setNilaiDisc(JSON.stringify(newDiscountValue).split('.')[0]);
     }
     await new Promise(resolve => setTimeout(resolve, 0));
     // Here you would typically apply the discount to your total
