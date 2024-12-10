@@ -47,6 +47,7 @@ import * as dbconn from '../db/Variant';
 import * as dbconnTrx from '../db/AddTrx';
 import * as dbhdr from '../db/AddTrxHdr';
 import * as dbshift from '../db/ShiftDetails';
+import {Picker} from '@react-native-picker/picker';
 import {run} from 'jest';
 
 export default function Menu({navigation}) {
@@ -94,8 +95,11 @@ export default function Menu({navigation}) {
   const [bills, setBills] = useState([]);
   const [discount, setDisCount] = useState([]);
   const [tax, setTax] = useState([]);
+  const [tax1, setTax1] = useState([]);
   const [total, setTotal] = useState(0);
+  const [total1, setTotal1] = useState(0);
   const [grandtotal, setGrandTotal] = useState(0);
+  const [grandtotalview, setGrandTotalview] = useState(0);
   const [seqTemp, setSeqTemp] = useState(0);
   const [paymentType, setPaymentType] = useState([]);
   const [salesid, setSalesID] = useState('');
@@ -120,11 +124,17 @@ export default function Menu({navigation}) {
   const [dataprint, setDataPrint] = useState([]);
   const [isChecked, setIsChecked] = useState(discount.map(() => false));
   const [nilaidisc, setNilaiDisc] = useState(0);
+  const [nilaidiscbills, setNilaiDiscBills] = useState(0);
+  const [nilaidiscview, setNilaiDiscView] = useState(0);
+  const [nilaidiscitem, setNilaiDiscItem] = useState(0);
   const [selectedButtonIndex, setSelectedButtonIndex] = useState(null);
   const [discid, setDiscId] = useState('');
   const [activePaymentID, setActivePaymentID] = useState(null);
   const [itemdescvar, setItemDescvar] = useState('');
   const [selectedDiscount, setSelectedDiscount] = useState(null);
+  const [selectedDiscountitem, setSelectedDiscountItem] = useState('');
+  const [selectedDiscountitemvalue, setSelectedDiscountItemValue] = useState(0);
+  const [discitemtype, setDiscItemType] = useState(0);
   //#endregion
 
   useEffect(() => {
@@ -160,7 +170,9 @@ export default function Menu({navigation}) {
 
   useEffect(() => {
     // Recalculate total whenever relevant states change
-    CalculateTotal();
+    if (discitemtype !== 1 && discitemtype !== 2) {
+      CalculateTotal();
+    }
   }, [selectedDiscount, total, nilaidisc]);
 
   const LOADMENU = async () => {
@@ -188,11 +200,15 @@ export default function Menu({navigation}) {
       const dbtrxhdr = await dbhdr.getDBConnection();
       //await dbconnTrx.dropTbl(db, 'AddTrxHdr');
       //await dbconn.dropTbl(db, 'Variant');
-      //await dbconnTrx.dropTbl(dbtrx, 'AddTrxDtl');
+      //await dbconnTrx.dropTbl(dbtrx, 'AddTrxDtlTemp');
       await dbconnTrx.AddTrxDtl_CreateTbl(dbtrx, 'AddTrxDtl');
+      await dbconnTrx.AddTrxDtlTemp_CreateTbl(dbtrx, 'AddTrxDtlTemp');
       await dbconn.Variant_CreateTbl(db, 'Variant');
       await dbhdr.AddTrxHdr_CreateTbl(dbtrxhdr, 'AddTrxHdr');
+      await dbhdr.AddTrxHdrTemp_CreateTbl(dbtrxhdr, 'AddTrxHdrTemp');
+      await dbhdr.deletedataAllTbl(dbtrxhdr, 'AddTrxHdrTemp');
       await dbconnTrx.deletedataAllTbl(dbtrx, 'AddTrxDtl');
+      await dbconnTrx.deletedataAllTbl(dbtrx, 'AddTrxDtlTemp');
       await dbconn.deletedataAllTbl(db, 'Variant');
       const storedTbl = await dbconn.Variant_getdata(db, 'Variant');
       if (storedTbl.length) {
@@ -550,6 +566,105 @@ export default function Menu({navigation}) {
     }
   };
 
+  const filteredDiscItem = discount.filter(item => item.discount_Type === 2);
+  const filteredDiscBills = discount.filter(item1 => item1.discount_Type === 1);
+
+  const handleDiscountItem = async discount => {
+    let newDiscountValue = 0;
+    const db = await dbconnTrx.getDBConnection();
+    const selectedItem = filteredDiscItem.find(
+      item => item.discount_ID === discount,
+    );
+    console.log('SELECTED ITEM: ', selectedItem);
+    if (selectedItem.type === 1) {
+      let getbills = await dbconnTrx.AddTrxDtl_getdataBills(
+        db,
+        'AddTrxDtl',
+        runno,
+      );
+      newDiscountValue = Math.round(
+        (getbills[0].Item_Price * selectedItem.discount_Value) / 100,
+      );
+      //CalculateTotalDiscItem(newDiscountValue);
+    } else if (selectedItem.type == 2) {
+      console.log('masuk discount type 2');
+      newDiscountValue = Math.round(selectedItem.discount_Value);
+      //CalculateTotalDiscItem(newDiscountValue);
+      //setTotal(discountedTotalamt);
+    }
+    setDiscId(selectedItem.discount_ID);
+    setSelectedDiscountItemValue(selectedItem.discount_Value);
+    setDiscItemType(selectedItem.type);
+    // setSelectedDiscountItem(discount.discount_ID);
+    // setDiscId(discount.discount_ID);
+    setNilaiDiscItem(newDiscountValue);
+    //setNilaiDisc(JSON.stringify(newDiscountValue).split('.')[0]);
+    //await new Promise(resolve => setTimeout(resolve, 0));
+    // Here you would typically apply the discount to your total
+    //CalculateTotal();
+    //console.log(`Applied discount: ${discount.discount_Name}`);
+  };
+
+  const handleDiscountChange = async discount => {
+    if (selectedDiscount === discount.discount_ID) {
+      setSelectedDiscount(null); // Uncheck if already selected
+      setNilaiDiscBills(0);
+    } else {
+      let newDiscountValue = 0;
+      let totalall = Number(total1);
+      console.log('TOTAL ALL: ', totalall);
+      if (discount.type === 1) {
+        console.log('masuk discount type 1');
+        newDiscountValue = Math.round(
+          (totalall * discount.discount_Value) / 100,
+        );
+      } else if (discount.type === 2) {
+        console.log('masuk discount type 2');
+        newDiscountValue = Math.round(discount.discount_Value);
+        //setTotal(discountedTotalamt);
+      }
+      setSelectedDiscount(discount.discount_ID);
+      setDiscId(discount.discount_ID);
+      setNilaiDiscBills(JSON.stringify(newDiscountValue).split('.')[0]);
+    }
+    await new Promise(resolve => setTimeout(resolve, 0));
+    // Here you would typically apply the discount to your total
+    //CalculateTotal();
+    console.log(`Applied discount: ${discount.discount_Name}`);
+  };
+
+  const ChooseCalc = async () => {
+    try {
+      if (discitemtype == 1 || discitemtype == 2) {
+        console.log('masuk disc item');
+        AddItemTemp();
+      } else {
+        console.log('masuk disc bills');
+        AddItemTempNormal();
+      }
+    } catch (error) {
+      console.log(error.message);
+      let msg = error.message;
+      CallModalInfo(msg);
+    }
+  };
+
+  const ChooseCalcnonvar = async () => {
+    try {
+      if (discitemtype == 1 || discitemtype == 2) {
+        console.log('masuk disc item');
+        AddItemTempNonvar();
+      } else {
+        console.log('masuk disc bills');
+        AddItemTempNonvarNormal();
+      }
+    } catch (error) {
+      console.log(error.message);
+      let msg = error.message;
+      CallModalInfo(msg);
+    }
+  };
+
   const AddItemTemp = async variant => {
     try {
       const today = new Date();
@@ -558,14 +673,18 @@ export default function Menu({navigation}) {
       const month = today.getMonth() + 1; // Months are zero-indexed
       const day = today.getDate();
       const formattedDate = `${month}/${day}/${year}`;
-      console.log('TODAY DATE: ', formattedDate);
+      //console.log('TODAY DATE: ', formattedDate);
       let datauser = await AsyncStorage.getItem('@dtUser');
       datauser = JSON.parse(datauser);
       var storeid = datauser[0].store_ID;
       const db = await dbconnTrx.getDBConnection();
       let dtVariant = await dbconn.Variant_getdataChoose(db, 'Variant');
-      console.log('ISI DTVARIANT: ', dtVariant);
+      //console.log('ISI DTVARIANT: ', dtVariant);
       let noitem = 0;
+      let amtdiscitem = nilaidiscitem * count;
+      let totnet = dtVariant[0].item_Price * count;
+      let subtotal = Math.round(totnet / 1.11);
+      let tax = Math.round(totnet - subtotal);
 
       if (dtVariant.length == 0) {
         console.log('masuk if length');
@@ -581,14 +700,6 @@ export default function Menu({navigation}) {
         noitem = len + 1;
         console.log('total noitem: ', noitem);
       }
-      console.log('kelar ngitung sequence');
-      //console.log('ISI DETAIL VARIANT: ', dtVariant[0].item_Price);
-      console.log('ISI STORE ID: ', storeid[0].value);
-      console.log('RUNNING NUMBER: ', runno);
-      console.log('DATE: ', formattedDate);
-      console.log('SEQUENCE: ', noitem);
-      console.log('QTY ORDER: ', count);
-      console.log('ISI NOTES: ', notes);
       await dbconnTrx.AddTrxDtl_savedata(
         db,
         'AddTrxDtl',
@@ -605,9 +716,141 @@ export default function Menu({navigation}) {
         dtVariant[0].variant_Name,
         storeid[0].value,
         1,
+        discid,
+        amtdiscitem,
+      );
+      await dbconnTrx.AddTrxDtlTemp_savedata(
+        db,
+        'AddTrxDtlTemp',
+        runno,
+        formattedDate,
+        noitem,
+        dtVariant[0].lineItem_Option,
+        count,
+        notes,
+        dtVariant[0].item_Number,
+        dtVariant[0].item_Name,
+        dtVariant[0].item_Price,
+        dtVariant[0].item_Cost,
+        dtVariant[0].variant_Name,
+        storeid[0].value,
+        1,
+        discid,
+        amtdiscitem,
+        totnet,
+        subtotal,
+        tax,
       );
       let dataDetail = await dbconnTrx.AddTrxDtl_getdata(db, 'AddTrxDtl');
+      let dataDetailTemp = await dbconnTrx.AddTrxDtlTemp_getdata(
+        db,
+        'AddTrxDtlTemp',
+      );
       console.log('data detail: ', dataDetail);
+      console.log('data detail temp: ', dataDetailTemp);
+      setMdlVariant(false);
+      setDiscItemType(0);
+    } catch (error) {
+      console.log(error);
+      let msg = 'Terjadi kesalahan, silahkan input ulang kembali';
+      msg = error.message;
+      CallModalInfo(msg);
+    }
+  };
+
+  const AddItemTempNormal = async variant => {
+    try {
+      const today = new Date();
+      // Get various parts of the date
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1; // Months are zero-indexed
+      const day = today.getDate();
+      const formattedDate = `${month}/${day}/${year}`;
+      //console.log('TODAY DATE: ', formattedDate);
+      let datauser = await AsyncStorage.getItem('@dtUser');
+      datauser = JSON.parse(datauser);
+      var storeid = datauser[0].store_ID;
+      const db = await dbconnTrx.getDBConnection();
+      let dtVariant = await dbconn.Variant_getdataChoose(db, 'Variant');
+      //console.log('ISI DTVARIANT: ', dtVariant);
+      let noitem = 0;
+      let amtdiscitem = 0;
+      let totnet = dtVariant[0].item_Price * count - amtdiscitem;
+      let subtotal = Math.round(totnet / 1.11);
+      let tax = Math.round(totnet - subtotal);
+      console.log('totnet: ', totnet);
+      console.log('subtotal: ', subtotal);
+      console.log('tax: ', tax);
+      if (dtVariant.length == 0) {
+        console.log('masuk if length');
+        noitem = noitem + 1;
+      } else {
+        console.log('masuk else if length');
+        let datamax = await dbconnTrx.queryselectTrx(
+          db,
+          `select * from AddTrxDtl order by Lineitmseq desc;`,
+        );
+        console.log('isi data max dari table detail: ', datamax);
+        let len = datamax.length < 1 ? 0 : datamax.length;
+        noitem = len + 1;
+        console.log('total noitem: ', noitem);
+      }
+      //console.log('kelar ngitung sequence');
+      //console.log('ISI DETAIL VARIANT: ', dtVariant[0].item_Price);
+      // console.log('ISI STORE ID: ', storeid[0].value);
+      // console.log('RUNNING NUMBER: ', runno);
+      // console.log('DATE: ', formattedDate);
+      // console.log('SEQUENCE: ', noitem);
+      // console.log('QTY ORDER: ', count);
+      // console.log('ISI NOTES: ', notes);
+      await dbconnTrx.AddTrxDtl_savedata(
+        db,
+        'AddTrxDtl',
+        runno,
+        formattedDate,
+        noitem,
+        dtVariant[0].lineItem_Option,
+        count,
+        notes,
+        dtVariant[0].item_Number,
+        dtVariant[0].item_Name,
+        dtVariant[0].item_Price,
+        dtVariant[0].item_Cost,
+        dtVariant[0].variant_Name,
+        storeid[0].value,
+        1,
+        '',
+        0,
+      );
+      await dbconnTrx.AddTrxDtlTemp_savedata(
+        db,
+        'AddTrxDtlTemp',
+        runno,
+        formattedDate,
+        noitem,
+        dtVariant[0].lineItem_Option,
+        count,
+        notes,
+        dtVariant[0].item_Number,
+        dtVariant[0].item_Name,
+        dtVariant[0].item_Price,
+        dtVariant[0].item_Cost,
+        dtVariant[0].variant_Name,
+        storeid[0].value,
+        1,
+        '',
+        0,
+        totnet,
+        subtotal,
+        tax,
+      );
+      let dataDetail = await dbconnTrx.AddTrxDtl_getdata(db, 'AddTrxDtl');
+      let dataDetailTemp = await dbconnTrx.AddTrxDtlTemp_getdata(
+        db,
+        'AddTrxDtlTemp',
+      );
+      console.log('data detail: ', dataDetail);
+      console.log('data detail temp: ', dataDetailTemp);
       setMdlVariant(false);
     } catch (error) {
       console.log(error);
@@ -632,6 +875,10 @@ export default function Menu({navigation}) {
       const db = await dbconnTrx.getDBConnection();
       let dtVariant = await dbconn.Variant_getdataChooseNonVar(db, 'Variant');
       let noitem = 0;
+      let amtdiscitem = nilaidiscitem * count;
+      let totnet = dtVariant[0].item_Price * count;
+      let subtotal = totnet / 1.11;
+      let tax = totnet - subtotal;
 
       console.log('HASIL VARIANT YANG DIPILIH: ', dtVariant);
 
@@ -673,6 +920,127 @@ export default function Menu({navigation}) {
         '',
         storeid[0].value,
         0,
+        discid,
+        amtdiscitem,
+      );
+      await dbconnTrx.AddTrxDtlTemp_savedata(
+        db,
+        'AddTrxDtlTemp',
+        runno,
+        formattedDate,
+        noitem,
+        0,
+        count,
+        notes,
+        dtVariant[0].item_Number,
+        dtVariant[0].item_Name,
+        dtVariant[0].item_Price,
+        dtVariant[0].item_Cost,
+        '',
+        storeid[0].value,
+        0,
+        discid,
+        amtdiscitem,
+        totnet,
+        subtotal,
+        tax,
+      );
+      let dataDetail = await dbconnTrx.AddTrxDtl_getdata(db, 'AddTrxDtl');
+      console.log('data detail: ', dataDetail);
+      setMdlNonVariant(false);
+      setDiscItemType(0);
+    } catch (error) {
+      console.log(error);
+      let msg = 'Terjadi kesalahan, silahkan input ulang kembali';
+      msg = error.message;
+      CallModalInfo(msg);
+    }
+  };
+
+  const AddItemTempNonvarNormal = async () => {
+    try {
+      const today = new Date();
+      // Get various parts of the date
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1; // Months are zero-indexed
+      const day = today.getDate();
+      const formattedDate = `${month}/${day}/${year}`;
+      console.log('TODAY DATE: ', formattedDate);
+      let datauser = await AsyncStorage.getItem('@dtUser');
+      datauser = JSON.parse(datauser);
+      var storeid = datauser[0].store_ID;
+      const db = await dbconnTrx.getDBConnection();
+      let dtVariant = await dbconn.Variant_getdataChooseNonVar(db, 'Variant');
+      let noitem = 0;
+      let amtdiscitem = 0;
+      let totnet = dtVariant[0].item_Price * count - amtdiscitem;
+      let subtotal = totnet / 1.11;
+      let tax = totnet - subtotal;
+
+      console.log('HASIL VARIANT YANG DIPILIH: ', dtVariant);
+
+      if (dtVariant.length == 0) {
+        console.log('masuk if length');
+        noitem = noitem + 1;
+      } else {
+        console.log('masuk else if length');
+        let datamax = await dbconnTrx.queryselectTrx(
+          db,
+          `select * from AddTrxDtl order by Lineitmseq desc;`,
+        );
+        console.log('isi data max dari table detail: ', datamax);
+        let len = datamax.length < 1 ? 0 : datamax.length;
+        noitem = len + 1;
+        console.log('total noitem: ', noitem);
+      }
+      console.log('kelar ngitung sequence');
+      console.log('ISI DETAIL VARIANT: ', dtVariant[0].item_Price);
+      console.log('ISI STORE ID: ', storeid[0].value);
+      console.log('RUNNING NUMBER: ', runno);
+      console.log('DATE: ', formattedDate);
+      console.log('SEQUENCE: ', noitem);
+      console.log('QTY ORDER: ', count);
+      console.log('ISI NOTES: ', notes);
+      await dbconnTrx.AddTrxDtl_savedata(
+        db,
+        'AddTrxDtl',
+        runno,
+        formattedDate,
+        noitem,
+        0,
+        count,
+        notes,
+        dtVariant[0].item_Number,
+        dtVariant[0].item_Name,
+        dtVariant[0].item_Price,
+        dtVariant[0].item_Cost,
+        '',
+        storeid[0].value,
+        0,
+        '',
+        0,
+      );
+      await dbconnTrx.AddTrxDtlTemp_savedata(
+        db,
+        'AddTrxDtlTemp',
+        runno,
+        formattedDate,
+        noitem,
+        0,
+        count,
+        notes,
+        dtVariant[0].item_Number,
+        dtVariant[0].item_Name,
+        dtVariant[0].item_Price,
+        dtVariant[0].item_Cost,
+        '',
+        storeid[0].value,
+        0,
+        '',
+        0,
+        0,
+        subtotal,
+        tax,
       );
       let dataDetail = await dbconnTrx.AddTrxDtl_getdata(db, 'AddTrxDtl');
       console.log('data detail: ', dataDetail);
@@ -699,6 +1067,13 @@ export default function Menu({navigation}) {
       );
       setBills(getbills);
       console.log('DATA BILLS: ', getbills);
+      // if (discitemtype == 1 || discitemtype == 2) {
+      //   console.log('masuk disc item');
+      //   CalculateTotalDiscItem();
+      // } else {
+      //   console.log('masuk disc bills');
+      //   CalculateTotal();
+      // }
       CalculateTotal();
     } catch (error) {
       console.log(error.message);
@@ -755,7 +1130,9 @@ export default function Menu({navigation}) {
       console.log('ISI LNITMSEQ: ', Lineitmseq);
       const db = await dbconnTrx.getDBConnection();
       let query = `DELETE FROM AddTrxDtl WHERE Lineitmseq = ${Lineitmseq} `;
+      let query2 = `DELETE FROM AddTrxDtlTemp WHERE Lineitmseq = ${Lineitmseq} `;
       await dbconnTrx.querydynamic(db, query);
+      await dbconnTrx.querydynamic(db, query2);
       let CurrentDtl = await dbconnTrx.AddTrxDtl_getdata(db, 'AddTrxDtl');
       setBills(CurrentDtl);
       console.log('ISI DETAIL SETELAH DELETE: ', CurrentDtl);
@@ -766,81 +1143,136 @@ export default function Menu({navigation}) {
     }
   };
 
-  const handleDiscountChange = async discount => {
-    if (selectedDiscount === discount.discount_ID) {
-      setSelectedDiscount(null); // Uncheck if already selected
-      setNilaiDisc(0);
-    } else {
-      let newDiscountValue = 0;
-      let totalall = Number(total) + Number(tax);
-      console.log('TOTAL ALL: ', totalall);
-      if (discount.discount_Type === 1) {
-        console.log('masuk discount type 1');
-        newDiscountValue = Math.round(
-          (totalall * discount.discount_Value) / 100,
-        );
-      } else if (discount.discount_Type === 2) {
-        console.log('masuk discount type 2');
-        newDiscountValue = Math.round(discount.discount_Value);
-        //setTotal(discountedTotalamt);
-      }
-      setSelectedDiscount(discount.discount_ID);
-      setDiscId(discount.discount_ID);
-      setNilaiDisc(JSON.stringify(newDiscountValue).split('.')[0]);
-    }
-    await new Promise(resolve => setTimeout(resolve, 0));
-    // Here you would typically apply the discount to your total
-    //CalculateTotal();
-    console.log(`Applied discount: ${discount.discount_Name}`);
-  };
-
-  const CalculateTotal = async () => {
+  const CalculateTotalDiscItem = async () => {
     try {
+      console.log('masuk CalculateTotalDiscItem');
       const db = await dbconnTrx.getDBConnection();
       let qty = await dbconnTrx.queryselectTrx(
         db,
-        `SELECT SUM(IFNULL(Item_Price * Quantity, 0))as TOTAL FROM AddTrxDtl`,
+        `SELECT SUM(IFNULL(Item_Price * Quantity, 0)) AS TOTAL, SUM(IFNULL(TOTALNET,0)) AS TOTALNET, SUM(IFNULL(Discount_Amount,0)) AS TOTALDISCITEM, Quantity, (SUM(IFNULL(Item_Price * Quantity, 0)) - SUM(IFNULL(Discount_Amount,0))) / 1.11 AS SUBTOTAL  FROM AddTrxDtlTemp`,
       );
-      // let querysum = `SELECT (Item_Price * Quantity) AS TOTALPRICE FROM AddTrxDtl`;
+      //let querysum = `SELECT (${nilaidiscitem} * Quantity) AS TOTALDISCITEM FROM AddTrxDtl`;
       // let sumtotal = await dbconnTrx.querydynamic(db, querysum);
       let querytax = await dbconnTrx.queryselectTrx(
         db,
-        `SELECT (${qty[0].TOTAL / 1.11} * 0.11) as totalppn`,
+        `SELECT SUM(IFNULL(Item_Price * Quantity, 0)) AS TOTAL, SUM(IFNULL(TOTALNET,0)) AS TOTALNET, (SUM(IFNULL(Item_Price * Quantity, 0)) - SUM(IFNULL(Discount_Amount,0))) / 1.11 AS SUBTOTAL, (SUM(IFNULL(Item_Price * Quantity, 0)) - ((SUM(IFNULL(Item_Price * Quantity, 0)) - SUM(IFNULL(Discount_Amount,0))) / 1.11)) AS totalppn FROM AddTrxDtlTemp`,
       );
       let querytotal = await dbconnTrx.queryselectTrx(
         db,
-        `SELECT (${qty[0].TOTAL / 1.11} + ${
-          querytax[0].totalppn
-        }) AS GRANDTOTAL`,
+        `SELECT(${qty[0].TOTAL} - (${qty[0].Quantity} * ${nilaidiscitem})) / 1.11 AS GRANDTOTAL`,
       );
       // let total = await dbconnTrx.querydynamic(db, querytotal);
-      console.log('HASIL QTY * PRICE: ', qty[0].TOTAL / 1.11);
+      console.log('HASIL SUBTOTAL: ', qty[0].SUBTOTAL);
+      console.log('HASIL GRANDTOTAL: ', qty[0].TOTAL - qty[0].TOTALDISCITEM);
       // console.log('HASIL SUM TOTAL', sumtotal);
-
-      console.log('HASIL TAX: ', querytax[0].totalppn);
+      console.log(
+        'HASIL TAX: ',
+        qty[0].TOTAL - qty[0].TOTALDISCITEM - qty[0].SUBTOTAL,
+      );
       console.log('HASIL DISCOUNT: ', nilaidisc);
       if (querytotal.length == 0) {
         setGrandTotal(0);
       } else {
-        const roundedTotal = Math.round(querytotal[0].GRANDTOTAL - nilaidisc);
+        const roundedTotal = Math.round(qty[0].TOTAL - qty[0].TOTALDISCITEM);
         setGrandTotal(JSON.stringify(roundedTotal));
       }
       if (querytax.length == 0) {
         setTax(0);
       } else {
-        const roundedTotal = Math.round(querytax[0].totalppn);
+        const roundedTotal = Math.round(
+          qty[0].TOTAL - qty[0].TOTALDISCITEM - qty[0].SUBTOTAL,
+        );
         setTax(JSON.stringify(roundedTotal).split('.')[0]);
       }
+      if (qty.length == 0) {
+        console.log('haha: ', qty.length);
+        setTotal(0);
+        setNilaiDiscView(0);
+      } else {
+        console.log('NILAI DISCOUNT ITEM: ', qty[0].TOTALNET);
+        const roundedTotal = Math.round(qty[0].SUBTOTAL);
+        const roundedTotal1 = Math.round(qty[0].TOTAL);
+        const roundedTotal2 = Math.round(qty[0].TOTALDISCITEM);
+        setTotal(JSON.stringify(roundedTotal).split('.')[0]);
+        setTotal1(JSON.stringify(roundedTotal1).split('.')[0]);
+        setNilaiDiscView(JSON.stringify(roundedTotal2).split('.')[0]);
+      }
+      // if (querysum.length == 0) {
+      //   setNilaiDisc(0);
+      // } else {
+      //   const roundedTotal = Math.round(querysum[0].TOTALDISCITEM);
+      //   console.log('NILAI DISCOUNT ITEM: ', roundedTotal);
+      //   setNilaiDisc(JSON.stringify(roundedTotal).split('.')[0]);
+      // }
+      // console.log('nilai grandtotal: ', grandtotal);
+      // console.log('nilai total: ', total);
+    } catch (error) {
+      console.log('ERROR CALCULATE: ', error.message);
+      let msg = error.message;
+      CallModalInfo(msg);
+    }
+  };
+
+  const CalculateTotal = async () => {
+    try {
+      const db = await dbconnTrx.getDBConnection();
+      let qty = await dbconnTrx.queryselectTrxTemp(
+        db,
+        `SELECT SUM(IFNULL(Item_Price * Quantity, 0)) TOTALPRICE, SUM(IFNULL(TOTALNET, 0))as GRANDTOTAL, SUM(IFNULL(Discount_Amount, 0)) AS TOTDISC, SUM(IFNULL(SUBTOTAL, 0)) as TOTAL, SUM(IFNULL(TAX, 0)) as tax FROM AddTrxDtlTemp`,
+      );
+      // let querysum = `SELECT (Item_Price * Quantity) AS TOTALPRICE FROM AddTrxDtl`;
+      // let sumtotal = await dbconnTrx.querydynamic(db, querysum);
+      // let querytax = await dbconnTrx.queryselectTrx(
+      //   db,
+      //   `SELECT (${qty[0].TOTAL / 1.11} * 0.11) as totalppn`,
+      // );
+      // let querytotal = await dbconnTrx.queryselectTrx(
+      //   db,
+      //   `SELECT (${qty[0].TOTAL / 1.11} + ${
+      //     querytax[0].totalppn
+      //   }) AS GRANDTOTAL`,
+      // );
+      // let total = await dbconnTrx.querydynamic(db, querytotal);
+      console.log('HASIL TOTAL: ', qty[0].TOTAL);
+      console.log('HASIL TOTALPRICE: ', qty[0].TOTALPRICE);
+      console.log('HASIL DISCOUNT ITEM: ', qty[0].TOTDISC);
+      console.log('HASIL DISCOUNT bills: ', nilaidiscbills);
+      console.log('HASIL TAX: ', qty[0].tax);
+      console.log('HASIL GRANDTOTAL: ', qty[0].GRANDTOTAL);
+      // if (querytotal.length == 0) {
+      //   setGrandTotal(0);
+      // } else {
+      //   const roundedTotal = Math.round(querytotal[0].GRANDTOTAL - nilaidisc);
+      //   setGrandTotal(JSON.stringify(roundedTotal));
+      // }
+      // if (querytax.length == 0) {
+      //   setTax(0);
+      // } else {
+      //   const roundedTotal = Math.round(querytax[0].totalppn);
+      //   setTax(JSON.stringify(roundedTotal).split('.')[0]);
+      // }
 
       if (qty.length == 0) {
         console.log('haha: ', qty.length);
         setTotal(0);
+        setGrandTotal(0);
+        setTax(0);
+        setTotal1(0);
+        setNilaiDiscView(0);
+        setNilaiDisc(0);
       } else {
-        const roundedTotal = Math.round(qty[0].TOTAL / 1.11);
-        setTotal(JSON.stringify(roundedTotal).split('.')[0]);
+        const roundedTotal = Math.round(qty[0].TOTAL);
+        const resultDisc = Math.abs(qty[0].TOTDISC - nilaidiscbills);
+        const roundedTotal1 = Math.round(qty[0].GRANDTOTAL - resultDisc);
+        //setTotal(JSON.stringify(roundedTotal).split('.')[0]);
+        //setTax(JSON.stringify(qty[0].tax).split('.')[0]);
+        setTotal1(JSON.stringify(qty[0].TOTALPRICE).split('.')[0]);
+        setNilaiDiscView(JSON.stringify(resultDisc).split('.')[0]);
+        setGrandTotalview(JSON.stringify(roundedTotal1).split('.')[0]);
+        //setNilaiDisc(JSON.stringify(resultDisc).split('.')[0]);
       }
-      console.log('nilai grandtotal: ', grandtotal);
-      console.log('nilai total: ', total);
+      // console.log('nilai grandtotal: ', grandtotal);
+      // console.log('nilai total: ', total);
     } catch (error) {
       console.log('ERROR CALCULATE: ', error.message);
       let msg = error.message;
@@ -853,6 +1285,7 @@ export default function Menu({navigation}) {
       setMdlBills(false);
       setMdlPayment(true);
       setTotChanges('');
+      AddHdrTemp();
       //setAmtTender([]);
       const db = await dbconnTrx.getDBConnection();
       let datatipesales = await AsyncStorage.getItem('@datasalestype');
@@ -891,7 +1324,7 @@ export default function Menu({navigation}) {
       console.log('payment ID, ', paymentid.payment_ID);
       console.log('payment name: ', paymentid.payment_Name);
       console.log('amount tender: ', amounttender);
-      let changes = amounttender - grandtotal;
+      let changes = amounttender - grandtotalview;
       let tendertot = amounttender;
       console.log('hasil changes: ', changes);
       setPaymentName(paymentid.payment_Name);
@@ -913,8 +1346,8 @@ export default function Menu({navigation}) {
       console.log('payment name: ', paymentid.payment_Name);
       console.log('Previous amttendered:', amttendered);
       console.log('isi array amttender:', amttendered);
-      let tenderall = grandtotal;
-      let changesall = grandtotal - grandtotal;
+      let tenderall = grandtotalview;
+      let changesall = grandtotalview - grandtotalview;
       const updatedAmtTender = {
         ...amttendered,
         [paymentid.payment_ID]: tenderall,
@@ -976,6 +1409,44 @@ export default function Menu({navigation}) {
         console.log('ISI DATA PRINT: ', dataprint);
         SyncUpFinal(payment_Name);
       }
+    } catch (error) {
+      let msg = error.message;
+      console.log(error);
+      CallModalInfo(msg);
+    }
+  };
+
+  const AddHdrTemp = async () => {
+    try {
+      const db = await dbconnTrx.getDBConnection();
+      let qty = await dbconnTrx.queryselectTrxTemp(
+        db,
+        `SELECT SUM(IFNULL(Item_Price * Quantity, 0)) TOTALPRICE, SUM(IFNULL(TOTALNET, 0) - IFNULL(Discount_Amount, 0)) as GRANDTOTAL, SUM(IFNULL(Discount_Amount, 0)) AS TOTDISC, SUM(IFNULL(SUBTOTAL, 0)) as TOTAL, SUM(IFNULL(TAX, 0)) as tax FROM AddTrxDtlTemp`,
+      );
+      let grandtotal = Math.round(qty[0].TOTALPRICE - nilaidiscview);
+      let subtotal = Math.round(grandtotal / 1.11);
+      let taxtotal = Math.round(grandtotal - subtotal);
+      let disctotal = Math.round(nilaidiscview);
+
+      console.log('HASIL SUBTOTAL: ', subtotal);
+      console.log('HASIL TOTAL DISCOUNT: ', disctotal);
+      console.log('HASIL TAX: ', taxtotal);
+      console.log('HASIL GRANDTOTAL: ', grandtotal);
+      const dbtrxhdr = await dbhdr.getDBConnection();
+      await dbhdr.AddTrxHdrTemp_savedata(
+        dbtrxhdr,
+        'AddTrxHdrTemp',
+        runno,
+        qty[0].GRANDTOTAL,
+        subtotal,
+        taxtotal,
+        discid,
+        disctotal,
+      );
+      setTotal(subtotal);
+      setGrandTotal(grandtotal);
+      setTax(taxtotal);
+      setNilaiDisc(disctotal);
     } catch (error) {
       let msg = error.message;
       console.log(error);
@@ -1190,13 +1661,17 @@ export default function Menu({navigation}) {
       var userid = datauser[0].userid;
       var storeid = datauser[0].store_ID;
       const db = await dbshift.getDBConnection();
+      const dbtrxhdr = await dbhdr.getDBConnection();
       //const dbtrx = await dbconnTrx.getDBConnection();
       let datashift = await dbshift.ShiftDetail_getdataSum(
         db,
         'ShiftDetail',
         formattedDate,
       );
-      console.log('data shift: ', datashift);
+      let datahdrtemp = await dbhdr.queryselectTrx(
+        dbtrxhdr,
+        `SELECT SUM(IFNULL(Discount_Amount, 0)) as TOTALDISCOUNT FROM AddTrxHdrTemp`,
+      );
       let Opening_Date = datashift[0].Opening_Date;
       console.log('opening date: ', Opening_Date);
       console.log('NILAI DISCOUNT BEFORE SUMMARY SHIFT: ', nilaidisc);
@@ -1215,7 +1690,7 @@ export default function Menu({navigation}) {
         Sum_Invoice_Posted: 0,
         Sum_Tendered: 0,
         Sum_Changes: 0,
-        Sum_Amount_Discount: nilaidisc,
+        Sum_Amount_Discount: datahdrtemp[0].TOTALDISCOUNT,
         Sum_Amount_Tax: 0,
         Sum_Invoice_Refund_Posted: 0,
         Sum_Amount_PayOut: 0,
@@ -1363,7 +1838,7 @@ export default function Menu({navigation}) {
           BluetoothEscposPrinter.ALIGN.RIGHT,
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ],
-        ['Discount', 'Rp.', Intl.NumberFormat('id-ID').format(nilaidisc)],
+        ['Discount', 'Rp.', Intl.NumberFormat('id-ID').format(nilaidiscview)],
         {},
       );
       await BluetoothEscposPrinter.printText(
@@ -1377,19 +1852,19 @@ export default function Menu({navigation}) {
           BluetoothEscposPrinter.ALIGN.RIGHT,
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ],
-        ['Total', 'Rp.', Intl.NumberFormat('id-ID').format(total)],
+        ['Total', 'Rp.', Intl.NumberFormat('id-ID').format(total1)],
         {},
       );
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths2,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        ['PPN 11%', 'Rp.', Intl.NumberFormat('id-ID').format(tax)],
-        {},
-      );
+      // await BluetoothEscposPrinter.printColumn(
+      //   columnWidths2,
+      //   [
+      //     BluetoothEscposPrinter.ALIGN.LEFT,
+      //     BluetoothEscposPrinter.ALIGN.RIGHT,
+      //     BluetoothEscposPrinter.ALIGN.RIGHT,
+      //   ],
+      //   ['PPN 11%', 'Rp.', Intl.NumberFormat('id-ID').format(tax)],
+      //   {},
+      // );
       await BluetoothEscposPrinter.printText(
         '================================================',
         {},
@@ -1401,7 +1876,11 @@ export default function Menu({navigation}) {
           BluetoothEscposPrinter.ALIGN.RIGHT,
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ],
-        ['Grand Total', 'Rp.', Intl.NumberFormat('id-ID').format(grandtotal)],
+        [
+          'Grand Total',
+          'Rp.',
+          Intl.NumberFormat('id-ID').format(grandtotalview),
+        ],
         {},
       );
       await BluetoothEscposPrinter.printColumn(
@@ -1442,19 +1921,19 @@ export default function Menu({navigation}) {
       await BluetoothEscposPrinter.printColumn(
         [48],
         [BluetoothEscposPrinter.ALIGN.CENTER],
-        ['Barang yang sudah dibeli tidak dapat ditukar'],
+        ['Barang yang sudah dibeli dapat ditukar'],
         {},
       );
       await BluetoothEscposPrinter.printColumn(
         [48],
         [BluetoothEscposPrinter.ALIGN.CENTER],
-        ['atau dikembalikan'],
+        ['jika sesuai dengan kondisi awal dan '],
         {},
       );
       await BluetoothEscposPrinter.printColumn(
         [48],
         [BluetoothEscposPrinter.ALIGN.CENTER],
-        ['(kecuali ada perjanjian).'],
+        ['MAX 2 hari dari tanggal pembelian'],
         {},
       );
       await BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
@@ -1575,7 +2054,7 @@ export default function Menu({navigation}) {
   const screenWidth = Dimensions.get('window').width;
 
   return (
-    <ScrollView style={{flex: 1, width: '100%', height: '100%', padding: 0}}>
+    <SafeAreaView style={{flex: 1, width: '100%', height: '100%'}}>
       <SafeAreaView
         style={{flex: 1, flexDirection: 'column', backgroundColor: '#FFFFFF'}}>
         {/* //* INFORMATION */}
@@ -1808,7 +2287,7 @@ export default function Menu({navigation}) {
                     ]}
                     editable={false}
                     maxLength={100}
-                    value={Intl.NumberFormat('id-ID').format(grandtotal)}
+                    value={Intl.NumberFormat('id-ID').format(grandtotalview)}
                   />
                 </View>
                 <View style={globalStyles.labelinputtotalanbillsdisc}>
@@ -1937,6 +2416,27 @@ export default function Menu({navigation}) {
                     />
                   </View>
                 </SafeAreaView>
+                <View
+                  style={{
+                    //marginRight: 0,
+                    //marginTop: 5,
+                    bottom: 40,
+                    width: '100%',
+                    borderWidth: 1,
+                  }}>
+                  <Picker
+                    selectedValue={selectedDiscountitem}
+                    onValueChange={handleDiscountItem}>
+                    {filteredDiscItem.map(item => (
+                      <Picker.Item
+                        key={item.discount_ID}
+                        label={`${item.discount_Name}`}
+                        // Use name as the value, but you could use any unique identifier
+                        value={item.discount_ID}
+                      />
+                    ))}
+                  </Picker>
+                </View>
                 <SafeAreaView style={[invrecStyles.inputanqty]}>
                   <TouchableOpacity
                     style={[globalStyles.buttonQTYMinus]}
@@ -1970,7 +2470,7 @@ export default function Menu({navigation}) {
                   <TouchableOpacity
                     style={[globalStyles.buttonYesPayment]}
                     onPress={() => {
-                      AddItemTemp(variant);
+                      AddItemTemp();
                     }}>
                     <Text style={globalStyles.textStyle}>Add Item</Text>
                   </TouchableOpacity>
@@ -2311,7 +2811,7 @@ export default function Menu({navigation}) {
               </ScrollView>
               <ScrollView style={globalStyles.InputBills2}>
                 <Text style={globalStyles.TextHeaderBills2}>Discounts</Text>
-                {discount.map((discount, index) => {
+                {filteredDiscBills.map((discount, index) => {
                   return (
                     <View
                       key={index}
@@ -2357,7 +2857,7 @@ export default function Menu({navigation}) {
                         {backgroundColor: colors.card, color: colors.text},
                       ]}>
                       {/* Rp {total.toLocaleString('id-ID')} */}
-                      Rp {Intl.NumberFormat('id-ID').format(total)}
+                      Rp {Intl.NumberFormat('id-ID').format(total1)}
                     </Text>
                   </View>
                 </SafeAreaView>
@@ -2377,11 +2877,11 @@ export default function Menu({navigation}) {
                         invrecStyles.labelinputbills,
                         {backgroundColor: colors.card, color: colors.text},
                       ]}>
-                      Rp {Intl.NumberFormat('id-ID').format(nilaidisc)}
+                      Rp {Intl.NumberFormat('id-ID').format(nilaidiscview)}
                     </Text>
                   </View>
                 </SafeAreaView>
-                <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
+                {/* <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
                   <View style={globalStyles.labelinputtotalanbillsdisc}>
                     <Text
                       style={[
@@ -2400,7 +2900,7 @@ export default function Menu({navigation}) {
                       Rp {Intl.NumberFormat('id-ID').format(tax)}
                     </Text>
                   </View>
-                </SafeAreaView>
+                </SafeAreaView> */}
                 <SafeAreaView style={[invrecStyles.inputantotalanbills2]}>
                   <View style={globalStyles.labelinputtotalanbillsdisc}>
                     <Text
@@ -2417,7 +2917,7 @@ export default function Menu({navigation}) {
                         invrecStyles.labelinputbills,
                         {backgroundColor: colors.card, color: colors.text},
                       ]}>
-                      Rp {Intl.NumberFormat('id-ID').format(grandtotal)}
+                      Rp {Intl.NumberFormat('id-ID').format(grandtotalview)}
                     </Text>
                   </View>
                 </SafeAreaView>
@@ -2472,7 +2972,7 @@ export default function Menu({navigation}) {
         </SafeAreaView>
         {/* //* BANNER */}
         {/* //* CONTENT */}
-        <ScrollView style={{flex: 3, padding: 15, height: '100%'}}>
+        <View>
           <View
             style={
               (invrecStyles.menucatdropdown, {minHeight: open ? '50%' : '20%'})
@@ -2499,7 +2999,7 @@ export default function Menu({navigation}) {
                 selectedCat(item.value);
                 console.log('nilai cat:' + item.value);
               }}
-              dropDownStyle={{maxHeight: 500, backgroundColor: 'white'}}
+              dropDownStyle={{maxHeight: 500}}
             />
             {/* <TouchableOpacity
               style={[invrecStyles.iconlookup, {backgroundColor: colors.card}]}>
@@ -2515,7 +3015,7 @@ export default function Menu({navigation}) {
                 flexDirection: 'row',
                 flexWrap: 'wrap',
                 gap: 5,
-                height: '100%',
+                //height: '100%',
               }}>
               {/* //! MENU ITEM */}
               {item.map((item, index) => {
@@ -2534,11 +3034,11 @@ export default function Menu({navigation}) {
               })}
             </View>
           </ScrollView>
-        </ScrollView>
+        </View>
         {/* //* CONTENT */}
         {/* //* FOOTER */}
         {/* //* FOOTER */}
       </SafeAreaView>
-    </ScrollView>
+    </SafeAreaView>
   );
 }

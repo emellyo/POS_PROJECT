@@ -1,5 +1,5 @@
 import {SQLiteDatabase, enablePromise, openDatabase} from 'react-native-sqlite-storage';
-import {AddTrxHdr} from '../models';
+import {AddTrxDtlTemp, AddTrxHdr} from '../models';
 
 export const getDBConnection = async () => {
    return openDatabase(
@@ -34,6 +34,20 @@ export const AddTrxHdr_CreateTbl = async (db: SQLiteDatabase, tableName: string)
         SyncStatus INT NOT NULL,
         Payment_ID TEXT NOT NULL,
         Payment_Type TEXT NOT NULL
+    );`;
+
+  await db.executeSql(query);
+};
+
+export const AddTrxHdrTemp_CreateTbl = async (db: SQLiteDatabase, tableName: string) => {
+  // create table if not exists
+  const query = `CREATE TABLE IF NOT EXISTS ${tableName}(
+        DOCNUMBER TEXT PRIMARY KEY NOT NULL,
+        ORIGTOTAL REAL NOT NULL,
+        SUBTOTAL REAL NOT NULL,
+        Tax_Amount REAL NOT NULL,
+        Discount_ID TEXT NULL,
+        Discount_Amount REAL NOT NULL
     );`;
 
   await db.executeSql(query);
@@ -172,6 +186,18 @@ Amount_Tendered: number, Change_Amount: number, Batch_ID: string, Payment_ID: st
   return db.executeSql(insertQuery);
 };
 
+export const AddTrxHdrTemp_savedata = async (db: SQLiteDatabase, tableName: string ,
+  DOCNUMBER: string, ORIGTOTAL: number, SUBTOTAL: number, Tax_Amount: number, Discount_ID: string, Discount_Amount: number,) => {
+  const insertQuery =
+    `INSERT INTO ${tableName}`+
+    `(DOCNUMBER, ORIGTOTAL, SUBTOTAL, Tax_Amount, Discount_ID, Discount_Amount)` +
+    ` values ` +
+ `('${DOCNUMBER}', ${ORIGTOTAL}, ${SUBTOTAL}, ${Tax_Amount}, '${Discount_ID}', '${Discount_Amount}')`;
+  // join(',')
+
+  return db.executeSql(insertQuery);
+};
+
 export const queryselecAddTrxHdr = async (db: SQLiteDatabase, query: string) => {
   console.log('querydyn:', query);
   const Lists: AddTrxHdr[] = [];
@@ -186,6 +212,18 @@ export const queryselecAddTrxHdr = async (db: SQLiteDatabase, query: string) => 
     });
     return Lists;
 }
+
+export const queryselectTrx = async (db: SQLiteDatabase, query: string) => {
+  console.log('querydyn:', query);
+  const Lists: AddTrxDtlTemp[] = [];
+    const results = await db.executeSql(query);
+    results.forEach(result => {
+      for (let index = 0; index < result.rows.length; index++) {
+        Lists.push(result.rows.item(index))
+      }
+    });
+    return Lists;
+};
 
 export const querydynamic = async (db: SQLiteDatabase, query: string) => {
   console.log('querydyn:', query);

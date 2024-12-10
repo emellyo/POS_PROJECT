@@ -58,6 +58,15 @@ export type AddTrxHdr ={
     Payment_Type: string;
 }
 
+export type AddTrxHdrTemp ={
+    DOCNUMBER: string;
+    ORIGTOTAL: number;
+    SUBTOTAL: number;
+    Tax_Amount: number;
+    Discount_ID: string;
+    Discount_Amount: number;
+}
+
 export type AddTrxDtl ={
     DOCNUMBER: string;
     DOCTYPE: number;
@@ -79,6 +88,30 @@ export type AddTrxDtl ={
     POS_Device_ID: string;
     POS_Version: string;
     variant_Name: string;
+}
+
+export type AddTrxDtlTemp ={
+    DOCNUMBER: string;
+    DOCTYPE: number;
+    DOCDATE: number;
+    Lineitmseq: number;
+    lineItem_Option: number;
+    Item_Number: string;
+    Item_Description: string;
+    Quantity: number;
+    UofM: string;
+    Item_Price: number;
+    Item_Cost: number;
+    Store_ID: string;
+    Site_ID: string;
+    SalesType_ID: string;
+    Discount_ID: string;
+    Discount_Amount: number;
+    Notes: string;
+    POS_Device_ID: string;
+    POS_Version: string;
+    variant_Name: string;
+    TOTALNET: number;
 }
 
 export type ShiftDetail ={

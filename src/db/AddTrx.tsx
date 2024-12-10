@@ -1,5 +1,5 @@
 import {SQLiteDatabase, enablePromise, openDatabase} from 'react-native-sqlite-storage';
-import { AddTrxHdr, AddTrxDtl} from '../models';
+import { AddTrxHdr, AddTrxHdrTemp, AddTrxDtl, AddTrxDtlTemp} from '../models';
 
 export const getDBConnection = async () => {
    return openDatabase(
@@ -39,6 +39,8 @@ export const AddTrxHdr_CreateTbl = async (db: SQLiteDatabase, tableName: string)
   await db.executeSql(query);
 };
 
+
+
 export const AddTrxDtl_CreateTbl = async (db: SQLiteDatabase, tableName: string) => {
   // create table if not exists
   const query = `CREATE TABLE IF NOT EXISTS ${tableName}(
@@ -68,6 +70,38 @@ export const AddTrxDtl_CreateTbl = async (db: SQLiteDatabase, tableName: string)
   await db.executeSql(query);
 };
 
+export const AddTrxDtlTemp_CreateTbl = async (db: SQLiteDatabase, tableName: string) => {
+  // create table if not exists
+  const query = `CREATE TABLE IF NOT EXISTS ${tableName}(
+        DOCNUMBER TEXT  NOT NULL,
+        DOCTYPE INT NOT NULL,
+        DOCDATE TEXT NOT NULL,
+        Lineitmseq INT PRIMARY KEY NOT NULL,
+        lineItem_Option INT NOT NULL,
+        Item_Number TEXT NOT NULL,
+        Item_Description TEXT NULL,
+        Quantity INT NOT NULL,
+        UofM TEXT NOT NULL,
+        Item_Price REAL NOT NULL,
+        Item_Cost REAL NOT NULL,
+        Store_ID TEXT NULL,
+        Site_ID TEXT NULL,
+        SalesType_ID TEXT NOT NULL,
+        Discount_ID TEXT NOT NULL,
+        Discount_Amount REAL NOT NULL,
+        Notes TEXT NULL,
+        POS_Device_ID TEXT NULL,
+        POS_Version TEXT NULL,
+        variant_Name TEXT NULL,
+        isVarian INT NOT NULL,
+        TOTALNET REAL NOT NULL,
+        SUBTOTAL REAL NOT NULL,
+        TAX REAL NOT NULL
+    );`;
+
+  await db.executeSql(query);
+};
+
 export const AddTrxHdr_getdata = async (db: SQLiteDatabase, tableName: string): Promise<AddTrxHdr[]> => {
   try {
     const Lists: AddTrxHdr[] = [];
@@ -87,6 +121,18 @@ export const AddTrxHdr_getdata = async (db: SQLiteDatabase, tableName: string): 
 export const queryselectTrx = async (db: SQLiteDatabase, query: string) => {
   console.log('querydyn:', query);
   const Lists: AddTrxDtl[] = [];
+    const results = await db.executeSql(query);
+    results.forEach(result => {
+      for (let index = 0; index < result.rows.length; index++) {
+        Lists.push(result.rows.item(index))
+      }
+    });
+    return Lists;
+};
+
+export const queryselectTrxTemp = async (db: SQLiteDatabase, query: string) => {
+  console.log('querydyn:', query);
+  const Lists: AddTrxDtlTemp[] = [];
     const results = await db.executeSql(query);
     results.forEach(result => {
       for (let index = 0; index < result.rows.length; index++) {
@@ -130,9 +176,41 @@ export const AddTrxDtl_getdata = async (db: SQLiteDatabase, tableName: string): 
   }
 };
 
+export const AddTrxDtlTemp_getdata = async (db: SQLiteDatabase, tableName: string): Promise<AddTrxDtl[]> => {
+  try {
+    const Lists: AddTrxDtlTemp[] = [];
+    const results = await db.executeSql(`SELECT * FROM ${tableName}`);
+    results.forEach(result => {
+      for (let index = 0; index < result.rows.length; index++) {
+        Lists.push(result.rows.item(index))
+      }
+    });
+    return Lists;
+  } catch (error) {
+    console.error(error);
+    throw Error('Failed to get Add Item !!!');
+  }
+};
+
 export const AddTrxDtl_getdataBills = async (db: SQLiteDatabase, tableName: string, docnumbr: string): Promise<AddTrxDtl[]> => {
   try {
     const Lists: AddTrxDtl[] = [];
+    const results = await db.executeSql(`SELECT * FROM ${tableName}`);
+    results.forEach(result => {
+      for (let index = 0; index < result.rows.length; index++) {
+        Lists.push(result.rows.item(index))
+      }
+    });
+    return Lists;
+  } catch (error) {
+    console.error(error);
+    throw Error('Failed to get Add Item !!!');
+  }
+};
+
+export const AddTrxDtlTemp_getdataBills = async (db: SQLiteDatabase, tableName: string, docnumbr: string): Promise<AddTrxDtl[]> => {
+  try {
+    const Lists: AddTrxDtlTemp[] = [];
     const results = await db.executeSql(`SELECT * FROM ${tableName}`);
     results.forEach(result => {
       for (let index = 0; index < result.rows.length; index++) {
@@ -247,14 +325,29 @@ export const AddTrxHdr_getdatacash = async (db: SQLiteDatabase, tableName: strin
 
 export const AddTrxDtl_savedata = async (db: SQLiteDatabase, tableName: string ,
    docnumbr: string, date: string, lnitmseq: number, lineItem_Option: number ,qty: number, notes: string, itemnmbr: string, itemname: string, itemprice: number,
-   itemcost: number, variantname: string, Store_ID: string, isVarian: number) => {
+   itemcost: number, variantname: string, Store_ID: string, isVarian: number, Discount_ID: string, Discount_Amount: number) => {
   const insertQuery =
     `INSERT INTO ${tableName}`+
     `(DOCNUMBER, DOCTYPE, DOCDATE, Lineitmseq, lineItem_Option, Item_Number, Item_Description, Quantity, UofM,`+
     `Item_Price, Item_Cost, Store_ID, Site_ID, SalesType_ID, Discount_ID, Discount_Amount, Notes, POS_Device_ID, POS_Version, variant_Name, isVarian)`+
     ` values ` +
  `('${docnumbr}', ${1}, '${date}', ${lnitmseq}, ${lineItem_Option}, '${itemnmbr}','${itemname}', ${qty}, '${'PCS'}', ${itemprice}, ${itemcost}, '${Store_ID}', '${''}', '${''}',` + "\n" +
-  `'${''}', ${0}, '${notes}', '${''}', '${''}', '${variantname}', ${isVarian})`;
+  `'${Discount_ID}', ${Discount_Amount}, '${notes}', '${''}', '${''}', '${variantname}', ${isVarian})`;
+  // join(',')
+
+  return db.executeSql(insertQuery);
+};
+
+export const AddTrxDtlTemp_savedata = async (db: SQLiteDatabase, tableName: string ,
+   docnumbr: string, date: string, lnitmseq: number, lineItem_Option: number ,qty: number, notes: string, itemnmbr: string, itemname: string, itemprice: number,
+   itemcost: number, variantname: string, Store_ID: string, isVarian: number, Discount_ID: string, Discount_Amount: number, totalnet: number, subtotal: number, tax: number) => {
+  const insertQuery =
+    `INSERT INTO ${tableName}`+
+    `(DOCNUMBER, DOCTYPE, DOCDATE, Lineitmseq, lineItem_Option, Item_Number, Item_Description, Quantity, UofM,`+
+    `Item_Price, Item_Cost, Store_ID, Site_ID, SalesType_ID, Discount_ID, Discount_Amount, Notes, POS_Device_ID, POS_Version, variant_Name, isVarian, TOTALNET, SUBTOTAL, TAX)`+
+    ` values ` +
+ `('${docnumbr}', ${1}, '${date}', ${lnitmseq}, ${lineItem_Option}, '${itemnmbr}','${itemname}', ${qty}, '${'PCS'}', ${itemprice}, ${itemcost}, '${Store_ID}', '${''}', '${''}',` + "\n" +
+  `'${Discount_ID}', ${Discount_Amount}, '${notes}', '${''}', '${''}', '${variantname}', ${isVarian}, ${totalnet}, ${subtotal}, ${tax})`;
   // join(',')
 
   return db.executeSql(insertQuery);
@@ -276,6 +369,8 @@ Amount_Tendered: number, Change_Amount: number, Batch_ID: string, Payment_ID: st
   return db.executeSql(insertQuery);
 };
 
+
+
 export const queryselecAddTrxHdr = async (db: SQLiteDatabase, query: string) => {
   console.log('querydyn:', query);
   const Lists: AddTrxHdr[] = [];
@@ -294,6 +389,21 @@ export const queryselecAddTrxHdr = async (db: SQLiteDatabase, query: string) => 
 export const queryselecAddTrxDtl = async (db: SQLiteDatabase, query: string) => {
   console.log('querydyn:', query);
   const Lists: AddTrxDtl[] = [];
+    const results = await db.executeSql(query);
+    
+    results.forEach(results => {
+      console.log('length: ', results.rows.length);
+      for(let index = 0; index < results.rows.length; index++){
+        Lists.push(results.rows.item(index))
+      }
+     console.log('resultquery: ', results);
+    });
+    return Lists;
+}
+
+export const queryselecAddTrxDtlTemp = async (db: SQLiteDatabase, query: string) => {
+  console.log('querydyn:', query);
+  const Lists: AddTrxDtlTemp[] = [];
     const results = await db.executeSql(query);
     
     results.forEach(results => {

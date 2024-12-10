@@ -548,16 +548,16 @@ const Receipts = () => {
         ['Total', 'Rp.', Intl.NumberFormat('id-ID').format(totaltrx)],
         {},
       );
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths2,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        ['PPN 11%', 'Rp.', Intl.NumberFormat('id-ID').format(tottax)],
-        {},
-      );
+      // await BluetoothEscposPrinter.printColumn(
+      //   columnWidths2,
+      //   [
+      //     BluetoothEscposPrinter.ALIGN.LEFT,
+      //     BluetoothEscposPrinter.ALIGN.RIGHT,
+      //     BluetoothEscposPrinter.ALIGN.RIGHT,
+      //   ],
+      //   ['PPN 11%', 'Rp.', Intl.NumberFormat('id-ID').format(tottax)],
+      //   {},
+      // );
       await BluetoothEscposPrinter.printText(
         '================================================',
         {},
@@ -610,19 +610,19 @@ const Receipts = () => {
       await BluetoothEscposPrinter.printColumn(
         [48],
         [BluetoothEscposPrinter.ALIGN.CENTER],
-        ['Barang yang sudah dibeli tidak dapat ditukar'],
+        ['Barang yang sudah dibeli dapat ditukar jika'],
         {},
       );
       await BluetoothEscposPrinter.printColumn(
         [48],
         [BluetoothEscposPrinter.ALIGN.CENTER],
-        ['atau dikembalikan'],
+        ['sesuai dengan kondisi awal dan '],
         {},
       );
       await BluetoothEscposPrinter.printColumn(
         [48],
         [BluetoothEscposPrinter.ALIGN.CENTER],
-        ['(kecuali ada perjanjian).'],
+        ['MAX 2 hari dari tanggal pembelian'],
         {},
       );
       await BluetoothEscposPrinter.printText('\r\n\r\n\r\n', {});
@@ -917,7 +917,7 @@ const Receipts = () => {
                   </Text>
                 </View>
               </SafeAreaView> */}
-              <SafeAreaView style={[invrecStyles.inputantotalanbills2new]}>
+              {/* <SafeAreaView style={[invrecStyles.inputantotalanbills2new]}>
                 <View style={globalStyles.labelinputtotalanbillsdisc}>
                   <Text
                     style={[
@@ -936,7 +936,7 @@ const Receipts = () => {
                     Rp {Intl.NumberFormat('id-ID').format(tottax)}
                   </Text>
                 </View>
-              </SafeAreaView>
+              </SafeAreaView> */}
               <SafeAreaView style={[invrecStyles.inputantotalanbills2new]}>
                 <View style={globalStyles.labelinputtotalanbillsdisc}>
                   <Text
