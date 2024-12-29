@@ -750,6 +750,7 @@ export default function Menu({navigation}) {
       console.log('data detail temp: ', dataDetailTemp);
       setMdlVariant(false);
       setDiscItemType(0);
+      setNilaiDiscItem(0);
     } catch (error) {
       console.log(error);
       let msg = 'Terjadi kesalahan, silahkan input ulang kembali';
@@ -949,6 +950,7 @@ export default function Menu({navigation}) {
       console.log('data detail: ', dataDetail);
       setMdlNonVariant(false);
       setDiscItemType(0);
+      setNilaiDiscItem(0);
     } catch (error) {
       console.log(error);
       let msg = 'Terjadi kesalahan, silahkan input ulang kembali';
