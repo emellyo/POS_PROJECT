@@ -82,6 +82,7 @@ export default function Discount({navigation}) {
   const [payment, setPayment] = useState([]);
   const [pipo, setPipo] = useState([]);
   const [cash, setCash] = useState(0);
+  const [transfer, setTransfer] = useState(0);
   const [gross, setGross] = useState(0);
   const [netsales, setNetSales] = useState(0);
   const [totinv, setTotInv] = useState(0);
@@ -354,6 +355,11 @@ export default function Discount({navigation}) {
         'AddTrxHdr',
         datashift[0].Batch_ID,
       );
+      let datatransfer = await dbconnTrx.AddTrxHdr_getdatatransfer(
+        dbtrx,
+        'AddTrxHdr',
+        datashift[0].Batch_ID,
+      );
       let databca = await dbconnTrx.AddTrxHdr_getdatabca(
         dbtrx,
         'AddTrxHdr',
@@ -394,6 +400,7 @@ export default function Discount({navigation}) {
       setTotInv(datatrx[0].InvoicePosted);
       setGross(grosssales);
       setCash(datacash[0].TOTALCASH);
+      setTransfer(datatransfer[0].TOTALCASH);
       setPayment(datatrx);
       setsum_Amount_Discount(datatrx[0].setsum_Amount_Discount);
       getsummaryshift({
@@ -911,6 +918,28 @@ export default function Discount({navigation}) {
                     invrecStyles.labelinputshift,
                     {backgroundColor: colors.card, color: colors.text},
                   ]}>
+                  Transfer
+                </Text>
+              </View>
+            </View>
+            <View style={globalStyles.kanan}>
+              <Text
+                style={[
+                  invrecStyles.labelinputshift,
+                  {backgroundColor: colors.card, color: colors.text},
+                ]}>
+                Rp {Intl.NumberFormat('id-ID').format(transfer)}
+              </Text>
+            </View>
+          </SafeAreaView>
+          {/* <SafeAreaView style={invrecStyles.form}>
+            <View style={globalStyles.kiri}>
+              <View style={globalStyles.textshift}>
+                <Text
+                  style={[
+                    invrecStyles.labelinputshift,
+                    {backgroundColor: colors.card, color: colors.text},
+                  ]}>
                   DEBIT BCA
                 </Text>
               </View>
@@ -924,8 +953,8 @@ export default function Discount({navigation}) {
                 Rp {Intl.NumberFormat('id-ID').format(bca)}
               </Text>
             </View>
-          </SafeAreaView>
-          <SafeAreaView style={invrecStyles.form}>
+          </SafeAreaView> */}
+          {/* <SafeAreaView style={invrecStyles.form}>
             <View style={globalStyles.kiri}>
               <View style={globalStyles.textshift}>
                 <Text
@@ -946,8 +975,8 @@ export default function Discount({navigation}) {
                 Rp {Intl.NumberFormat('id-ID').format(mandiri)}
               </Text>
             </View>
-          </SafeAreaView>
-          <SafeAreaView style={invrecStyles.form}>
+          </SafeAreaView> */}
+          {/* <SafeAreaView style={invrecStyles.form}>
             <View style={globalStyles.kiri}>
               <View style={globalStyles.textshift}>
                 <Text
@@ -968,7 +997,7 @@ export default function Discount({navigation}) {
                 Rp {Intl.NumberFormat('id-ID').format(gopay)}
               </Text>
             </View>
-          </SafeAreaView>
+          </SafeAreaView> */}
         </ScrollView>
         <View style={{borderBottomWidth: 1, borderBottomColor: '#212121'}}>
           <SafeAreaView style={invrecStyles.form}>
