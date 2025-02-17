@@ -975,7 +975,7 @@ export default function Discount({navigation}) {
               </TouchableOpacity>
               <TouchableOpacity
                 style={[globalStyles.buttonYes]}
-                onPress={() => PostCloseShift2(closeamount, differenamt)}>
+                onPress={() => PostSummaryShiftClosing(closeamount)}>
                 <Text style={globalStyles.textStyle}>Ya</Text>
               </TouchableOpacity>
             </View>
@@ -1110,7 +1110,7 @@ export default function Discount({navigation}) {
               <SafeAreaView style={[invrecStyles.buttontotalanclose]}>
                 <TouchableOpacity
                   style={[globalStyles.buttonclose2]}
-                  onPress={() => PostCloseShift(closeamount, differenamt)}>
+                  onPress={() => PostSummaryShiftClosing(closeamount)}>
                   <Text style={globalStyles.textCloseShift}>CLOSE SHIFT</Text>
                 </TouchableOpacity>
               </SafeAreaView>
