@@ -1713,7 +1713,7 @@ export default function Menu({navigation}) {
   const PrintStruk = async () => {
     let columnWidths = [20, 3, 17, 8];
     let columnWidthsVAR = [20, 3, 17, 8];
-    let columnWidths2 = [15, 25, 8];
+    let columnWidths2 = [15, 20, 13];
     const db = await dbconnTrx.getDBConnection();
     let getbills = [];
     const today = new Date();
@@ -2614,6 +2614,27 @@ export default function Menu({navigation}) {
                     />
                   </View>
                 </SafeAreaView>
+                <View
+                  style={{
+                    //marginRight: 0,
+                    //marginTop: 5,
+                    bottom: 40,
+                    width: '100%',
+                    borderWidth: 1,
+                  }}>
+                  <Picker
+                    selectedValue={selectedDiscountitem}
+                    onValueChange={handleDiscountItem}>
+                    {filteredDiscItem.map(item => (
+                      <Picker.Item
+                        key={item.discount_ID}
+                        label={`${item.discount_Name}`}
+                        // Use name as the value, but you could use any unique identifier
+                        value={item.discount_ID}
+                      />
+                    ))}
+                  </Picker>
+                </View>
                 <SafeAreaView style={[invrecStyles.inputanqty]}>
                   <TouchableOpacity
                     style={[globalStyles.buttonQTYMinus]}
