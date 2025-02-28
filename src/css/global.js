@@ -1826,9 +1826,12 @@ export const invrecStyles = StyleSheet.create({
   },
   menucatdropdown: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     // flexWrap: 'wrap',
     // marginVertical: 0,
-    width: '100%',
+    alignItems: 'center',
+    padding: 5,
+    //width: '100%',
     backgroundColor: '#FFFFFF',
     zIndex: 1,
   },

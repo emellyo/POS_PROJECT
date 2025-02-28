@@ -29,4 +29,23 @@ export const styles = StyleSheet.create({
     color: '#0096FF',
     marginBottom: 20,
   },
+  containerSearch: {
+    //flex: 1,
+    padding: 5,
+    width: '70%',
+    marginRight: 10,
+  },
+  searchInput: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    paddingLeft: 8,
+    borderRadius: 5,
+    //marginBottom: 16,
+  },
+  item: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
 });

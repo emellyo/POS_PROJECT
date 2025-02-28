@@ -18,6 +18,7 @@ import {
   PermissionsAndroid,
   Platform,
   ToastAndroid,
+  FlatList,
 } from 'react-native';
 import {globalStyles, invrecStyles} from '../css/global';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -49,6 +50,7 @@ import * as dbhdr from '../db/AddTrxHdr';
 import * as dbshift from '../db/ShiftDetails';
 import {Picker} from '@react-native-picker/picker';
 import {run} from 'jest';
+import {styles} from '../css/styles';
 
 export default function Menu({navigation}) {
   LogBox.ignoreLogs([
@@ -135,6 +137,8 @@ export default function Menu({navigation}) {
   const [selectedDiscountitem, setSelectedDiscountItem] = useState('');
   const [selectedDiscountitemvalue, setSelectedDiscountItemValue] = useState(0);
   const [discitemtype, setDiscItemType] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
   //#endregion
 
   useEffect(() => {
@@ -157,6 +161,7 @@ export default function Menu({navigation}) {
     GetSalesType();
     GetStorename();
     getCurrentTime();
+    //setFilteredData(item);
     console.log('Current time:', getCurrentTime());
     BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     return () => {
@@ -476,6 +481,7 @@ export default function Menu({navigation}) {
       var hasil = result.data;
       console.info('hasil get item: ', hasil);
       setItem(hasil);
+      setFilteredData(hasil);
     });
   };
 
@@ -566,8 +572,8 @@ export default function Menu({navigation}) {
     }
   };
 
-  const filteredDiscItem = discount.filter(item => item.discount_Type === 2);
-  const filteredDiscBills = discount.filter(item1 => item1.discount_Type === 1);
+  const filteredDiscItem = discount.filter(item => item.type === 2);
+  const filteredDiscBills = discount.filter(item1 => item1.type === 1);
 
   const handleDiscountItem = async discount => {
     let newDiscountValue = 0;
@@ -576,17 +582,19 @@ export default function Menu({navigation}) {
       item => item.discount_ID === discount,
     );
     console.log('SELECTED ITEM: ', selectedItem);
-    if (selectedItem.type === 1) {
-      let getbills = await dbconnTrx.AddTrxDtl_getdataBills(
-        db,
-        'AddTrxDtl',
-        runno,
-      );
+    if (selectedItem.type === 2 && selectedItem.discount_Type === 1) {
+      // let getbills = await dbconnTrx.AddTrxDtl_getdataBills(
+      //   db,
+      //   'AddTrxDtl',
+      //   runno,
+      // );
+      let dtVariant = await dbconn.Variant_getdataChoose(db, 'Variant');
+      console.log('GET price: ', dtVariant);
       newDiscountValue = Math.round(
-        (getbills[0].Item_Price * selectedItem.discount_Value) / 100,
+        (dtVariant[0].item_Price * selectedItem.discount_Value) / 100,
       );
       //CalculateTotalDiscItem(newDiscountValue);
-    } else if (selectedItem.type == 2) {
+    } else if (selectedItem.type == 2 && selectedItem.discount_Type == 2) {
       console.log('masuk discount type 2');
       newDiscountValue = Math.round(selectedItem.discount_Value);
       //CalculateTotalDiscItem(newDiscountValue);
@@ -597,6 +605,7 @@ export default function Menu({navigation}) {
     setDiscItemType(selectedItem.type);
     // setSelectedDiscountItem(discount.discount_ID);
     // setDiscId(discount.discount_ID);
+    console.log('DISCOUNT VALUE: ', newDiscountValue);
     setNilaiDiscItem(newDiscountValue);
     //setNilaiDisc(JSON.stringify(newDiscountValue).split('.')[0]);
     //await new Promise(resolve => setTimeout(resolve, 0));
@@ -613,13 +622,13 @@ export default function Menu({navigation}) {
       let newDiscountValue = 0;
       let totalall = Number(total1);
       console.log('TOTAL ALL: ', totalall);
-      if (discount.type === 1) {
-        console.log('masuk discount type 1');
+      if (discount.type === 1 && discount.discount_Type === 1) {
+        console.log('masuk discount type 2 ITEM');
         newDiscountValue = Math.round(
           (totalall * discount.discount_Value) / 100,
         );
-      } else if (discount.type === 2) {
-        console.log('masuk discount type 2');
+      } else if (discount.type === 1 && discount.discount_Type === 2) {
+        console.log('masuk discount type 1 BILLS');
         newDiscountValue = Math.round(discount.discount_Value);
         //setTotal(discountedTotalamt);
       }
@@ -751,6 +760,7 @@ export default function Menu({navigation}) {
       setMdlVariant(false);
       setDiscItemType(0);
       setNilaiDiscItem(0);
+      setDiscId('');
     } catch (error) {
       console.log(error);
       let msg = 'Terjadi kesalahan, silahkan input ulang kembali';
@@ -853,6 +863,9 @@ export default function Menu({navigation}) {
       console.log('data detail: ', dataDetail);
       console.log('data detail temp: ', dataDetailTemp);
       setMdlVariant(false);
+      setDiscId('');
+      setDiscItemType(0);
+      setNilaiDiscItem(0);
     } catch (error) {
       console.log(error);
       let msg = 'Terjadi kesalahan, silahkan input ulang kembali';
@@ -951,6 +964,7 @@ export default function Menu({navigation}) {
       setMdlNonVariant(false);
       setDiscItemType(0);
       setNilaiDiscItem(0);
+      setDiscId('');
     } catch (error) {
       console.log(error);
       let msg = 'Terjadi kesalahan, silahkan input ulang kembali';
@@ -1047,6 +1061,9 @@ export default function Menu({navigation}) {
       let dataDetail = await dbconnTrx.AddTrxDtl_getdata(db, 'AddTrxDtl');
       console.log('data detail: ', dataDetail);
       setMdlNonVariant(false);
+      setDiscItemType(0);
+      setNilaiDiscItem(0);
+      setDiscId('');
     } catch (error) {
       console.log(error);
       let msg = 'Terjadi kesalahan, silahkan input ulang kembali';
@@ -2051,6 +2068,14 @@ export default function Menu({navigation}) {
     // Alert.alert("Information", info);
   };
 
+  const handleSearch = query => {
+    setSearchQuery(query);
+    const filtered = item.filter(item =>
+      item.item_Name.toLowerCase().includes(query.toLowerCase()),
+    );
+    setFilteredData(filtered);
+  };
+
   //#endregion
 
   const screenWidth = Dimensions.get('window').width;
@@ -2998,10 +3023,27 @@ export default function Menu({navigation}) {
         <View>
           <View
             style={
-              (invrecStyles.menucatdropdown, {minHeight: open ? '50%' : '20%'})
+              (invrecStyles.menucatdropdown, {minHeight: open ? '40%' : '20%'})
             }>
+            <View style={styles.containerSearch}>
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Search..."
+                value={searchQuery}
+                onChangeText={handleSearch}
+              />
+            </View>
             <DropDownPicker
-              style={{elevation: 5, zIndex: 1, marginRight: 0}}
+              style={{
+                elevation: 2,
+                zIndex: 1,
+                //marginRight: 0,
+                width: '30%',
+                bottom: 50,
+                //position: 'absolute',
+                left: 900,
+                // top: 0,
+              }}
               textStyle={{fontWeight: '600', fontSize: 15}}
               showTickIcon={true}
               listMode="SCROLLVIEW"
@@ -3041,7 +3083,7 @@ export default function Menu({navigation}) {
                 //height: '100%',
               }}>
               {/* //! MENU ITEM */}
-              {item.map((item, index) => {
+              {filteredData.map((item, index) => {
                 return (
                   <View key={index} style={globalStyles.menuitemlist}>
                     <TouchableOpacity
